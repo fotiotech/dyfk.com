@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 declare global {
   namespace NodeJS {
     interface ProcessEnv {
-      NEXT_PUBLIC_MONGODB_URI: string;
+      MONGODB_URI: string;
       // Add more environment variables here if needed
     }
   }
@@ -20,7 +20,7 @@ export const connection = async () => {
   }
 
   try {
-    await mongoose.connect(process.env.NEXT_PUBLIC_MONGODB_URI, {
+    await mongoose.connect(process.env.MONGODB_URI, {
       dbName: "fotiodb",
       useNewUrlParser: true,
       useUnifiedTopology: true,
