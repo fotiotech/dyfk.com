@@ -22,8 +22,6 @@ export const connection = async () => {
   try {
     await mongoose.connect(process.env.MONGODB_URI, {
       dbName: "fotiodb",
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
     });
 
     isConnected = true;

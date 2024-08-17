@@ -11,7 +11,7 @@ interface ContextProps {
 const UserContext = createContext<any>(null);
 
 const UserContextProvider: FC<ContextProps> = ({ children }) => {
-  const storedUser = JSON.parse(localStorage.getItem("user" || "{}"));
+  const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
   const [user, setUser] = useState(storedUser);
   const [token, setToken] = useState(localStorage.getItem("token") || "");
   const [isLogIn, setIsLogIn] = useState(!!token);
