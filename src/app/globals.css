@@ -2,4 +2,27 @@
 @tailwind components;
 @tailwind utilities;
 
-
+/* html {
+    @apply box-border m-0 p-0;
+  }
+  
+  label {
+    @apply text-lg font-semibold text-gray-700 dark:text-gray-300 block;
+  }
+  
+  input,
+  select,
+  textarea {
+    @apply appearance-none block px-3 shadow focus:outline-none 
+    rounded-lg border-2 dark:bg-sec-dark border-gray-300
+     focus:border-thi my-2 p-2 bg-[#eee];
+  }
+  
+  .btn {
+    @apply bg-thi p-2 rounded-lg;
+  }
+  
+  th,
+  td {
+    @apply border p-2;
+  } */
