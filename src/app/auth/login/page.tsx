@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
 import React, { useState } from "react";
-import { useAuth } from "../UserContext";
 import Image from "next/image";
 import Link from "next/link";
+import { useAuth } from "../UserContext";
 
 const Login = () => {
   const [input, setInput] = useState({
@@ -16,7 +16,7 @@ const Login = () => {
   async function handleLoginSubmit(e: { preventDefault: () => void }) {
     e.preventDefault();
     if (input.email !== "" || input.password !== "") {
-      auth.loginAction(input);
+      auth?.loginAction(input);
       return;
     }
     alert("Please provide a valid input");
@@ -32,9 +32,16 @@ const Login = () => {
 
   return (
     <>
-      <div className="p-2">
-        <Image title="logo" src="/logo.png" width={60} height={30} alt="logo" />
-      </div>
+      <Link href={"/"}>
+        <Image
+          title="logo"
+          src="/logo.png"
+          width={60}
+          height={30}
+          alt="logo"
+          className="p-2"
+        />
+      </Link>
       <div
         className={`flex justify-center items-center relative bg-pri w-full mt-8 `}
       >
@@ -53,7 +60,9 @@ const Login = () => {
                   aria-describedby="user-email"
                   aria-invalid="false"
                   required
-                  className="block bg-gray-500 my-3 px-3 rounded-lg p-1 focus:outline-none border-2 border-thi w-full"
+                  className="block bg-pri my-3 px-3 rounded-lg p-1 
+                  focus:outline-none border-2 border-gray-300
+                  focus:border-thiR w-full"
                 />
               </label>
               <div id="user-email" className=" sr-only">
@@ -71,7 +80,9 @@ const Login = () => {
                   aria-describedby="user-password"
                   aria-invalid="false"
                   required
-                  className="block bg-gray-500 my-3 px-3 rounded-lg p-1 focus:outline-none border-2 border-thi w-full"
+                  className="block bg-pri my-3 px-3 rounded-lg p-1 
+                  focus:outline-none border-2 border-gray-300
+                  focus:border-thiR w-full"
                 />
               </label>
 

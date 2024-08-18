@@ -1,17 +1,8 @@
 import mongoose from "mongoose";
 
-declare global {
-  namespace NodeJS {
-    interface ProcessEnv {
-      MONGODB_URI: string;
-      // Add more environment variables here if needed
-    }
-  }
-}
-
 let isConnected = false; // track the connection
 
-export const connection = async () => {
+export async function connection() {
   mongoose.set("strictQuery", true);
 
   if (isConnected) {
@@ -20,7 +11,7 @@ export const connection = async () => {
   }
 
   try {
-    await mongoose.connect(process.env.MONGODB_URI, {
+    await mongoose.connect(process.env.MONGODB_URI as string, {
       dbName: "fotiodb",
     });
 
@@ -30,4 +21,4 @@ export const connection = async () => {
   } catch (error) {
     console.log(error);
   }
-};
+}

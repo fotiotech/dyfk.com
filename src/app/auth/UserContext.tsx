@@ -1,21 +1,40 @@
 "use client";
+import { Users } from "@/constant/types";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import React, { FC, ReactNode, useContext } from "react";
+import React, { FC, ReactNode, useContext, useEffect } from "react";
 import { createContext, useState } from "react";
 
 interface ContextProps {
   children: ReactNode;
 }
 
-const UserContext = createContext<any>(null);
+interface providerProps {
+  token: string;
+  user: Users | null;
+  setUser: React.Dispatch<React.SetStateAction<Users | null>>;
+  loginAction: (option: { email: string; password: string }) => Promise<void>;
+  logout: () => void;
+  isLogIn: boolean;
+}
+
+const UserContext = createContext<providerProps | null>(null);
 
 const UserContextProvider: FC<ContextProps> = ({ children }) => {
-  const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
-  const [user, setUser] = useState(storedUser);
-  const [token, setToken] = useState(localStorage.getItem("token") || "");
+  const [user, setUser] = useState<Users | null>(null);
+  const [token, setToken] = useState("");
   const [isLogIn, setIsLogIn] = useState(!!token);
   const router = useRouter();
+
+  useEffect(() => {
+    // Ensure this code runs only on the client side
+    if (typeof window !== "undefined") {
+      const users = JSON.parse(localStorage.getItem("user") || "{}");
+      setUser(users);
+      const tok = localStorage.getItem("token") || "";
+      setToken(tok);
+    }
+  }, []);
 
   async function loginAction(option: { email: string; password: string }) {
     try {
@@ -24,15 +43,18 @@ const UserContextProvider: FC<ContextProps> = ({ children }) => {
         option
       );
 
-      const { results, token, message } = response.data;
+      // if (response) {
 
+      const { token, result, message } = response.data;
+      console.log(result);
       alert(message);
-      setUser({ ...results[0] });
-      localStorage.setItem("user", JSON.stringify(results[0]));
+      setUser({ ...result });
+      localStorage.setItem("user", JSON.stringify(result));
       setToken(token);
       localStorage.setItem("token", token);
       setIsLogIn(true);
-      router.push("/redirect");
+      router.push("/profile");
+      // }
     } catch (e) {
       alert("Login failed");
       console.error(e);
@@ -48,7 +70,9 @@ const UserContextProvider: FC<ContextProps> = ({ children }) => {
   }
 
   return (
-    <UserContext.Provider value={{ token, user, loginAction, logout, isLogIn }}>
+    <UserContext.Provider
+      value={{ token, user, setUser, loginAction, logout, isLogIn }}
+    >
       {children}
     </UserContext.Provider>
   );

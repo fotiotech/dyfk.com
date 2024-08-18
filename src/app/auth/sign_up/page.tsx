@@ -15,14 +15,16 @@ const Sign_Up = () => {
   async function SignUpValidation(ev: { preventDefault: () => void }) {
     ev.preventDefault();
 
-    const date = new Date().toISOString().slice(0, 16);
-
     try {
-      const response = await axios.post("http://localhost:3000/api/users/sign_up", {
-        username: name,
-        email: email,
-        password: password,
-      });
+      const response = await axios.post(
+        "http://localhost:3000/api/users/sign_up",
+        {
+          username: name,
+          email: email,
+          password: password,
+          role: "customer",
+        }
+      );
       alert(response.data);
       navigate.push("/auth/login");
     } catch (error) {
@@ -32,9 +34,16 @@ const Sign_Up = () => {
 
   return (
     <>
-      <div className="p-2">
-        <Image title="logo" src="/logo.png" width={60} height={30} alt="logo" />
-      </div>
+      <Link href={"/"}>
+        <Image
+          title="logo"
+          src="/logo.png"
+          width={60}
+          height={30}
+          alt="logo"
+          className="p-2"
+        />
+      </Link>
       <div
         className={`flex justify-center items-center relative bg-pri w-full mt-8 `}
       >
@@ -52,7 +61,9 @@ const Sign_Up = () => {
                   aria-describedby="user-name"
                   aria-invalid="false"
                   required
-                  className="block bg-gray-500 my-3 px-3 rounded-lg p-1 focus:outline-none border-2 border-thi w-full"
+                  className="block bg-pri my-3 px-3 rounded-lg p-1 
+                  focus:outline-none border-2 border-gray-300
+                  focus:border-thiR w-full"
                 />
               </label>
               <label htmlFor="email" className="font-semibold">
@@ -66,7 +77,9 @@ const Sign_Up = () => {
                   aria-describedby="user-email"
                   aria-invalid="false"
                   required
-                  className="block bg-gray-500 my-3 px-3 rounded-lg p-1 focus:outline-none border-2 border-thi w-full"
+                  className="block bg-pri my-3 px-3 rounded-lg p-1 
+                  focus:outline-none border-2 border-gray-300
+                  focus:border-thiR w-full"
                 />
               </label>
               <div id="user-email" className=" sr-only">
@@ -84,7 +97,9 @@ const Sign_Up = () => {
                   aria-describedby="user-password"
                   aria-invalid="false"
                   required
-                  className="block bg-gray-500 my-3 px-3 rounded-lg p-1 focus:outline-none border-2 border-thi w-full"
+                  className="block bg-pri my-3 px-3 rounded-lg p-1 
+                  focus:outline-none border-2 border-gray-300
+                  focus:border-thiR w-full"
                 />
               </label>
 
