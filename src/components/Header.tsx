@@ -44,7 +44,7 @@ const Header = () => {
           </span>
           <div className="flex items-center">
             <Link href={"/auth/login"} className="font-medium">
-              {user ? user?.username : <p>"Login"</p>}
+              {user ? user?.username : <p>Login</p>}
             </Link>
             <span>
               <NavigateNext style={{ fontSize: 20 }} />
