@@ -9,7 +9,7 @@ export default function Home() {
       min-h-dvh w-full p-2"
       >
         <div className="w-1/2">
-          <h2 className="font-bold text-lg">Hello there</h2>
+          <h2 className="font-bold text-lg">Hello there from Dylan</h2>
           <p>
             Let&apos;s{" "}
             <Link href={"/auth/sign_up"} className="text-blue-400">
