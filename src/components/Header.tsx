@@ -21,7 +21,7 @@ const Header = () => {
     throw new Error("useAuth must be used within a UserContextProvider");
   }
 
-  const { user } = auth;
+  const { isLogIn, user } = auth;
 
   const domNode = useClickOusite(() => setShowSearchBox(false));
 
@@ -43,9 +43,15 @@ const Header = () => {
             />
           </span>
           <div className="flex items-center">
-            <Link href={"/auth/login"} className="font-medium">
-              {user ? user?.username : <p>Login</p>}
-            </Link>
+            {isLogIn ? (
+              <Link href={`/profile`}>
+                <p className="">{user?.username}</p>
+              </Link>
+            ) : (
+              <Link href={"/auth/login"}>
+                <p className=" ">Login</p>
+              </Link>
+            )}
             <span>
               <NavigateNext style={{ fontSize: 20 }} />
             </span>
