@@ -15,16 +15,15 @@ const Sign_Up = () => {
   async function SignUpValidation(ev: { preventDefault: () => void }) {
     ev.preventDefault();
 
+    const uri = process.env.NEXT_PUBLIC_API_URL;
+
     try {
-      const response = await axios.post(
-        "http://localhost:3000/api/users/sign_up",
-        {
-          username: name,
-          email: email,
-          password: password,
-          role: "customer",
-        }
-      );
+      const response = await axios.post(`${uri}/api/users/sign_up`, {
+        username: name,
+        email: email,
+        password: password,
+        role: "customer",
+      });
       alert(response.data);
       navigate.push("/auth/login");
     } catch (error) {

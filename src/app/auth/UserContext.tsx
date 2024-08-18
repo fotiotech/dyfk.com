@@ -37,11 +37,9 @@ const UserContextProvider: FC<ContextProps> = ({ children }) => {
   }, []);
 
   async function loginAction(option: { email: string; password: string }) {
+    const uri = process.env.NEXT_PUBLIC_API_URL;
     try {
-      const response = await axios.post(
-        "http://localhost:3000/api/users/login",
-        option
-      );
+      const response = await axios.post(`${uri}/api/users/login`, option);
 
       // if (response) {
 
