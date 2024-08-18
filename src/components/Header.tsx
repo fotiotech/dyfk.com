@@ -69,7 +69,7 @@ const Header = () => {
         <div className="relative w-full ">
           <form
             className="flex items-center border-2
-          border-thi h-11 shadow bg-pri bg-opacity-95 rounded-xl overflow-hidden"
+          border-thiR h-11 shadow bg-pri bg-opacity-95 rounded-xl overflow-hidden"
           >
             <input
               title="search"
@@ -77,7 +77,7 @@ const Header = () => {
               name="search"
               placeholder="Search Dyfk"
               onFocus={() => setShowSearchBox(true)}
-              className="flex-1 h-full dark:bg-transparent py-2 focus:outline-none 
+              className="flex-1 h-full bg-none py-2 focus:outline-none 
                  border-none font-bold px-3 leading-tight text-sec
               "
             />
