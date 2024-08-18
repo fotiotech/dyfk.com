@@ -43,7 +43,7 @@ const Header = () => {
             />
           </span>
           <div className="flex items-center">
-            {user ? (
+            {user?._id ? (
               <Link href={`/profile`}>
                 <p className="">{user?.username}</p>
               </Link>
