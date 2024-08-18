@@ -1,4 +1,5 @@
 "use client";
+import React, { useState } from "react";
 import { useAuth } from "@/app/auth/UserContext";
 import {
   Menu,
@@ -9,7 +10,6 @@ import {
 } from "@mui/icons-material";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useState } from "react";
 import useClickOusite from "./Hooks";
 
 const Header = () => {
@@ -21,7 +21,7 @@ const Header = () => {
     throw new Error("useAuth must be used within a UserContextProvider");
   }
 
-  const { isLogIn, user } = auth;
+  const { user } = auth;
 
   const domNode = useClickOusite(() => setShowSearchBox(false));
 
@@ -43,7 +43,7 @@ const Header = () => {
             />
           </span>
           <div className="flex items-center">
-            {isLogIn ? (
+            {user ? (
               <Link href={`/profile`}>
                 <p className="">{user?.username}</p>
               </Link>
