@@ -2,9 +2,9 @@
 
 // app/api/auth/login/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import User from "@/models/users";
 import { generateToken } from "@/utils/jwt";
 import { connection } from "@/utils/connection";
+import User from "@/models/users";
 
 export async function POST(req: NextRequest) {
   await connection();
@@ -15,7 +15,10 @@ export async function POST(req: NextRequest) {
 
   if (result && (await result.matchPassword(password))) {
     const token = generateToken(result._id.toString());
-    return NextResponse.json({ token, result, message: "Login successfully" }, { status: 200 });
+    return NextResponse.json(
+      { token, result, message: "Login successfully" },
+      { status: 200 }
+    );
   } else {
     return NextResponse.json(
       { message: "Invalid credentials" },

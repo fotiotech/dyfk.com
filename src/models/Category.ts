@@ -1,15 +1,14 @@
 import { ObjectId } from "mongodb";
-import { Schema, model, models } from "mongoose";
+import mongoose, { Schema, model, models } from "mongoose";
 
 const CategorySchema = new Schema({
   _id: {
     type: ObjectId,
     required: [true],
   },
-  url_slg: {
+  url_slug: {
     type: String,
     unique: [true],
-    required: [true],
   },
 
   categoryName: {
@@ -18,10 +17,11 @@ const CategorySchema = new Schema({
     required: [true],
   },
   parent_id: {
-    type: String,
+    type: mongoose.Types.ObjectId,
+    ref: "Category",
   },
   description: {
-    type: Number,
+    type: String,
   },
   imageUrl: {
     type: String,
@@ -42,10 +42,12 @@ const CategorySchema = new Schema({
     type: String,
   },
   created_at: {
-    type: String,
+    type: Date,
+    default: Date.now,
   },
   updated_ad: {
-    type: String,
+    type: Date,
+    default: Date.now,
   },
 });
 

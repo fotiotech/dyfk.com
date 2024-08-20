@@ -106,7 +106,6 @@ const Sign_Up = () => {
                 Your password should be more than 6 character
               </div>
             </div>
-            <p className="font-semibold">Forgot Password?</p>
             <button
               title="submit"
               type="submit"

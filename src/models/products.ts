@@ -1,5 +1,5 @@
 import { ObjectId } from "mongodb";
-import { Schema, model, models } from "mongoose";
+import mongoose, { Schema, model, models } from "mongoose";
 
 const ProductSchema = new Schema({
   _id: {
@@ -23,26 +23,9 @@ const ProductSchema = new Schema({
     type: String,
   },
   category_id: {
-    type: String,
+    type: mongoose.Types.ObjectId,
+    ref: "Categories",
   },
-  attributes: {
-    _id: { type: ObjectId },
-    id_subcategory: {
-      type: Number,
-    },
-    names: { type: String },
-    attributes_values: {
-      _id: { type: ObjectId },
-      id_attributes: { type: Number },
-      attr_values: { type: Map },
-      created_at: { type: Date },
-      updated_at: { type: Date },
-    },
-
-    created_at: { type: String },
-    updated_at: { type: String },
-  },
-
   price: {
     type: Number,
   },

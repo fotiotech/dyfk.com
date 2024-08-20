@@ -12,7 +12,7 @@ const Profile = () => {
   }
 
   const { user } = auth;
-  
+
   return (
     <Layout>
       <div className="p-2 font-semibold text-lg">Profile</div>
@@ -20,9 +20,16 @@ const Profile = () => {
         <li className="p-2 rounded-lg bg-gray-300">
           Welcome <span className="font-bold">{user && user?.username}</span>
         </li>
-        <li className="p-2 rounded-lg bg-gray-300">
-          <Link href={"/"}>Go back to Home Page</Link>
-        </li>
+        <Link href={"/"}>
+          <li className="p-2 rounded-lg bg-gray-300">Go back to Home Page</li>
+        </Link>
+        {user?.role === "admin" ? (
+          <Link href={`/admin`}>
+            <li className="p-2 rounded-lg bg-gray-300">Admin Panel</li>
+          </Link>
+        ) : (
+          ""
+        )}
       </ul>
     </Layout>
   );

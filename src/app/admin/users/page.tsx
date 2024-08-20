@@ -4,6 +4,7 @@ import { getUsersData } from "@/fetch/users";
 import { Users as usersTypes } from "@/constant/types";
 import { useQuery } from "@tanstack/react-query";
 import React from "react";
+import { AdminLayout } from "@/components";
 
 const Users = () => {
   const { data: users, isLoading } = useQuery<usersTypes[]>({
@@ -12,7 +13,7 @@ const Users = () => {
   });
 
   return (
-    <div className="p-2">
+    <AdminLayout>
       <h2 className="text-2xl font-bold p-2">Users</h2>
       <ul className="flex flex-col gap-2 mt-6">
         {users &&
@@ -28,7 +29,7 @@ const Users = () => {
             </li>
           ))}
       </ul>
-    </div>
+    </AdminLayout>
   );
 };
 
