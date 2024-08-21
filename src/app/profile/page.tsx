@@ -11,7 +11,7 @@ const Profile = () => {
     throw new Error("useAuth must be used within a UserContextProvider");
   }
 
-  const { user } = auth;
+  const { user, logout } = auth;
 
   return (
     <Layout>
@@ -30,6 +30,9 @@ const Profile = () => {
         ) : (
           ""
         )}
+        <li onClick={logout} className="p-2 rounded-lg bg-gray-300">
+          Log Out
+        </li>
       </ul>
     </Layout>
   );

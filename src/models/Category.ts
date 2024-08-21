@@ -1,11 +1,6 @@
-import { ObjectId } from "mongodb";
 import mongoose, { Schema, model, models } from "mongoose";
 
 const CategorySchema = new Schema({
-  _id: {
-    type: ObjectId,
-    required: [true],
-  },
   url_slug: {
     type: String,
     unique: [true],
@@ -14,7 +9,6 @@ const CategorySchema = new Schema({
   categoryName: {
     type: String,
     unique: [true],
-    required: [true],
   },
   parent_id: {
     type: mongoose.Types.ObjectId,

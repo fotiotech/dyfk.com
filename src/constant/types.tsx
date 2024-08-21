@@ -1,5 +1,5 @@
 export type Users = {
-  _id: number;
+  _id: string;
   username: string;
   email: string;
   password: string;
@@ -10,10 +10,10 @@ export type Users = {
 };
 
 export type Category = {
-  category_id: number;
+  _id: string;
   parent_id: number;
-  category_slug?: string;
-  category_name: string;
+  url_slug?: string;
+  categoryName: string;
   description: string;
   imageUrl?: string;
   seo_title?: string;
@@ -34,6 +34,7 @@ export type Brands = {
 };
 
 export type Product = {
+  _id: string;
   id_subcategory?: number;
   department: string;
   dsin?: string;

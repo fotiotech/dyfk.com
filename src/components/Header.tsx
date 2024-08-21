@@ -11,11 +11,20 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import useClickOusite from "./Hooks";
+import { Category } from "@/constant/types";
+import { getCategory } from "@/fetch/category";
+import { useQuery } from "@tanstack/react-query";
 
 const Header = () => {
   const [showSearchBox, setShowSearchBox] = useState(false);
   const [searchInput, setSearchInput] = useState("");
+  const { data: category, isLoading } = useQuery<Category[]>({
+    queryKey: ["category"],
+    queryFn: getCategory,
+  });
   const auth = useAuth();
+
+  console.log(category);
 
   if (!auth) {
     throw new Error("useAuth must be used within a UserContextProvider");
@@ -101,6 +110,16 @@ const Header = () => {
             </Link>
           </form>
         </div>
+      </div>
+      <div>
+        <ul className="whitespace-nowrap overflow-auto">
+          {category &&
+            category.map((cat, index) => (
+              <li key={index} className="inline-block pt-2 px-2">
+                {cat.categoryName}
+              </li>
+            ))}
+        </ul>
       </div>
     </div>
   );

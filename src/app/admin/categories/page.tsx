@@ -11,12 +11,12 @@ import { useQuery } from "@tanstack/react-query";
 
 const Categories = () => {
   const [category, setCategory] = useState({
-    categoryId: 0,
+    categoryId: "",
     category_name: "",
     description: "",
   });
   const [imageUrl, setImageUrl] = useState<FileList | null>(null);
-  const [id, setId] = useState<number | null>(null);
+  const [id, setId] = useState<string | null>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
 
   const { data: categories, isLoading } = useQuery<Category[]>({
@@ -36,14 +36,14 @@ const Categories = () => {
     setCategory((prevData) => ({ ...prevData, [name]: value }));
   };
 
-  const data = new FormData();
-
   const handleSubmitCategory = async (ev: FormEvent) => {
     ev.preventDefault();
 
+    const data = new FormData();
     Object.entries(category).forEach(([key, value]) => {
       data.append(key, value.toString());
     });
+
     if (imageUrl) {
       Array.from(imageUrl).forEach((file) => data.append("imageUrl", file));
     }
@@ -59,8 +59,6 @@ const Categories = () => {
 
       const newCategory = response.data;
       console.log(newCategory);
-      // setCategories((prevCategories) => [...prevCategories, newCategory]);
-
       alert(response.data.message);
     } catch (error) {
       console.error("Failed to create category:", error);
@@ -70,10 +68,9 @@ const Categories = () => {
 
   return (
     <AdminLayout>
-      <div className=" p-2 pb-10">
+      <div className="p-2 pb-10">
         <h2 className="text-2xl font-bold my-2">Create Category</h2>
 
-        {/* Form to create a new category */}
         <form onSubmit={handleSubmitCategory}>
           <div className="lg:flex gap-3 mb-2">
             <div className="lg:flex gap-3 mb-5">
@@ -88,8 +85,8 @@ const Categories = () => {
                 >
                   <option value="">Select Parent Category</option>
                   {categories?.map((cat) => (
-                    <option key={cat.category_id} value={cat.category_id}>
-                      {cat.category_name}
+                    <option key={cat._id} value={cat._id}>
+                      {cat.categoryName}
                     </option>
                   ))}
                 </select>
@@ -172,8 +169,6 @@ const Categories = () => {
           </div>
         </form>
 
-        {/* Form to create an attribute */}
-
         <div>
           <h2 className="font-bold text-xl my-2">Categories</h2>
           <div className="grid grid-cols-2 gap-3 w-full">
@@ -185,17 +180,12 @@ const Categories = () => {
                 {categories?.map((cat, index) => (
                   <li
                     key={index}
-                    onClick={() => setId(cat.category_id)}
+                    onClick={() => setId(cat._id)}
                     className="flex justify-between cursor-pointer font-bold text-gray-300 hover:text-pri
                hover:bg-gray-100 hover:bg-opacity-5 p-1"
                   >
-                    <span className="">{cat.category_name}</span>
-                    <Link
-                      href={`/admin/categories_edit/${cat.category_id}`}
-                      className=""
-                    >
-                      Edit
-                    </Link>
+                    <span>{cat.categoryName}</span>
+                    <Link href={`/admin/categories_edit/${cat._id}`}>Edit</Link>
                   </li>
                 ))}
               </ul>
@@ -213,7 +203,7 @@ const Categories = () => {
                     font-bold text-gray-300 hover:text-pri
                   hover:bg-gray-100 hover:bg-opacity-5 p-1"
                     >
-                      {sub.category_name}
+                      {sub.categoryName}
                     </li>
                   ))}
               </ul>
