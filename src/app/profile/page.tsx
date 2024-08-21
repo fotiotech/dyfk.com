@@ -30,7 +30,10 @@ const Profile = () => {
         ) : (
           ""
         )}
-        <li onClick={logout} className="p-2 rounded-lg bg-gray-300">
+        <li
+          onClick={logout}
+          className="p-2 rounded-lg bg-gray-300 text-red-800"
+        >
           Log Out
         </li>
       </ul>

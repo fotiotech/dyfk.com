@@ -59,7 +59,7 @@ const Categories = () => {
 
       const newCategory = response.data;
       console.log(newCategory);
-      alert(response.data.message);
+      alert(response.data);
     } catch (error) {
       console.error("Failed to create category:", error);
       alert("Failed to create category! " + error);
