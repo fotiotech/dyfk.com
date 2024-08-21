@@ -64,7 +64,7 @@ const UserContextProvider: FC<ContextProps> = ({ children }) => {
     setToken("");
     localStorage.removeItem("token");
     setIsLogIn(false);
-    router.push("/login");
+    router.push("/auth/login");
   }
 
   return (
