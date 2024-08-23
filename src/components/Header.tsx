@@ -24,8 +24,6 @@ const Header = () => {
   });
   const auth = useAuth();
 
-  console.log(category);
-
   if (!auth) {
     throw new Error("useAuth must be used within a UserContextProvider");
   }
