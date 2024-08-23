@@ -64,6 +64,9 @@ const AdminSideBar = ({
           <Link href={"/admin/customers"}>
             <li onClick={handleCloseSideBar}>Customers</li>
           </Link>
+          <Link href={"/admin/settings"}>
+            <li onClick={handleCloseSideBar}>Settings</li>
+          </Link>
         </ul>
       </div>
     </div>

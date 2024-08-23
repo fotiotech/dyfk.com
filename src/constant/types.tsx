@@ -231,7 +231,7 @@ export type ProductsFiles = {
 export type HeroSection = {
   title: string;
   description: string;
-  image_url: string;
+  imageUrl: string;
   cta_text: string;
   cta_link: string;
   created_at: string;
