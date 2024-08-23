@@ -10,7 +10,7 @@ export default function Home() {
       <main className="">
         <Hero />
         <div
-          className="flex justify-center items-center 
+          className="flex justify-center items-center
       h-96 w-full p-2"
         >
           <div className="w-1/2 text-center">
