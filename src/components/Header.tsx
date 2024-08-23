@@ -110,7 +110,7 @@ const Header = () => {
         </div>
       </div>
       <div>
-        <ul className="whitespace-nowrap overflow-auto">
+        <ul className="whitespace-nowrap overflow-auto scrollbar-none">
           {category &&
             category.map((cat, index) => (
               <li key={index} className="inline-block pt-2 px-2">
