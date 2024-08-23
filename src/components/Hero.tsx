@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import React, { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
@@ -14,13 +14,15 @@ const HeaderScroll = () => {
   });
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentImageIndex(
-        (prevIndex) => (prevIndex + 1) % heroContent?.length!
-      );
-    }, 10000);
+    if (typeof window !== "undefined") {
+      const interval = setInterval(() => {
+        setCurrentImageIndex(
+          (prevIndex) => (prevIndex + 1) % heroContent?.length!
+        );
+      }, 10000);
 
-    return () => clearInterval(interval);
+      return () => clearInterval(interval);
+    }
   }, [currentImageIndex, heroContent?.length]);
 
   const dotIndex = (index: number) => {
@@ -69,7 +71,7 @@ const HeaderScroll = () => {
               key={index}
               onClick={() => dotIndex(index)}
               className={`${
-                index === currentImageIndex ? "bg-thi" : "bg-[#eee]"
+                index === currentImageIndex ? "bg-thiR" : "bg-[#eee]"
               } cursor-pointer p-1 rounded-full transition-all duration-300 `}
             ></span>
           ))}
