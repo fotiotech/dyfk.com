@@ -7,6 +7,8 @@ import { NextRequest, NextResponse } from "next/server";
 import slugify from "slugify";
 import { connection } from "@/utils/connection";
 import Category from "@/models/Category";
+import { storage } from "@/utils/firebaseConfig";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 function generateSlug(name: string) {
   return slugify(name, { lower: true });
@@ -49,45 +51,17 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const buffer = Buffer.from(await files.arrayBuffer());
-    const relativeUploadDir = `uploads/${new Date()
-      .toLocaleDateString("id-ID", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-      })
-      .replace(/\//g, "-")}`;
-    const uploadDir = join(process.cwd(), "public", relativeUploadDir);
-
-    try {
-      await stat(uploadDir);
-    } catch (e: any) {
-      if (e.code === "ENOENT") {
-        await mkdir(uploadDir, { recursive: true });
-      } else {
-        console.error("Error creating directory:\n", e);
-        return NextResponse.json(
-          { error: "Something went wrong while creating directory." },
-          { status: 500 }
-        );
-      }
-    }
-
-    const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
-    const filename = `${files.name.replace(
-      /\.[^/.]+$/,
-      ""
-    )}-${uniqueSuffix}.${mime.getExtension(files.type)}`;
-    await writeFile(join(uploadDir, filename), buffer);
-    const fileUrl = `${process.env.NEXT_PUBLIC_API_URL}/${relativeUploadDir}/${filename}`;
+    const storageRef = ref(storage, `category/${files.name}`);
+    await uploadBytes(storageRef, files);
+    const downloadURL = await getDownloadURL(storageRef);
 
     await connection();
     const newCategory = new Category({
       url_slug: url_slug,
       categoryName: category_name,
-      // parent_id: categoryId,
+      parent_id: categoryId,
       description: description,
-      imageUrl: fileUrl,
+      imageUrl: downloadURL,
     });
     const savedCategory = await newCategory.save();
 

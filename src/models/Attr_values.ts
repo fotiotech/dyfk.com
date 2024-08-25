@@ -1,14 +1,17 @@
-import { ObjectId } from "mongodb";
 import mongoose, { Schema, model, models } from "mongoose";
 
-const Attr_valuesSchema = new Schema({
-  _id: { type: ObjectId },
-  id_attributes: { type: mongoose.Types.ObjectId, ref: "Attribute" },
-  attr_values: { type: Map },
-  created_at: { type: Date },
-  updated_at: { type: Date },
-});
+const AttrValuesSchema = new Schema(
+  {
+    id_attributes: {
+      type: mongoose.Types.ObjectId,
+      ref: "Attribute",
+      required: true,
+    },
+    attr_values: { type: [String], required: true },
+  },
+  { timestamps: { createdAt: "created_at", updatedAt: "updated_at" } }
+);
 
-const Attr_value = models.Attr_value || model("Attr_value", Attr_valuesSchema);
+const AttrValue = models.AttrValue || model("AttrValue", AttrValuesSchema);
 
-export default Attr_value;
+export default AttrValue;

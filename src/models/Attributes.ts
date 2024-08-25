@@ -2,15 +2,11 @@ import { ObjectId } from "mongodb";
 import mongoose, { Schema, model, models } from "mongoose";
 
 const AttributesSchema = new Schema({
-  _id: { type: ObjectId },
-  id_subcategory: {
-    type: Number,
-  },
-  names: { type: String },
   category_id: {
     type: mongoose.Types.ObjectId,
     ref: "Category",
   },
+  names: { type: String },
 
   status: {
     type: String,
