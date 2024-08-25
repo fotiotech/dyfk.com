@@ -181,11 +181,20 @@ const Categories = () => {
                   <li
                     key={index}
                     onClick={() => setId(cat._id)}
-                    className="flex justify-between cursor-pointer font-bold text-gray-300 hover:text-pri
-               hover:bg-gray-100 hover:bg-opacity-5 p-1"
+                    className="flex justify-between cursor-pointer font-bold text-gray-700
+               hover:text-sec hover:bg-opacity-5 p-1"
                   >
                     <span>{cat.categoryName}</span>
-                    <Link href={`/admin/categories_edit/${cat._id}`}>Edit</Link>
+                    <span className="flex gap-2">
+                      <Link href={`/admin/categories/category_edit/${cat._id}`}>
+                        Edit
+                      </Link>
+                      <Link
+                        href={`/admin/categories/category_delete/${cat._id}`}
+                      >
+                        Delete
+                      </Link>
+                    </span>
                   </li>
                 ))}
               </ul>
