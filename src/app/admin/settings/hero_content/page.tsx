@@ -4,14 +4,17 @@ import { AdminLayout } from "@/components";
 import { useMutation } from "@tanstack/react-query";
 import React, { ChangeEvent, useState } from "react";
 import { postHeroContent } from "../../../../fetch/Home";
+// import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 
 const AddHeroContent = () => {
+  // const { executeRecaptcha } = useGoogleReCaptcha();
   const [heroData, setHeroData] = useState({
     title: "",
     description: "",
     cta_text: "",
     cta_link: "",
   });
+  // const [submitStatus, setSubmitStatus] = useState<string>("");
 
   const [imageFile, setImageFile] = useState<File | null>(null);
 
@@ -31,10 +34,30 @@ const AddHeroContent = () => {
     mutationFn: (data: FormData) => {
       return postHeroContent(data);
     },
+    // onSuccess: () => {
+    //   // setSubmitStatus("Success!");
+    //   // Optionally reset the form after a successful submission
+    //   setHeroData({
+    //     title: "",
+    //     description: "",
+    //     cta_text: "",
+    //     cta_link: "",
+    //   });
+    //   setImageFile(null);
+    // },
+    // onError: () => {
+    //   setSubmitStatus("Failed to submit data.");
+    // },
   });
 
-  const handleSubmitData = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmitData = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    // setSubmitStatus("");
+
+    // if (!executeRecaptcha) {
+    //   console.error("ReCAPTCHA not available");
+    //   return;
+    // }
 
     const data = new FormData();
     Object.entries(heroData).forEach(([key, value]) => {
@@ -44,6 +67,9 @@ const AddHeroContent = () => {
     if (imageFile) {
       data.append("imageUrl", imageFile);
     }
+
+    // const gRecaptchaToken = await executeRecaptcha("registerSubmit");
+    // data.append("gRecaptchaToken", gRecaptchaToken);
 
     mutation.mutate(data);
   };
@@ -111,6 +137,7 @@ const AddHeroContent = () => {
           Submit
         </button>
       </form>
+      {/* {submitStatus && <p>{submitStatus}</p>} */}
     </AdminLayout>
   );
 };

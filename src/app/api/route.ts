@@ -1,10 +1,11 @@
 "use server";
 import { NextRequest, NextResponse } from "next/server";
-import mime from "mime";
-import { join } from "path";
-import { stat, mkdir, writeFile } from "fs/promises";
 import { connection } from "@/utils/connection";
 import HeroContent from "@/models/HeroContent";
+import { storage } from "@/utils/firebaseConfig";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { NextApiResponse } from "next";
+
 
 export async function GET(req: NextRequest) {
   await connection();
@@ -18,7 +19,10 @@ export async function GET(req: NextRequest) {
   }
 }
 
-export async function POST(req: Request) {
+export async function POST(
+  req: Request,
+  res: NextApiResponse
+) {
   const formData = await req.formData();
 
   const title = formData.get("title") as string | null;
@@ -26,6 +30,7 @@ export async function POST(req: Request) {
   const cta_text = formData.get("cta_text") as string | null;
   const cta_link = formData.get("cta_link") as string | null;
   const imageUrl = formData.get("imageUrl") as File | null;
+  // const gRecaptchaToken = formData.get("gRecaptchaToken ") as File | null;
 
   if (!imageUrl) {
     return NextResponse.json(
@@ -35,43 +40,31 @@ export async function POST(req: Request) {
   }
 
   try {
-    const buffer = Buffer.from(await imageUrl.arrayBuffer());
-    const relativeUploadDir = `heroFiles/${new Date()
-      .toLocaleDateString("id-ID", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-      })
-      .replace(/\//g, "-")}`;
-    const uploadDir = join(process.cwd(), "public", relativeUploadDir);
+    // Verify the ReCaptcha token
+    // const recaptchaVerifyUrl = `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.RECAPTCHA_SECRET_KEY}&response=${gRecaptchaToken}`;
+    // const recaptchaResponse = await fetch(recaptchaVerifyUrl, {
+    //   method: "POST",
+    // });
+    // const recaptchaData = await recaptchaResponse.json();
 
-    try {
-      await stat(uploadDir);
-    } catch (e: any) {
-      if (e.code === "ENOENT") {
-        await mkdir(uploadDir, { recursive: true });
-      } else {
-        console.error("Error creating directory:\n", e);
-        return NextResponse.json(
-          { error: "Something went wrong while creating directory." },
-          { status: 500 }
-        );
-      }
-    }
+    // if (!recaptchaData.success || recaptchaData.score < 0.5) {
+    //   return res.status(400).json({
+    //     success: false,
+    //     error: "ReCaptcha verification failed.",
+    //     score: recaptchaData.score || 0,
+    //   });
+    // }
 
-    const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
-    const filename = `${imageUrl.name.replace(
-      /\.[^/.]+$/,
-      ""
-    )}-${uniqueSuffix}.${mime.getExtension(imageUrl.type)}`;
-    await writeFile(join(uploadDir, filename), buffer);
-    const heroFileUrl = `${process.env.NEXT_PUBLIC_API_URL}/${relativeUploadDir}/${filename}`;
+    const storageRef = ref(storage, `uploads/${imageUrl.name}`);
+    await uploadBytes(storageRef, imageUrl);
+    const downloadURL = await getDownloadURL(storageRef);
 
     await connection();
+
     const newHeroContent = new HeroContent({
       title: title,
       description: description,
-      imageUrl: heroFileUrl,
+      imageUrl: downloadURL,
       cta_text: cta_text,
       cta_link: cta_link,
     });
@@ -86,9 +79,10 @@ export async function POST(req: Request) {
     );
   } catch (e: any) {
     console.error("Error while processing the request:\n", e);
-    return NextResponse.json(
-      { error: "Something went wrong.", message: e.message },
-      { status: 500 }
-    );
+    return res.status(400).json({
+      success: false,
+      error: "Bad request",
+      score: 0,
+    });
   }
 }

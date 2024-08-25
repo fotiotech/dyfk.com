@@ -1,6 +1,7 @@
 import React, { ReactNode } from "react";
 import Header from "./Header";
 import Footer from "./Footer";
+import { GoogleReCaptchaProvider } from "react-google-recaptcha-v3";
 
 interface layoutProps {
   children: ReactNode;
