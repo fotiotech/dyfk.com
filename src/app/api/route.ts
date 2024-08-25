@@ -6,7 +6,6 @@ import { storage } from "@/utils/firebaseConfig";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { NextApiResponse } from "next";
 
-
 export async function GET(req: NextRequest) {
   await connection();
 
@@ -19,10 +18,7 @@ export async function GET(req: NextRequest) {
   }
 }
 
-export async function POST(
-  req: Request,
-  res: NextApiResponse
-) {
+export async function POST(req: Request, res: NextApiResponse) {
   const formData = await req.formData();
 
   const title = formData.get("title") as string | null;
@@ -30,7 +26,6 @@ export async function POST(
   const cta_text = formData.get("cta_text") as string | null;
   const cta_link = formData.get("cta_link") as string | null;
   const imageUrl = formData.get("imageUrl") as File | null;
-  // const gRecaptchaToken = formData.get("gRecaptchaToken ") as File | null;
 
   if (!imageUrl) {
     return NextResponse.json(
@@ -40,21 +35,6 @@ export async function POST(
   }
 
   try {
-    // Verify the ReCaptcha token
-    // const recaptchaVerifyUrl = `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.RECAPTCHA_SECRET_KEY}&response=${gRecaptchaToken}`;
-    // const recaptchaResponse = await fetch(recaptchaVerifyUrl, {
-    //   method: "POST",
-    // });
-    // const recaptchaData = await recaptchaResponse.json();
-
-    // if (!recaptchaData.success || recaptchaData.score < 0.5) {
-    //   return res.status(400).json({
-    //     success: false,
-    //     error: "ReCaptcha verification failed.",
-    //     score: recaptchaData.score || 0,
-    //   });
-    // }
-
     const storageRef = ref(storage, `uploads/${imageUrl.name}`);
     await uploadBytes(storageRef, imageUrl);
     const downloadURL = await getDownloadURL(storageRef);

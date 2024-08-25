@@ -11,8 +11,9 @@ const Settings = () => {
       <div>
         <ul className="mt-4">
           <Link href={"/admin/settings/hero_content"}>
-            <li className="p-2 rounded-lg bg-gray-300">Add Hero Content</li>
+            <li className="p-2 rounded-lg bg-gray-300">Hero Content</li>
           </Link>
+          
         </ul>
       </div>
     </AdminLayout>
