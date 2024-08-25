@@ -25,6 +25,14 @@ export type Category = {
   updated_at?: string;
 };
 
+export type Attributes = {
+  _id: string;
+  category_id: number;
+  names?: string;
+  created_at?: string;
+  updated_at?: string;
+};
+
 export type Brands = {
   id_brands: number;
   name: string;

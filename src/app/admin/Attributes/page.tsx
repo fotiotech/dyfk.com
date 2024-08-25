@@ -1,8 +1,8 @@
 "use client";
 
 import { AdminLayout } from "@/components";
-import { Category } from "@/constant/types";
-import { postAttributes } from "@/fetch/attributes";
+import { Attributes as attr, Category } from "@/constant/types";
+import { getAttributes, postAttributes } from "@/fetch/attributes";
 import { getCategory } from "@/fetch/category";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import React, { ChangeEvent, FormEvent, useState } from "react";
@@ -17,6 +17,11 @@ const Attributes = () => {
   const { data: categories, isLoading } = useQuery<Category[]>({
     queryKey: ["category"],
     queryFn: getCategory,
+  });
+
+  const { data: attributes, isLoading: loading } = useQuery<attr[]>({
+    queryKey: ["attributes"],
+    queryFn: getAttributes,
   });
 
   const handleChange = (
@@ -96,6 +101,25 @@ const Attributes = () => {
           </button>
         </div>
       </form>
+      <div>
+        <h3 className="font-bold text-lg">Attributes</h3>
+        <ul
+          className="flex flex-col gap-1 max-h-96 
+            overflow-hidden overflow-y-auto scrollbar-none"
+        >
+          {attributes?.length &&
+            attributes?.map((attr, index) => (
+              <li
+                key={index}
+                className="flex justify-between cursor-pointer 
+                    font-bold text-gray-700 hover:text-sec
+                  hover:bg-gray-100 hover:bg-opacity-5 p-1"
+              >
+                {attr.names}
+              </li>
+            ))}
+        </ul>
+      </div>
     </AdminLayout>
   );
 };
