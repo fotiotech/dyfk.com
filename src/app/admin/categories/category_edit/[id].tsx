@@ -1,8 +1,8 @@
-import { useParams } from "next/navigation";
+import { useRouter } from "next/router";
 import React from "react";
 
 const CategoryEdit = () => {
-  const { id } = useParams();
+  const { id } = useRouter().query;
   return <div>Category Edit {id}</div>;
 };
 

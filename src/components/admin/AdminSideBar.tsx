@@ -46,7 +46,7 @@ const AdminSideBar = ({
       <div>
         <ul
           className="flex flex-col gap-2 p-2 
-        font-semibold text-gray-700"
+        font-semibold text-gray-600"
         >
           <Link href={"/admin"}>
             <li onClick={handleCloseSideBar}>DashBoard</li>
@@ -55,9 +55,27 @@ const AdminSideBar = ({
           <Link href={"/admin/users"}>
             <li onClick={handleCloseSideBar}>Users</li>
           </Link>
-          <Link href={"/admin/categories"}>
-            <li onClick={handleCloseSideBar}>Categories</li>
-          </Link>
+
+          <li>
+            <h3 className="text-sm">Categories</h3>
+            <ul className="flex flex-col gap-1 p-2">
+              <Link
+                href={"/admin/categories"}
+                onClick={handleCloseSideBar}
+                className=""
+              >
+                <li>Category</li>
+              </Link>
+              <Link
+                href={"/admin/attributes"}
+                onClick={handleCloseSideBar}
+                className=""
+              >
+                <li>Attributes</li>
+              </Link>
+            </ul>
+          </li>
+
           <Link href={"/admin/products"}>
             <li onClick={handleCloseSideBar}>Products</li>
           </Link>
