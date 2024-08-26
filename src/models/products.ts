@@ -25,7 +25,7 @@ const ProductSchema = new Schema({
     type: Number,
   },
   imageUrls: {
-    type: [String], // Corrected definition for an array of strings
+    type: [String],
     required: true,
   },
   department: {

@@ -1,4 +1,3 @@
-import { ObjectId } from "mongodb";
 import mongoose, { Schema, model, models } from "mongoose";
 
 const BrandSchema = new Schema({
