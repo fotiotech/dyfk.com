@@ -58,7 +58,7 @@ export type Product = {
   url_slug?: string;
   product_id?: number;
   brand_id?: number;
-  imageUrls?: string;
+  imageUrls?: [string];
   productName: string;
   price: number;
   color?: string;

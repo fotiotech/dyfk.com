@@ -1,12 +1,12 @@
 import React from "react";
 
 interface imageRendererProps {
-  image: string;
+  image?: string;
 }
 
 const ImageRenderer = ({ image }: imageRendererProps) => {
   const renderImage = () => {
-    if (image.includes(".png")) {
+    if (image?.includes(".png")) {
       return (
         <img
           title="image"
@@ -14,7 +14,7 @@ const ImageRenderer = ({ image }: imageRendererProps) => {
           className="w-full h-full object-contain p-2 "
         />
       );
-    } else if (image.includes(".jpg") || image.endsWith(".jpeg")) {
+    } else if (image?.includes(".jpg") || image?.endsWith(".jpeg")) {
       return (
         <img
           title="image"
@@ -22,7 +22,7 @@ const ImageRenderer = ({ image }: imageRendererProps) => {
           className="w-full h-full object-cover "
         />
       );
-    } else if (image.includes(".webp")) {
+    } else if (image?.includes(".webp")) {
       return (
         <img
           title="image"

@@ -1,4 +1,3 @@
-import { useRouter } from "next/router";
 import React from "react";
 
 const CategoryEdit = ({ params }: { params: { id: string } }) => {
