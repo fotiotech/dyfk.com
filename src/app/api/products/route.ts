@@ -1,3 +1,4 @@
+"use server";
 import Product from "@/models/Products";
 import { connection } from "@/utils/connection";
 import { NextRequest, NextResponse } from "next/server";
