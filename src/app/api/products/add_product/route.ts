@@ -1,6 +1,6 @@
 "use server";
 
-import Product from "@/models/Products";
+import Product from "../../../../models/Product";
 import { connection } from "@/utils/connection";
 import { storage } from "@/utils/firebaseConfig";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
