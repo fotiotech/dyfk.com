@@ -30,9 +30,7 @@ export default function Home() {
             {newArrival?.length! > 0 ? (
               newArrival?.slice(0, 4).map((product, index) => (
                 <div key={index} className=" mb-1 rounded">
-                  <Link
-                    href={`/${product.url_slug}/details?dsin=${product.dsin}`}
-                  >
+                  <Link href={`/${product.url_slug}/details/${product.dsin}`}>
                     <div className=" lg:h-60 p-2 content-center bg-[#eee] h-52 rounded-lg overflow-hidden  ">
                       {product.imageUrls && (
                         <ImageRenderer image={product.imageUrls[0]} />
