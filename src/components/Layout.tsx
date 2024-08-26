@@ -1,7 +1,7 @@
-import React, { ReactNode } from "react";
+import React, { ReactNode, Suspense } from "react";
 import Header from "./Header";
 import Footer from "./Footer";
-import { GoogleReCaptchaProvider } from "react-google-recaptcha-v3";
+import Loading from "@/app/loading";
 
 interface layoutProps {
   children: ReactNode;
@@ -11,7 +11,7 @@ const Layout = ({ children }: layoutProps) => {
   return (
     <div>
       <Header />
-      {children}
+      <Suspense fallback={<Loading />}>{children}</Suspense>
       <Footer />
     </div>
   );

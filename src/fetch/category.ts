@@ -9,6 +9,15 @@ export const getCategory = async () => {
   return response.data.results;
 };
 
+export const getBrands = async () => {
+  const uri = process.env.NEXT_PUBLIC_API_URL;
+  const response = await axios.get(`${uri}/api/brands`);
+  if (!response) {
+    throw new Error("Network response was not ok!");
+  }
+  return response.data.results;
+};
+
 export const getSubcategories = async (id: string | null) => {
   const uri = process.env.NEXT_PUBLIC_API_URL;
   const response = await axios.get(`${uri}/api/category/sub/${id}`);

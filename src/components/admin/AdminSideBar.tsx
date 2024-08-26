@@ -76,9 +76,25 @@ const AdminSideBar = ({
             </ul>
           </li>
 
-          <Link href={"/admin/products"}>
-            <li onClick={handleCloseSideBar}>Products</li>
-          </Link>
+          <li>
+            <h3 className="text-sm">Products</h3>
+            <ul className="flex flex-col gap-1 p-2">
+              <Link
+                href={"/admin/products/add_product"}
+                onClick={handleCloseSideBar}
+                className=""
+              >
+                <li>Add Product</li>
+              </Link>
+              <Link
+                href={"/admin/products_list"}
+                onClick={handleCloseSideBar}
+                className=""
+              >
+                <li>Products List</li>
+              </Link>
+            </ul>
+          </li>
           <Link href={"/admin/customers"}>
             <li onClick={handleCloseSideBar}>Customers</li>
           </Link>

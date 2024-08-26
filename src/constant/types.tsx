@@ -34,11 +34,18 @@ export type Attributes = {
 };
 
 export type Brands = {
-  id_brands: number;
-  name: string;
-  imageUrl: string;
-  created_at: string;
-  updated_at: string;
+  _id: number;
+  url_slug: string;
+  brandName: string;
+  description: string;
+  imageUrl: [string];
+  seo_title: string;
+  seo_desc: string;
+  keywords: string;
+  sort_order: string;
+  status: string;
+  created_at: Date;
+  updated_at: Date;
 };
 
 export type Product = {
@@ -51,8 +58,8 @@ export type Product = {
   url_slug?: string;
   product_id?: number;
   brand_id?: number;
-  imageUrl?: string;
-  product_name: string;
+  imageUrls?: string;
+  productName: string;
   price: number;
   color?: string;
   discount?: number;

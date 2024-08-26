@@ -2,16 +2,12 @@ import { ObjectId } from "mongodb";
 import mongoose, { Schema, model, models } from "mongoose";
 
 const ProductSchema = new Schema({
-  _id: {
-    type: ObjectId,
-    required: [true],
-  },
-  url_slg: {
+  url_slug: {
     type: String,
     unique: [true],
     required: [true],
   },
-  dsn: {
+  dsin: {
     type: String,
     unique: [true],
     required: [true],
@@ -24,13 +20,14 @@ const ProductSchema = new Schema({
   },
   category_id: {
     type: mongoose.Types.ObjectId,
-    ref: "Categories",
+    ref: "Category",
   },
   price: {
     type: Number,
   },
   imageUrls: {
-    type: String,
+    type: [String], // Corrected definition for an array of strings
+    required: true,
   },
   department: {
     type: String,
@@ -39,7 +36,8 @@ const ProductSchema = new Schema({
     type: String,
   },
   brand_id: {
-    type: String,
+    type: mongoose.Types.ObjectId,
+    ref: "Brand",
   },
   status: {
     type: String,
