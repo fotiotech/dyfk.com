@@ -5,6 +5,7 @@ import { Users as usersTypes } from "@/constant/types";
 import { useQuery } from "@tanstack/react-query";
 import React from "react";
 import { AdminLayout } from "@/components";
+import { DateComponent } from "@/components/Date";
 
 const Users = () => {
   const { data: users, isLoading } = useQuery<usersTypes[]>({
@@ -25,7 +26,7 @@ const Users = () => {
               <span className="font-bold">{user.username}</span>
               <span>{user.email}</span>
               <span className="text-green-600">{user.status}</span>
-              <span>{user.created_at}</span>
+              <span><DateComponent date={user.created_at} /></span>
             </li>
           ))}
       </ul>
