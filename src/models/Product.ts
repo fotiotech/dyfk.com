@@ -40,9 +40,11 @@ const ProductSchema = new Schema({
   },
   status: {
     type: String,
+    
   },
   created_at: {
     type: String,
+    default: Date.now,
   },
   updated_ad: {
     type: String,

@@ -19,6 +19,7 @@ const HeroContentSchema = new Schema({
   },
   created_at: {
     type: String,
+    default: Date.now,
   },
   updated_ad: {
     type: String,

@@ -9,7 +9,7 @@ import { NextApiResponse } from "next";
 export async function GET(req: NextRequest) {
   await connection();
 
-  const result = await HeroContent.find();
+  const result = await HeroContent.find().sort({ created_at: -1 });
 
   if (result) {
     return NextResponse.json({ results: result }, { status: 200 });
