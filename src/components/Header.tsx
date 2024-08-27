@@ -37,9 +37,9 @@ const Header = () => {
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-3">
           <Menu />
-          <div>
+          <Link href={"/"}>
             <Image src={"/logo.png"} width={60} height={30} alt="logo" />
-          </div>
+          </Link>
         </div>
         <div className="flex items-center gap-3">
           <span className={`${showSearchBox ? "hidden" : ""}`}>
@@ -87,8 +87,10 @@ const Header = () => {
             <input
               title="search"
               type="text"
-              name="search"
+              name="searchInput"
+              value={searchInput}
               placeholder="Search Dyfk"
+              onChange={(e) => setSearchInput(e.target.value)}
               onFocus={() => setShowSearchBox(true)}
               className="flex-1 h-full bg-none py-2 focus:outline-none 
                  border-none font-bold px-3 leading-tight text-sec

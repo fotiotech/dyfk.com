@@ -5,9 +5,9 @@ interface spinnerProps {
   loading?: boolean;
 }
 
-export default function Loading({ loading }: spinnerProps) {
+export default function Spinner({ loading }: spinnerProps) {
   return (
-    <div className="flex justify-center items-center w-full h-screen p-2">
+    <div className="flex justify-center items-center w-screen p-2">
       <MoonLoader
         color="#5C83F7"
         loading={loading}

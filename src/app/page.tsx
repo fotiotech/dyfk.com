@@ -7,8 +7,8 @@ import { Product } from "@/constant/types";
 import { getNewArrival } from "@/fetch/products";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
-import Loading from "./loading";
 import { useAuth } from "./auth/UserContext";
+import Spinner from "@/components/Spinner";
 
 export default function Home() {
   const { data: newArrival, isLoading } = useQuery<Product[]>({
@@ -59,7 +59,7 @@ export default function Home() {
                 </div>
               ))
             ) : (
-              <Loading loading={isLoading} />
+              <Spinner loading={isLoading} />
             )}
           </div>
         </div>

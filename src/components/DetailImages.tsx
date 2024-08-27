@@ -74,7 +74,7 @@ const DetailImages: React.FC<DetailImagesProps> = ({ file }) => {
               key={index}
               onClick={() => dotIndex(index)}
               className={`${
-                index === currentImageIndex ? "bg-thi" : "bg-[#eee]"
+                index === currentImageIndex ? "bg-thiR" : "bg-[#eee]"
               } cursor-pointer p-1 rounded-full transition-all duration-300 `}
             ></span>
           ))}
