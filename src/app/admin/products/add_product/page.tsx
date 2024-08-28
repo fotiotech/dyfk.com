@@ -11,6 +11,7 @@ import Category from "@/components/admin/category/Category";
 import { postProducts } from "@/fetch/products";
 import { getAttributes } from "@/fetch/attributes";
 import { getBrands } from "@/fetch/category";
+import FilesUploader from "@/components/FilesUploader";
 
 const AddProduct = () => {
   const initialState = {
@@ -27,7 +28,7 @@ const AddProduct = () => {
   const [selectedAttrIds, setSelectedAttrIds] = useState<
     Record<string, number>
   >({});
-  const [files, setFiles] = useState<FileList | null>(null);
+  const [files, setFiles] = useState<File[]>([]);
   const imageInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
 
@@ -96,30 +97,7 @@ const AddProduct = () => {
           className="md:flex justify-between gap-3 p-2 bg-[#eee] dark:bg-sec-dark w-full"
         >
           <div className="flex-1">
-            <div className="flex justify-center items-center gap-3 whitespace-nowrap p-4 bg-pri dark:bg-pri-dark overflow-auto rounded-xl mb-2">
-              <div className="inline-block">
-                <div className="flex justify-center items-center w-40 h-40 border-2 border-thi rounded-lg">
-                  <button
-                    title="Upload Images"
-                    type="button"
-                    onClick={() => imageInputRef.current?.click()}
-                    className="text-gray-300"
-                  >
-                    <AttachFile style={{ fontSize: 32 }} />
-                    <p>Attach Files</p>
-                  </button>
-                  <input
-                    title="images"
-                    ref={imageInputRef}
-                    type="file"
-                    multiple
-                    accept=".png, .jpg, .jpeg, .webp, .mp4"
-                    onChange={(e) => setFiles(e.target.files)}
-                    className="hidden"
-                  />
-                </div>
-              </div>
-            </div>
+            <FilesUploader images={files} setImages={setFiles} />
             <div className="p-2 bg-pri dark:bg-pri-dark rounded-xl mb-2">
               <h2 className="font-semibold text-xl m-2 mt-5">Category</h2>
               <Category categoryId={categoryId} setCategoryId={setCategoryId} />

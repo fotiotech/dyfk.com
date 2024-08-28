@@ -1,3 +1,4 @@
+import Image from "next/image";
 import React from "react";
 
 interface imageRendererProps {
@@ -8,25 +9,34 @@ const ImageRenderer = ({ image }: imageRendererProps) => {
   const renderImage = () => {
     if (image?.includes(".png")) {
       return (
-        <img
+        <Image
           title="image"
           src={image}
+          width={50}
+          height={50}
+          alt="image"
           className="w-full h-full object-contain p-2 "
         />
       );
-    } else if (image?.includes(".jpg") || image?.endsWith(".jpeg")) {
+    } else if (image?.includes(".jpg") || image?.includes(".jpeg")) {
       return (
-        <img
+        <Image
           title="image"
           src={image}
+          width={50}
+          height={50}
+          alt="image"
           className="w-full h-full object-cover "
         />
       );
     } else if (image?.includes(".webp")) {
       return (
-        <img
+        <Image
           title="image"
           src={image}
+          width={50}
+          height={50}
+          alt="image"
           className="w-full h-full object-cover "
         />
       );

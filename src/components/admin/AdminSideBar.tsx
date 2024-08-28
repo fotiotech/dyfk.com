@@ -73,6 +73,13 @@ const AdminSideBar = ({
               >
                 <li>Attributes</li>
               </Link>
+              <Link
+                href={"/admin/brands"}
+                onClick={handleCloseSideBar}
+                className=""
+              >
+                <li>Brands</li>
+              </Link>
             </ul>
           </li>
 

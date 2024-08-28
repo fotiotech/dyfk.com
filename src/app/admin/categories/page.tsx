@@ -8,6 +8,7 @@ import { AttachFile } from "@mui/icons-material";
 import Link from "next/link";
 import { getCategory, getSubcategories } from "@/fetch/category";
 import { useQuery } from "@tanstack/react-query";
+import FilesUploader from "@/components/FilesUploader";
 
 const Categories = () => {
   const [category, setCategory] = useState({
@@ -15,7 +16,7 @@ const Categories = () => {
     category_name: "",
     description: "",
   });
-  const [imageUrl, setImageUrl] = useState<FileList | null>(null);
+  const [imageUrl, setImageUrl] = useState<File[]>([]);
   const [id, setId] = useState<string | null>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
 
@@ -104,52 +105,7 @@ const Categories = () => {
               />
             </div>
           </div>
-          <div>
-            <label htmlFor="imageUrl" className="font-bold">
-              Image Url :
-            </label>
-            <div
-              className="flex justify-center items-center gap-3 whitespace-nowrap 
-          p-4 bg-pri dark:bg-pri-dark overflow-auto rounded-xl mb-2"
-            >
-              <div className="inline-block">
-                <div
-                  className="flex justify-center items-center w-40 h-40 
-              border-2 border-gray-300 hover:border-thi rounded-lg"
-                >
-                  <button
-                    title="Upload Images"
-                    type="button"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      imageInputRef.current?.click();
-                    }}
-                    className="text-gray-300"
-                  >
-                    <AttachFile style={{ fontSize: 32 }} />
-                    <p>Attach Files</p>
-                  </button>
-                  <input
-                    ref={imageInputRef}
-                    title="name of product"
-                    type="file"
-                    accept=".png, .jpg, .jpeg, .webp, .mp4"
-                    name="imageUrl"
-                    multiple
-                    onChange={(e) => {
-                      const file = e.target.files;
-                      if (file && file.length > 0) {
-                        setImageUrl(file);
-                      } else {
-                        setImageUrl(null);
-                      }
-                    }}
-                    className="w-3/4 hidden "
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
+          <FilesUploader images={imageUrl} setImages={setImageUrl} />
 
           <div>
             <label htmlFor="description">Description:</label>
