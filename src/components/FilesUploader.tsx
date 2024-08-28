@@ -50,9 +50,11 @@ const FilesUploader: React.FC<filesUploaderProps> = ({ images, setImages }) => {
   };
 
   return (
-    <div className="border-gray-600 border-2
+    <div
+      className="border-gray-600 border-2
      hover:border-thiR p-4 my-2 rounded-md 
-     text-center">
+     text-center"
+    >
       {/* Drag-and-drop area */}
       <div
         {...getRootProps()}
@@ -87,13 +89,17 @@ const FilesUploader: React.FC<filesUploaderProps> = ({ images, setImages }) => {
       scrollbar-none mt-4"
       >
         {images?.map((file, index) => (
-          <div key={index} className="relative inline-block mx-2">
+          <div
+            key={index}
+            className="relative inline-block 
+          mx-2 border-2 border-thiR rounded-md"
+          >
             <Image
               src={URL.createObjectURL(file)}
               alt={file.name}
               width={50}
               height={50}
-              className="h-20 w-20 object-cover rounded-md"
+              className="h-20 w-20 object-cover "
             />
             <button
               title="button"

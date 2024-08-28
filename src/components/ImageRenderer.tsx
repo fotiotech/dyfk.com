@@ -12,8 +12,8 @@ const ImageRenderer = ({ image }: imageRendererProps) => {
         <Image
           title="image"
           src={image}
-          width={50}
-          height={50}
+          width={500}
+          height={300}
           alt="image"
           className="w-full h-full object-contain p-2 "
         />
@@ -23,8 +23,8 @@ const ImageRenderer = ({ image }: imageRendererProps) => {
         <Image
           title="image"
           src={image}
-          width={50}
-          height={50}
+          width={500}
+          height={300}
           alt="image"
           className="w-full h-full object-cover "
         />
@@ -34,8 +34,8 @@ const ImageRenderer = ({ image }: imageRendererProps) => {
         <Image
           title="image"
           src={image}
-          width={50}
-          height={50}
+          width={500}
+          height={300}
           alt="image"
           className="w-full h-full object-cover "
         />
