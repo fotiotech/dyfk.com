@@ -1,66 +1,33 @@
 "use client";
 
-import { AdminLayout } from "@/components";
-import { useMutation } from "@tanstack/react-query";
-import React, { ChangeEvent, useState } from "react";
-import { postHeroContent } from "../../../../fetch/Home";
+import { createHeroContent } from "@/app/actions/content_management";
+import FilesUploader from "@/components/FilesUploader";
+import React, { useState } from "react";
 
 const AddHeroContent = () => {
-  const [heroData, setHeroData] = useState({
-    title: "",
-    description: "",
-    cta_text: "",
-    cta_link: "",
-  });
 
-  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imageFile, setImageFile] = useState<string[]>([]);
 
-  function handleHeroDataChanges(
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) {
-    const { name, value } = e.target;
-    setHeroData((prev) => ({ ...prev, [name]: value }));
-  }
+  const files = imageFile?.length! > 1 ? imageFile : imageFile?.[0];
 
-  function handleFileChange(e: ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0] || null;
-    setImageFile(file);
-  }
+  const toCreateHeroContent = createHeroContent.bind(null,files as string[])
 
-  const mutation = useMutation({
-    mutationFn: (data: FormData) => postHeroContent(data),
-  });
 
-  const handleSubmitData = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    
-
-    const data = new FormData();
-    Object.entries(heroData).forEach(([key, value]) => {
-      data.append(key, value);
-    });
-
-    if (imageFile) {
-      data.append("imageUrl", imageFile);
-    }
-
-    mutation.mutate(data);
-  };
 
   return (
     <>
       <div>
         <h2>Add Hero Content</h2>
       </div>
-      <form onSubmit={handleSubmitData}>
+      <FilesUploader files={imageFile} setFiles={setImageFile} />
+      <form action={toCreateHeroContent}>
         <div>
           <label htmlFor="title">Title:</label>
           <input
             id="title"
             type="text"
             name="title"
-            value={heroData.title}
-            onChange={handleHeroDataChanges}
+    
           />
         </div>
         <div>
@@ -69,28 +36,17 @@ const AddHeroContent = () => {
             id="description"
             type="text"
             name="description"
-            value={heroData.description}
-            onChange={handleHeroDataChanges}
+           
           />
         </div>
-        <div>
-          <label htmlFor="imageUrl">Image URL:</label>
-          <input
-            id="imageUrl"
-            type="file"
-            accept=".png, .jpg, .jpeg, .webp, .mp4"
-            name="imageUrl"
-            onChange={handleFileChange}
-          />
-        </div>
+        
         <div>
           <label htmlFor="cta_text">CTA Text:</label>
           <input
             id="cta_text"
             type="text"
             name="cta_text"
-            value={heroData.cta_text}
-            onChange={handleHeroDataChanges}
+            
           />
         </div>
         <div>
@@ -99,8 +55,7 @@ const AddHeroContent = () => {
             id="cta_link"
             type="text"
             name="cta_link"
-            value={heroData.cta_link}
-            onChange={handleHeroDataChanges}
+           
           />
         </div>
         <button

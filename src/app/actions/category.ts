@@ -3,9 +3,7 @@
 import slugify from "slugify";
 import { connection } from "@/utils/connection";
 import Category from "@/models/Category";
-import Brand, { IBrand } from "@/models/Brand";
 import mongoose from "mongoose";
-import { revalidatePath } from "next/cache";
 
 
 function generateSlug(name: string) {

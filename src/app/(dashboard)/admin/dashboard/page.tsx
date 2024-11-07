@@ -1,4 +1,3 @@
-import { AdminLayout } from "@/components";
 import React from "react";
 
 const DashBoard = () => {

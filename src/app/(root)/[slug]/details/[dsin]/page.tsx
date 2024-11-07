@@ -67,7 +67,8 @@ const DetailsPage = ({
                 <CheckoutButton width="1/2" height="10">
                   Check Out
                 </CheckoutButton>
-                <AddToCart product={details} />
+                {details && <AddToCart product={details} />}
+
               </div>
 
               <div>

@@ -1,10 +1,8 @@
 "use client";
 
-import { AdminLayout } from "@/components";
 import { HeroSection } from "@/constant/types";
 import { getHeroContent } from "@/fetch/Home";
 import { useQuery } from "@tanstack/react-query";
-import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 

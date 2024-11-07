@@ -16,12 +16,10 @@ export type Category = {
   categoryName?: string;
   description?: string;
   imageUrl?: string[];
-  attributes?: [
-    {
-      attrName?: string;
-      attrValue?: string[];
-    }
-  ];
+  attributes?: [{
+    attrName: string;
+    attrValue: string[];
+  }];
   seo_title?: string;
   seo_desc?: string;
   keywords?: string;
@@ -65,7 +63,7 @@ export type Product = {
   brand_id?: string;
   imageUrls?: string[];
   productName: string;
-  attributes?: [];
+  attributes?: Record<string, string>;
   price: number;
   color?: string;
   discount?: number;

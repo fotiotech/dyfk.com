@@ -15,7 +15,7 @@ const ProductList = () => {
     const fetchData = async () => {
       // Load product data if editing
       const product = await findProducts();
-      setProducts(product);
+      setProducts(product ?? []);
     };
 
     fetchData();

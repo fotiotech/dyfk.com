@@ -22,13 +22,14 @@ const Cart = () => {
             
             <div key={item.id} className="flex gap-2 justify-between">
               <div className="flex gap-2 p-2">
-                <Image
+                {item.imageUrl && <Image
                   src={item.imageUrl}
                   width={500}
                   height={500}
                   alt="cart item img"
                   className="w-24 h-24 object-contain"
-                />
+                />}
+                
                 <div>
                   <h3>{item.name}</h3>
                   <p>

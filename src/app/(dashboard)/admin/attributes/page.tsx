@@ -1,9 +1,9 @@
 "use client";
 
-import { getCategory, postAttribute } from "@/app/actions/category";
+import { createAttribues } from "@/app/actions/attributes";
+import { getCategory } from "@/app/actions/category";
 import { Category } from "@/constant/types";
-import { useMutation } from "@tanstack/react-query";
-import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 type AttributeType = {
   attrName: string;
@@ -32,39 +32,6 @@ const Attributes = () => {
     fetchData();
   }, [catId]);
 
-  const handleAttrNameChange = (
-    index: number,
-    event: ChangeEvent<HTMLInputElement>
-  ) => {
-    setFormData((prev) => {
-      const updatedAttributes = [...prev];
-      updatedAttributes[index].attrName = event.target.value;
-      return updatedAttributes;
-    });
-  };
-
-  const handleAttrValueChange = (
-    index: number,
-    event: ChangeEvent<HTMLInputElement>
-  ) => {
-    setFormData((prev) => {
-      const updatedAttributes = [...prev];
-      updatedAttributes[index].attrValue = event.target.value.split(",");
-      return updatedAttributes;
-    });
-  };
-
-  const handleSubmitAttribute = async (ev: FormEvent) => {
-    ev.preventDefault();
-    if (catId) {
-      const data = formData.map((p) => ({
-        attrName: p.attrName,
-        attrValue: p.attrValue,
-      }));
-      await postAttribute({ formData: data, id: catId });
-      setCatId("");
-    }
-  };
 
   function addAttributes() {
     setFormData((prev) => [
@@ -76,7 +43,7 @@ const Attributes = () => {
   return (
     <>
       <h2 className="font-bold text-xl my-2">Attributes</h2>
-      <form onSubmit={handleSubmitAttribute}>
+      <form action={createAttribues}>
         <select
           title="Parent Category"
           name="catId"
@@ -99,7 +66,6 @@ const Attributes = () => {
                 type="text"
                 name="attrName"
                 value={attr.attrName}
-                onChange={(e) => handleAttrNameChange(index, e)}
                 className="p-2 rounded-lg bg-[#eee] dark:bg-sec-dark"
               />
             </div>
@@ -111,7 +77,6 @@ const Attributes = () => {
                 name="attrValue"
                 value={attr.attrValue.join(",")}
                 placeholder="Words, separated by commas"
-                onChange={(e) => handleAttrValueChange(index, e)}
                 className="p-2 rounded-lg bg-[#eee] dark:bg-sec-dark"
               />
             </div>

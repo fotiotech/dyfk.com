@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import ImageRenderer from "./ImageRenderer";
 
 interface DetailImagesProps {
-  file?: [string];
+  file?: string[];
 }
 
 const DetailImages: React.FC<DetailImagesProps> = ({ file }) => {

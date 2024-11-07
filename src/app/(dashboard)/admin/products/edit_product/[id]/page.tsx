@@ -168,7 +168,7 @@ const EditDeleteProduct: React.FC<PageProps> = ({ params }) => {
                   <input
                     name={name}
                     type={type}
-                    value={formData[name as keyof typeof formData] || ""}
+                    value={String(formData[name as keyof typeof formData] ?? "")}
                     placeholder={placeholder}
                     className="w-[90%] p-2 rounded-lg bg-[#eee] dark:bg-sec-dark"
                     {...rest}

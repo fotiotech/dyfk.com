@@ -1,4 +1,4 @@
-import { Product } from "@/constant/types";
+import { Category, Product } from "@/constant/types";
 import { getCategoryEdit } from "@/fetch/category";
 import { useQuery } from "@tanstack/react-query";
 import React from "react";
@@ -12,7 +12,7 @@ const HandleAttributtes = ({
   attributes: Product;
   setAttributes: (arg: Product) => void;
 }) => {
-  const { data: parentCategory, isLoading: loadingCategory } = useQuery<Cat>({
+  const { data: parentCategory, isLoading: loadingCategory } = useQuery<Category>({
     queryKey: ["category", product?.category_id],
     queryFn: () => getCategoryEdit(product?.category_id),
     enabled: !!product?.category_id, // Ensure query runs only if categoryId is available
@@ -24,7 +24,7 @@ const HandleAttributtes = ({
         {parentCategory?.attributes?.map((p) => (
           <div key={p.attrName}>
             <label>
-              {p.attrName[0].toUpperCase() + p.attrName.substring(1)}
+              {p.attrName[0].toUpperCase() + p.attrName?.substring(1)}
             </label>
             <select
               title="select attribute"
@@ -33,15 +33,15 @@ const HandleAttributtes = ({
                 setAttributes({
                   ...attributes,
                   attributes: {
-                    ...attributes.attributes,
-                    [p.attrName]: e.target.value,
+                  ...attributes.attributes,
+                  [p.attrName]: e.target.value,
                   },
                 })
               }
               className="p-2 rounded-lg bg-[#eee] dark:bg-sec-dark"
             >
               <option value="">Select {p.attrName}</option>
-              {p?.attrValue?.map((v) => (
+              {p?.attrValue?.map((v: string) => (
                 <option key={v} value={v}>
                   {v}
                 </option>

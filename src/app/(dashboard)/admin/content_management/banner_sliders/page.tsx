@@ -1,10 +1,10 @@
-import { AdminLayout } from "@/components";
+import { AdminLayout } from "@/app/(dashboard)/components";
 import Link from "next/link";
 import React from "react";
 
 const Settings = () => {
   return (
-    <>
+    <AdminLayout>
       <div>
         <h2>Banners & Sliders</h2>
       </div>
@@ -16,7 +16,7 @@ const Settings = () => {
           
         </ul>
       </div>
-    </>
+    </AdminLayout>
   );
 };
 

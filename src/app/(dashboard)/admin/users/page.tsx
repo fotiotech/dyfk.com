@@ -4,7 +4,6 @@ import { getUsersData } from "@/fetch/users";
 import { Users as usersTypes } from "@/constant/types";
 import { useQuery } from "@tanstack/react-query";
 import React from "react";
-import { AdminLayout } from "@/components";
 import { DateComponent } from "@/components/Date";
 
 const Users = () => {
