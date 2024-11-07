@@ -9,7 +9,7 @@ export const getCategory = async () => {
   return response.data.results;
 };
 
-export const getCategoryEdit = async (id: string) => {
+export const getCategoryEdit = async (id?: string) => {
   const uri = process.env.NEXT_PUBLIC_API_URL;
   const response = await axios.get(`${uri}/api/category/${id}`);
   if (!response) {
@@ -29,7 +29,7 @@ export const getBrands = async () => {
 
 export const getSubcategories = async (id: string | null) => {
   const uri = process.env.NEXT_PUBLIC_API_URL;
-  const response = await axios.get(`${uri}/api/category/sub/${id}`);
+  const response = await axios.get(`${uri}/api/category/${id}`);
   if (!response) {
     throw new Error("Network response was not ok!");
   }

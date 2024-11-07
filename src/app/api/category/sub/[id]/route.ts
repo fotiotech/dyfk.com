@@ -11,7 +11,7 @@ export async function GET(
   await connection();
   const { id } = params;
 
-  const category = await Category.find({ _id: id });
+  const category = await Category.find({ parent_id: id });
 
   if (category) {
     return NextResponse.json({ results: category });

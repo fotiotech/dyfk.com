@@ -10,12 +10,18 @@ export type Users = {
 };
 
 export type Category = {
-  _id: string;
-  parent_id: number;
+  _id?: string;
+  parent_id?: string;
   url_slug?: string;
-  categoryName: string;
-  description: string;
-  imageUrl?: string;
+  categoryName?: string;
+  description?: string;
+  imageUrl?: string[];
+  attributes?: [
+    {
+      attrName?: string;
+      attrValue?: string[];
+    }
+  ];
   seo_title?: string;
   seo_desc?: string;
   keywords?: string;
@@ -25,41 +31,41 @@ export type Category = {
   updated_at?: string;
 };
 
-export type Attributes = {
-  _id: string;
-  category_id: number;
-  names?: string;
-  created_at?: string;
-  updated_at?: string;
-};
+// export type Brands = {
+//   _id: number;
+//   url_slug: string;
+//   brandName: string;
+//   description: string;
+//   imageUrl: [string];
+//   seo_title: string;
+//   seo_desc: string;
+//   keywords: string;
+//   sort_order: string;
+//   status: string;
+//   created_at: Date;
+//   updated_at: Date;
+// };
 
-export type Brands = {
-  _id: number;
-  url_slug: string;
-  brandName: string;
-  description: string;
-  imageUrl: [string];
-  seo_title: string;
-  seo_desc: string;
-  keywords: string;
-  sort_order: string;
-  status: string;
-  created_at: Date;
-  updated_at: Date;
+// Brand type definition
+export type Brand = {
+  _id: string;
+  name: string;
+  logoUrl?: string;
+  status?: "active" | "inactive";
 };
 
 export type Product = {
   _id: string;
-  id_subcategory?: number;
+  category_id?: string;
   department: string;
   dsin?: string;
   sku?: string;
   Barcode?: string;
   url_slug?: string;
-  product_id?: number;
-  brand_id?: number;
-  imageUrls?: [string];
+  brand_id?: string;
+  imageUrls?: string[];
   productName: string;
+  attributes?: [];
   price: number;
   color?: string;
   discount?: number;

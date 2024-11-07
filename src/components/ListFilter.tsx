@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import useClickOusite, { useScreenSize } from "./Hooks";
 import Link from "next/link";
 
@@ -9,6 +9,17 @@ interface filterListProps {
 
 const ListFilter = ({ openClose, setOpenClose }: filterListProps) => {
   const [screenSize, setScreenSize] = useState(0);
+
+  useEffect(() => {
+    if (openClose) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [openClose]);
 
   useScreenSize(() => {
     setScreenSize(window.innerWidth);
@@ -23,71 +34,75 @@ const ListFilter = ({ openClose, setOpenClose }: filterListProps) => {
         screenSize <= 1024
           ? openClose
             ? "absolute z-10 bottom-0"
-            : "absolute -bottom-full "
+            : "hidden "
           : ""
-      } w-full lg:w-60  rounded-t-xl lg:rounded-none bg-pri p-2 pb-8 border-thi lg:border-none border-4 transition-all`}
+      } w-full lg:w-60  rounded-t-xl 
+       lg:rounded-none bg-pri p-2 pb-8 
+       border-thi lg:border-none border-4 transition-all`}
     >
       <div>
         <h3 className="font-semibold text-lg">Filter List</h3>
       </div>
-      <div className="w-full h-full overflow-y-auto ">
-        <div>
-          <h3 className=" font-bold text-lg">Category :</h3>
-          <ul className=" pl-20 font-medium list-disc ">
-            <Link href={"/search?category=electronic"}>
-              <li className="">Electronic</li>
-            </Link>
-            <Link href={"/search?category=books"}>
-              <li>Books</li>
-            </Link>
-            <Link href={"/search?category=shopping"}>
-              <li>Shopping</li>
-            </Link>
-            <Link href={"/search?category=construction"}>
-              <li>Construction</li>
-            </Link>
-            <Link href={"/search?category=furniture"}>
-              <li>Furniture</li>
-            </Link>
-          </ul>
+      <div className="h-96 overflow-y-auto">
+        <div className="w-full  ">
+          <div>
+            <h3 className=" font-bold text-lg">Category :</h3>
+            <ul className=" pl-20 font-medium list-disc ">
+              <Link href={"/search?category=electronic"}>
+                <li className="">Electronic</li>
+              </Link>
+              <Link href={"/search?category=books"}>
+                <li>Books</li>
+              </Link>
+              <Link href={"/search?category=shopping"}>
+                <li>Shopping</li>
+              </Link>
+              <Link href={"/search?category=construction"}>
+                <li>Construction</li>
+              </Link>
+              <Link href={"/search?category=furniture"}>
+                <li>Furniture</li>
+              </Link>
+            </ul>
+          </div>
+          <div>
+            <h3 className=" font-bold text-lg">Departement :</h3>
+            <ul className=" lg:pl-20 font-medium list-disc">
+              <li>Laptop</li>
+              <li>Tablette</li>
+              <li>Smartphone</li>
+            </ul>
+          </div>
         </div>
-        <div>
-          <h3 className=" font-bold text-lg">Departement :</h3>
-          <ul className=" lg:pl-20 font-medium list-disc">
-            <li>Laptop</li>
-            <li>Tablette</li>
-            <li>Smartphone</li>
-          </ul>
-        </div>
-      </div>
-      <div className="w-full h-full overflow-y-auto ">
-        <div>
-          <h3 className=" font-bold text-lg">Category :</h3>
-          <ul className=" pl-20 font-medium list-disc ">
-            <Link href={"/search?category=electronic"}>
-              <li className="">Electronic</li>
-            </Link>
-            <Link href={"/search?category=books"}>
-              <li>Books</li>
-            </Link>
-            <Link href={"/search?category=shopping"}>
-              <li>Shopping</li>
-            </Link>
-            <Link href={"/search?category=construction"}>
-              <li>Construction</li>
-            </Link>
-            <Link href={"/search?category=furniture"}>
-              <li>Furniture</li>
-            </Link>
-          </ul>
-        </div>
-        <div>
-          <h3 className=" font-bold text-lg">Departement :</h3>
-          <ul className=" lg:pl-20 font-medium list-disc">
-            <li>Laptop</li>
-            <li>Tablette</li>
-            <li>Smartphone</li>
-          </ul>
+        <div className="w-full ">
+          <div>
+            <h3 className=" font-bold text-lg">Category :</h3>
+            <ul className=" pl-20 font-medium list-disc ">
+              <Link href={"/search?category=electronic"}>
+                <li className="">Electronic</li>
+              </Link>
+              <Link href={"/search?category=books"}>
+                <li>Books</li>
+              </Link>
+              <Link href={"/search?category=shopping"}>
+                <li>Shopping</li>
+              </Link>
+              <Link href={"/search?category=construction"}>
+                <li>Construction</li>
+              </Link>
+              <Link href={"/search?category=furniture"}>
+                <li>Furniture</li>
+              </Link>
+            </ul>
+          </div>
+          <div>
+            <h3 className=" font-bold text-lg">Departement :</h3>
+            <ul className=" lg:pl-20 font-medium list-disc">
+              <li>Laptop</li>
+              <li>Tablette</li>
+              <li>Smartphone</li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>

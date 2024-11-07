@@ -13,7 +13,7 @@ const ImageRenderer = ({ image }: imageRendererProps) => {
           title="image"
           src={image}
           width={500}
-          height={300}
+          height={500}
           alt="image"
           className="w-full h-full object-contain p-2 "
         />
@@ -24,18 +24,18 @@ const ImageRenderer = ({ image }: imageRendererProps) => {
           title="image"
           src={image}
           width={500}
-          height={300}
+          height={500}
           alt="image"
           className="w-full h-full object-cover "
         />
       );
-    } else if (image?.includes(".webp")) {
+    } else if (image?.includes(".webp") || image?.includes(".avif")) {
       return (
         <Image
           title="image"
           src={image}
           width={500}
-          height={300}
+          height={500}
           alt="image"
           className="w-full h-full object-cover "
         />

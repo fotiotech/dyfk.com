@@ -1,6 +1,5 @@
 "use client";
 import React, { useState } from "react";
-import { useAuth } from "@/app/auth/UserContext";
 import {
   Menu,
   NavigateNext,
@@ -14,21 +13,18 @@ import useClickOusite from "./Hooks";
 import { Category } from "@/constant/types";
 import { getCategory } from "@/fetch/category";
 import { useQuery } from "@tanstack/react-query";
+import { useUser } from "@/app/context/UserContext";
+import { useCart } from "@/app/context/CartContext";
 
 const Header = () => {
+  const { user } = useUser();
+  const { cart } = useCart();
   const [showSearchBox, setShowSearchBox] = useState(false);
   const [searchInput, setSearchInput] = useState("");
   const { data: category, isLoading } = useQuery<Category[]>({
     queryKey: ["category"],
     queryFn: getCategory,
   });
-  const auth = useAuth();
-
-  if (!auth) {
-    throw new Error("useAuth must be used within a UserContextProvider");
-  }
-
-  const { user } = auth;
 
   const domNode = useClickOusite(() => setShowSearchBox(false));
 
@@ -36,7 +32,7 @@ const Header = () => {
     <div className="p-2 bg-sec text-pri">
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-3">
-          <Menu />
+          <Menu style={{ fontSize: 30 }} />
           <Link href={"/"}>
             <Image src={"/logo.png"} width={60} height={30} alt="logo" />
           </Link>
@@ -50,33 +46,46 @@ const Header = () => {
             />
           </span>
           <div className="flex items-center">
-            {user?._id ? (
-              <Link href={`/profile`}>
-                <p className="">{user?.username}</p>
+            {user ? (
+              <Link href={"/profile"}>
+                <p className=" ">{user?.username}</p>
               </Link>
             ) : (
               <Link href={"/auth/login"}>
                 <p className=" ">Login</p>
               </Link>
             )}
+
             <span>
-              <NavigateNext style={{ fontSize: 20 }} />
+              <NavigateNext style={{ fontSize: 16 }} />
             </span>
 
             <Link href={"/profile"}>
-              <Person />
+              <Person style={{ fontSize: 30 }} />
             </Link>
           </div>
 
-          <span>
-            <ShoppingCart />
+          <span className="relative">
+            {cart.length > 0 ? (
+              <p
+                className="absolute right-0 -top-2
+              bg-red-500 text-sm rounded-full px-1"
+              >
+                {cart.length}
+              </p>
+            ) : (
+              ""
+            )}
+            <Link href={"/cart"}>
+              <ShoppingCart style={{ fontSize: 30 }} />
+            </Link>
           </span>
         </div>
       </div>
       <div
         ref={domNode}
         className={`${
-          showSearchBox ? "w-full h-auto mt-1" : "w-0 h-0 overflow-hidden"
+          showSearchBox ? "w-full h-auto mt-2" : "w-0 h-0 overflow-hidden"
         } transition-all `}
       >
         <div className="relative w-full ">

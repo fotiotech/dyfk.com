@@ -1,4 +1,4 @@
-import Product from "@/models/Product";
+import Category from "@/models/Category";
 import { connection } from "@/utils/connection";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -14,10 +14,10 @@ export async function GET(
     await connection();
 
     if (params.id) {
-      const products = await Product.findById(params.id);
+      const category = await Category.findById({ _id: params.id });
 
-      if (products.length > 0) {
-        return NextResponse.json({ results: products });
+      if (category) {
+        return NextResponse.json({ results: category });
       } else {
         return NextResponse.json({ message: "Nothing found" }, { status: 404 });
       }

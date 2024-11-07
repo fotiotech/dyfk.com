@@ -17,10 +17,7 @@ const ProductSchema = new Schema({
   productName: {
     type: String,
   },
-  category_id: {
-    type: mongoose.Types.ObjectId,
-    ref: "Category",
-  },
+  category_id: { type: Schema.Types.ObjectId, ref: "Category", required: true },
   price: {
     type: Number,
   },
@@ -28,6 +25,7 @@ const ProductSchema = new Schema({
     type: [String],
     required: true,
   },
+  attributes: [{ type: Object }],
   department: {
     type: String,
   },
@@ -40,7 +38,6 @@ const ProductSchema = new Schema({
   },
   status: {
     type: String,
-    
   },
   created_at: {
     type: String,

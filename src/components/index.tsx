@@ -1,1 +1,1 @@
-export { default as AdminLayout } from "./admin/AdminLayout";
+export { default as AdminLayout } from "../app/(dashboard)/components/admin/AdminLayout";

@@ -1,60 +1,40 @@
-import mongoose, { Schema, model, models } from "mongoose";
+import mongoose, { Schema, Document, Model } from "mongoose";
 
-const BrandSchema = new Schema({
+export interface IBrand extends Document {
+  _id: string;
+  url_slug?: string;
+  name: string;
+  logoUrl?: string;
+  status: "active" | "inactive";
+}
+
+const BrandSchema = new Schema<IBrand>({
   url_slug: {
     type: String,
     unique: true,
-    required: [true, "URL slug is required"],
-    match: /^[a-z0-9]+(?:-[a-z0-9]+)*$/, // Example regex for slugs
+    sparse: true, // Allows multiple `null` values without triggering a unique constraint
   },
-  brandName: {
+  name: {
     type: String,
+    required: [true, "Brand name is required"],
     unique: true,
-    required: [true, "Category name is required"],
   },
-  description: {
-    type: String,
-    maxLength: 500, // Example constraint
-  },
-  imageUrl: {
+  logoUrl: {
     type: String,
     validate: {
-      validator: function (v: string) {
-        return /^https?:\/\/.+\..+$/.test(v);
-      },
-      message: (props: { value: string }) =>
-        `${props.value} is not a valid URL!`,
+      validator: (v: string) => /^https?:\/\/.+\..+$/.test(v),
+      message: "Invalid URL format",
     },
-  },
-  seo_title: {
-    type: String,
-    maxLength: 60,
-  },
-  seo_desc: {
-    type: String,
-    maxLength: 160,
-  },
-  keywords: {
-    type: String,
-  },
-  sort_order: {
-    type: Number, // Changed to Number
+    unique: true,
+    sparse: true,
   },
   status: {
     type: String,
     enum: ["active", "inactive"],
     default: "active",
   },
-  created_at: {
-    type: Date,
-    default: Date.now,
-  },
-  updated_at: {
-    type: Date,
-    default: Date.now,
-  },
 });
 
-const Brand = models.Brand || model("Brand", BrandSchema);
+const Brand: Model<IBrand> = mongoose.models.Brand || mongoose.model<IBrand>("Brand", BrandSchema);
 
 export default Brand;

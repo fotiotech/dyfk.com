@@ -3,18 +3,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connection } from "@/utils/connection";
 
-import Attribute from "@/models/Attributes";
-import Attr_values from "@/models/Attr_values";
+import Category from "@/models/Category";
 
 // GET request to fetch all attributes
 export async function GET(req: NextRequest) {
   try {
     await connection();
 
-    const attributes = await Attribute.find();
+    const attrs = await Category.find();
 
-    if (attributes && attributes.length > 0) {
-      return NextResponse.json({ results: attributes });
+    if (attrs) {
+      return NextResponse.json({ results: attrs });
     } else {
       return NextResponse.json({ message: "Nothing found" }, { status: 404 });
     }
@@ -30,15 +29,11 @@ export async function GET(req: NextRequest) {
 // POST request to create a new attribute and its values
 export async function POST(req: NextRequest) {
   try {
-    const formData = await req.formData();
+    const { categoryId, attributes } = await req.json();
 
-    const categoryId = formData.get("categoryId") as string | null;
-    const attrName = formData.get("attrName") as string | null;
-    const attrValue = formData.get("attrValue") as string | null;
-
-    if (!attrName) {
+    if (!categoryId || !attributes) {
       return NextResponse.json(
-        { error: "Attribute name is required." },
+        { error: "Attribute name or category is required." },
         { status: 400 }
       );
     }
@@ -46,33 +41,20 @@ export async function POST(req: NextRequest) {
     await connection();
 
     // Create new attribute
-    const newAttribute = new Attribute({
-      category_id: categoryId,
-      names: attrName,
-      status: "active",
-    });
-    const savedAttribute = await newAttribute.save();
 
-    // Save attribute values
-    const attrValues = attrValue?.split(",").map((value) => value.trim());
-    const savedAttrValues = [];
-
-    if (attrValues && attrValues.length > 0) {
-      for (const value of attrValues) {
-        const newAttrValue = new Attr_values({
-          id_attributes: savedAttribute._id,
-          attr_values: value,
-        });
-        const savedValue = await newAttrValue.save();
-        savedAttrValues.push(savedValue);
+    const savedAttribute = await Category.findOneAndUpdate(
+      { _id: categoryId },
+      {
+        attributes: attributes,
       }
-    }
+    );
+
+    console.log(savedAttribute);
 
     return NextResponse.json(
       {
         message: "Attribute and values inserted successfully!",
         attribute: savedAttribute,
-        attrValues: savedAttrValues,
       },
       { status: 201 }
     );
