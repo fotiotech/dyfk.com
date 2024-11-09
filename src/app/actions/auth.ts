@@ -10,6 +10,7 @@ import { createSession, deleteSession, updateSession } from "../lib/session";
 import { redirect } from "next/navigation";
 import { connection } from "@/utils/connection";
 import { verifySession } from "../lib/dal";
+import Customer from "@/models/Customer";
 
 export async function signup(state: FormState, formData: FormData) {
   // Validate form fields
@@ -58,8 +59,9 @@ export async function signup(state: FormState, formData: FormData) {
     // Current steps:
     // 4. Create user session
     await createSession(user._id);
+    new Customer({ userId: user._id });
     // 5. Redirect user
-    redirect("/");
+    redirect("/auth/login");
   }
 }
 
@@ -100,6 +102,7 @@ export async function signin(
       await createSession(user._id);
     }
     if (session) {
+      new Customer({ userId: user._id });
       redirect("/");
     }
   } else {

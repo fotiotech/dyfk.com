@@ -36,7 +36,7 @@ export const verifySession = cache(async () => {
 
     return {
       isAuth: true,
-      userId: sess.userId,
+      userId: sess.userId.toString(),
       role: user.role,
       email: user.email,
       username: user.username,
@@ -60,7 +60,7 @@ export const getUser = cache(async () => {
     );
 
     return {
-      _id: currentUser?._id,
+      _id: currentUser?._id.toString(),
       username: currentUser?.username,
       email: currentUser?.email,
       role: currentUser?.role,

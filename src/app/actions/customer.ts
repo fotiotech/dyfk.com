@@ -6,7 +6,12 @@ import { redirect } from "next/navigation";
 export async function findCustomer(_id: string) {
   await connection();
   if (_id) {
-    return await Customer.findOne({ _id });
+    const data = await Customer.findOne({ userId: _id });
+    return {
+      ...data.toObject(),
+      _id: data._id.toString(),
+      timestamps: data.timestamps?.toISOString(),
+    };
   }
 }
 

@@ -4,6 +4,7 @@ import { verifySession } from "./lib/dal";
 
 export default async function middleware(req: NextRequest) {
   const session = await verifySession();
+  console.log(session);
   const userRole = session?.role;
 
   // If there is no token, redirect to login page

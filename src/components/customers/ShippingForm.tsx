@@ -30,16 +30,6 @@ const ShippingForm = ({
   return (
     <div>
       <h2 className="text-2xl font-semibold mb-4">Shipping Information</h2>
-      <div className="flex gap-2">
-        <p>Same as Billing address?</p>
-        <input
-          title="shippingAddressCheck"
-          type="checkbox"
-          name="shippingAddressCheck"
-          checked={shippingAddressCheck}
-          onChange={(e) => setShippingAddressCheck(e.target.checked)}
-        />
-      </div>
 
       <form
         action={toUpdateShippingInfos}

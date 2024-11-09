@@ -243,6 +243,7 @@ export type HeroSection = {
 };
 
 export type Customer = {
+  _id: string;
   userId: string; // Reference to the User (authenticated user)
   photo: string;
   language: string;
