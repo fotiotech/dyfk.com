@@ -27,7 +27,7 @@ const Users = () => {
               <span>{user.role}</span>
               <span className="text-green-600">{user.status}</span>
               <span>
-                <DateComponent date={user.created_at} />
+                <DateComponent date={user.created_at as string} />
               </span>
             </li>
           ))}

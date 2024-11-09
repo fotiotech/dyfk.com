@@ -3,6 +3,7 @@
 import { useCart } from "@/app/context/CartContext";
 import { Delete } from "@mui/icons-material";
 import Image from "next/image";
+import {Prices} from "./Prices";
 
 const Cart = () => {
   const { cart, dispatch } = useCart();
@@ -12,8 +13,7 @@ const Cart = () => {
   };
 
   return (
-    <div className="p-2">
-      <h2 className=" font-bold text-xl">Your Cart</h2>
+    <div className="">
       {cart.length === 0 ? (
         <p>Cart is empty</p>
       ) : (
@@ -34,8 +34,7 @@ const Cart = () => {
                   <h3>{item.name}</h3>
                   <p>
                     Price:{" "}
-                    <span className=" font-bold text-gray-700 ">cfa</span>
-                    <span className=" font-bold mr-1">{item.price}</span>
+                    <span className=" font-bold mr-1"><Prices amount={item.price} /></span>
                   </p>
                   <p>Quantity: {item.quantity}</p>
                 </div>

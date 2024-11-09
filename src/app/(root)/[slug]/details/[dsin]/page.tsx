@@ -4,25 +4,39 @@ import Loading from "@/app/loading";
 import AddToCart from "@/components/AddToCart";
 import CheckoutButton from "@/components/CheckoutButton";
 import DetailImages from "@/components/DetailImages";
-import Layout from "@/components/Layout";
+import {Prices} from "@/components/cart/Prices";
 import { Product } from "@/constant/types";
 import { getProductDetail } from "@/fetch/products";
 import { useQuery } from "@tanstack/react-query";
 import React from "react";
 
-const RenderAttribute = ({ keyName, value }: { keyName: string; value: any }) => {
+const RenderAttribute = ({
+  keyName,
+  value,
+}: {
+  keyName: string;
+  value: any;
+}) => {
   return (
     <div className="flex flex-col ml-2">
       <strong>{keyName}:</strong>
       {typeof value === "object" && !Array.isArray(value) && value !== null ? (
         <div className="ml-4">
           {Object.entries(value).map(([nestedKey, nestedValue]) => (
-            <RenderAttribute key={nestedKey} keyName={nestedKey} value={nestedValue} />
+            <RenderAttribute
+              key={nestedKey}
+              keyName={nestedKey}
+              value={nestedValue}
+            />
           ))}
         </div>
       ) : Array.isArray(value) ? (
         value.map((item, index) => (
-          <RenderAttribute key={index} keyName={`${keyName} ${index + 1}`} value={item} />
+          <RenderAttribute
+            key={index}
+            keyName={`${keyName} ${index + 1}`}
+            value={item}
+          />
         ))
       ) : (
         <span>{value}</span>
@@ -47,7 +61,10 @@ const DetailsPage = ({
         {isLoading ? (
           <Loading loading={isLoading} />
         ) : (
-          <div key={details?._id} className="xl:flex-1 lg:grid grid-cols-2 gap-6 relative">
+          <div
+            key={details?._id}
+            className="xl:flex-1 lg:grid grid-cols-2 gap-6 relative"
+          >
             <div>
               <div className="p-2 lg:hidden">
                 <p className="lg:m-3 m-1 font-medium font-sans">
@@ -59,8 +76,9 @@ const DetailsPage = ({
 
             <div className="flex flex-col gap-2 p-2 lg:p-0">
               <div className="flex items-baseline gap-2">
-                <span className="font-bold text-gray-700">CFA</span>
-                <span className="font-bold text-xl">{details?.price}</span>
+                <span className="font-bold text-xl">
+                  <Prices amount={details?.price as number} />
+                </span>
               </div>
 
               <div className="flex justify-between items-center gap-3 w-full py-2">
@@ -68,7 +86,6 @@ const DetailsPage = ({
                   Check Out
                 </CheckoutButton>
                 {details && <AddToCart product={details} />}
-
               </div>
 
               <div>
@@ -100,4 +117,3 @@ const DetailsPage = ({
 };
 
 export default DetailsPage;
-

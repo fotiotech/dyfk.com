@@ -60,6 +60,7 @@ export const getUser = cache(async () => {
     );
 
     return {
+      _id: currentUser?._id,
       username: currentUser?.username,
       email: currentUser?.email,
       role: currentUser?.role,

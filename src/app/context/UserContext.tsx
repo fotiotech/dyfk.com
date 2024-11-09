@@ -46,7 +46,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
       try {
         const userData = await getUser();
         if(userData) {
-          // setUser(userData ?? null);
+          setUser(userData ?? null);
         }
         
       } catch (err) {

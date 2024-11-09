@@ -1,6 +1,7 @@
 "use server";
 import {
   FormState,
+  LoginFormState,
   SigninFormSchema,
   SignupFormSchema,
 } from "@/app/lib/definitions";
@@ -62,7 +63,13 @@ export async function signup(state: FormState, formData: FormData) {
   }
 }
 
-export async function signin(state: FormState, formData: FormData) {
+export async function signin(
+  state:
+    | false
+    | { errors: { email?: string[]; password?: string[] } }
+    | undefined,
+  formData: FormData
+) {
   const session = await verifySession();
 
   // Validate form fields
@@ -79,7 +86,6 @@ export async function signin(state: FormState, formData: FormData) {
   }
 
   // Call the provider or db to create a user...
-
   // 2. Prepare data for insertion into database
   const { email, password } = validatedFields.data;
 
@@ -93,13 +99,15 @@ export async function signin(state: FormState, formData: FormData) {
     } else {
       await createSession(user._id);
     }
-    redirect("/");
+    if (session) {
+      redirect("/");
+    }
   } else {
     return false;
   }
 }
 
-export async function logout() {
-  deleteSession();
-  // redirect("/auth/login");
+export async function logout(id: string) {
+  deleteSession(id);
+  redirect("/auth/login");
 }

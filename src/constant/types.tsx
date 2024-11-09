@@ -1,12 +1,12 @@
 export type Users = {
-  _id: string;
+  _id?: string;
   username: string;
   email: string;
-  password: string;
+  password?: string;
   role: string;
-  status: string;
-  created_at: string;
-  updated_at: string;
+  status?: string;
+  created_at?: string;
+  updated_at?: string;
 };
 
 export type Category = {
@@ -16,10 +16,12 @@ export type Category = {
   categoryName?: string;
   description?: string;
   imageUrl?: string[];
-  attributes?: [{
-    attrName: string;
-    attrValue: string[];
-  }];
+  attributes?: [
+    {
+      attrName: string;
+      attrValue: string[];
+    }
+  ];
   seo_title?: string;
   seo_desc?: string;
   keywords?: string;
@@ -29,22 +31,6 @@ export type Category = {
   updated_at?: string;
 };
 
-// export type Brands = {
-//   _id: number;
-//   url_slug: string;
-//   brandName: string;
-//   description: string;
-//   imageUrl: [string];
-//   seo_title: string;
-//   seo_desc: string;
-//   keywords: string;
-//   sort_order: string;
-//   status: string;
-//   created_at: Date;
-//   updated_at: Date;
-// };
-
-// Brand type definition
 export type Brand = {
   _id: string;
   name: string;
@@ -254,4 +240,40 @@ export type HeroSection = {
   cta_text: string;
   cta_link: string;
   created_at: string;
+};
+
+export type Customer = {
+  userId: string; // Reference to the User (authenticated user)
+  photo: string;
+  language: string;
+  billingAddress: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    phone?: string;
+    address?: string;
+    city?: string;
+    country?: string;
+    postalCode?: string;
+    preferences?: string[]; // Array to store customer preferences
+  };
+  shippingAddress: {
+    street: string;
+    city: string;
+    state: string;
+    postalCode: string;
+    country: string;
+    carrier: string;
+    shippingMethod: string;
+  };
+  billingMethod?: {
+    methodType: string; // e.g., "Credit Card", "PayPal", etc.
+    details?: {
+      cardNumber?: string;
+      expiryDate?: string;
+      cardholderName?: string;
+    };
+  };
+  createdAt: Date;
+  updatedAt: Date;
 };

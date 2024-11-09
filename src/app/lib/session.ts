@@ -3,7 +3,7 @@ import { cookies } from "next/headers";
 import Session from "@/models/Session";
 import { SignJWT, jwtVerify } from "jose";
 import { SessionPayload } from "@/app/lib/definitions";
-import { ObjectId } from "mongoose";
+import { HydratedDocument, ObjectId } from "mongoose";
 import { connection } from "@/utils/connection";
 
 const secretKey = process.env.SESSION_SECRET;
@@ -33,15 +33,25 @@ export async function createSession(id: ObjectId) {
 
   await connection();
 
-  // 1. Create a session in the database
-  const newSession = new Session({
-    userId: id,
-    expiresAt,
-  });
+  let createdSession: HydratedDocument<typeof Session> | null = null;
 
-  const sess = await newSession.save();
+  const existingSession = await Session.findOne({ userId: id });
+  if (existingSession) {
+    // Update the session if it exists
+    existingSession.userId = id;
+    existingSession.expiresAt = expiresAt;
+    createdSession = await existingSession.save();
+  } else {
+    // 1. Create a session in the database
+    const newSession = new Session({
+      userId: id,
+      expiresAt,
+    });
 
-  const sessionId = sess._id;
+    createdSession = await newSession.save();
+  }
+
+  const sessionId = createdSession?._id?.toString() ?? "";
 
   // 2. Encrypt the session ID
   const session = await encrypt({ sessionId, expiresAt });
@@ -74,6 +84,7 @@ export async function updateSession() {
   });
 }
 
-export async function deleteSession() {
+export async function deleteSession(userId: string) {
   cookies().delete("session");
+  await Session.deleteOne({ userId: userId });
 }

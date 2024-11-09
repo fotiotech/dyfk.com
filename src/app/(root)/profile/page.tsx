@@ -18,6 +18,9 @@ const Profile = () => {
         <Link href={"/"}>
           <li className="p-2 rounded-lg bg-gray-300">Go back to Home Page</li>
         </Link>
+        <Link href={"/profile/billing_addresses"}>
+          <li className="p-2 rounded-lg bg-gray-300">Billing Addresses</li>
+        </Link>
         {user?.role === "admin" ? (
           <Link href={`/admin`}>
             <li className="p-2 rounded-lg bg-gray-300">Admin Panel</li>
@@ -26,7 +29,7 @@ const Profile = () => {
           ""
         )}
         <li
-          onClick={() => logout()}
+          onClick={() => logout(user?._id as string)}
           className="p-2 rounded-lg bg-gray-300 text-red-800"
         >
           Log Out
