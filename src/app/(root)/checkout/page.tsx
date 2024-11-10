@@ -69,7 +69,7 @@ const CheckoutPage = () => {
       estimatedShippingDate.getDate() + transitDays
     );
 
-    await createOrder(orderNumber, {
+    await createOrder(cart, {
       orderNumber,
       userId: user?._id,
       products: cart?.map((item) => ({

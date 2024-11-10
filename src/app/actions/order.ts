@@ -2,6 +2,7 @@
 
 import Order from "@/models/Order";
 import { revalidatePath } from "next/cache";
+import { CartItem } from "../reducer/cartReducer";
 
 export async function findOrder() {
   const response = await Order.find();
@@ -15,12 +16,10 @@ export async function findOrder() {
   }
 }
 
-export async function createOrder(orderNumber: string, data: any) {
+export async function createOrder(cart: CartItem[], data: any) {
   try {
-    
-
     // Check if an order with the same orderNumber already exists
-    const existingOrder = await Order.findOne({ orderNumber });
+    const existingOrder = await Order.findOne({ products: cart });
 
     if (existingOrder) {
       // If it exists, update the existing order
