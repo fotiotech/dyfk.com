@@ -1,9 +1,14 @@
-
 import { useCart } from "@/app/context/CartContext";
 import { Prices, TotalPrice } from "@/components/cart/Prices";
+import { useState, useEffect } from "react";
 
-const OrderSummary = () => {
+const OrderSummary = ({
+  setOrderNumber,
+}: {
+  setOrderNumber: (num: string) => void;
+}) => {
   const { cart } = useCart();
+  const [ordNumber, setOrdNumber] = useState("");
 
   const generateOrderNumber = (): string => {
     const timestamp = Date.now().toString(); // Current timestamp in milliseconds
@@ -11,10 +16,17 @@ const OrderSummary = () => {
     return `ORD-${timestamp}-${randomStr}`;
   };
 
-  const orderNumber = cart ? generateOrderNumber() : "";
+  useEffect(() => {
+    if (cart && cart.length > 0) {
+      const orderNumber = generateOrderNumber();
+      setOrdNumber(orderNumber);
+      setOrderNumber(orderNumber);
+    }
+  }, [cart, setOrderNumber]); // Runs on component mount or when cart changes
+
   return (
     <div className="border rounded-lg p-2">
-      <p>Order number: {orderNumber}</p>
+      <p>Order number: {ordNumber}</p>
       <ul>
         {cart &&
           cart.map((items) => (
@@ -30,7 +42,6 @@ const OrderSummary = () => {
                   </div>
                 )}
               </div>
-
               <div className=" ">
                 <p className="font-bold">
                   <Prices amount={items.price} />

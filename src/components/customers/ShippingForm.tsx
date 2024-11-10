@@ -15,10 +15,8 @@ export interface ShippingData {
 
 const ShippingForm = ({
   shippingAddressCheck,
-  setShippingAddressCheck,
 }: {
   shippingAddressCheck: boolean;
-  setShippingAddressCheck: (arg: boolean) => void;
 }) => {
   const { user } = useUser();
   const toUpdateShippingInfos = updateShippingInfos.bind(
@@ -29,15 +27,9 @@ const ShippingForm = ({
 
   return (
     <div>
-      <h2 className="text-2xl font-semibold mb-4">Shipping Information</h2>
-
       <form
         action={toUpdateShippingInfos}
-        className={
-          shippingAddressCheck
-            ? "hidden"
-            : "space-y-4 max-w-md mx-auto p-6 bg-white rounded-lg shadow"
-        }
+        className={"space-y-4 max-w-md mx-auto p-6 bg-white rounded-lg shadow"}
       >
         {/* Address Fields */}
         <label>

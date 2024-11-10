@@ -1,4 +1,4 @@
-import mongoose, { Document, Schema } from 'mongoose';
+import mongoose, { Document, Schema } from "mongoose";
 
 interface Product {
   productId: mongoose.Types.ObjectId;
@@ -15,7 +15,7 @@ interface OrderDocument extends Document {
   tax: number;
   shippingCost: number;
   total: number;
-  paymentStatus: 'pending' | 'paid' | 'failed';
+  paymentStatus: "pending" | "paid" | "failed";
   paymentMethod: string;
   transactionId?: string;
   shippingAddress: {
@@ -25,10 +25,10 @@ interface OrderDocument extends Document {
     postalCode: string;
     country: string;
   };
-  shippingStatus: 'pending' | 'shipped' | 'delivered';
+  shippingStatus: "pending" | "shipped" | "delivered";
   shippingDate?: Date;
   deliveryDate?: Date;
-  orderStatus: 'processing' | 'completed' | 'cancelled';
+  orderStatus: "processing" | "completed" | "cancelled";
   createdAt: Date;
   updatedAt: Date;
   notes?: string;
@@ -44,14 +44,14 @@ const orderSchema = new Schema<OrderDocument>({
   },
   userId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
+    ref: "User",
     required: true,
   },
   products: [
     {
       productId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Product',
+        ref: "Product",
         required: true,
       },
       name: {
@@ -86,8 +86,8 @@ const orderSchema = new Schema<OrderDocument>({
   },
   paymentStatus: {
     type: String,
-    enum: ['pending', 'paid', 'failed'],
-    default: 'pending',
+    enum: ["pending", "paid", "failed"],
+    default: "pending",
   },
   paymentMethod: {
     type: String,
@@ -106,8 +106,8 @@ const orderSchema = new Schema<OrderDocument>({
   },
   shippingStatus: {
     type: String,
-    enum: ['pending', 'shipped', 'delivered'],
-    default: 'pending',
+    enum: ["pending", "shipped", "delivered"],
+    default: "pending",
   },
   shippingDate: {
     type: Date,
@@ -117,8 +117,8 @@ const orderSchema = new Schema<OrderDocument>({
   },
   orderStatus: {
     type: String,
-    enum: ['processing', 'completed', 'cancelled'],
-    default: 'processing',
+    enum: ["processing", "completed", "cancelled"],
+    default: "processing",
   },
   createdAt: {
     type: Date,
@@ -140,11 +140,12 @@ const orderSchema = new Schema<OrderDocument>({
   },
 });
 
-orderSchema.pre<OrderDocument>('save', function (next: () => void) {
+orderSchema.pre<OrderDocument>("save", function (next: () => void) {
   this.updatedAt = new Date();
   next();
 });
 
-const Order = mongoose.model<OrderDocument>('Order', orderSchema);
+const Order =
+  mongoose.models.Order || mongoose.model<OrderDocument>("Order", orderSchema);
 
 export default Order;

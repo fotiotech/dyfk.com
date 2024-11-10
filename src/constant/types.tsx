@@ -1,3 +1,5 @@
+import { CartItem } from "@/app/reducer/cartReducer";
+
 export type Users = {
   _id?: string;
   username: string;
@@ -191,37 +193,32 @@ export type Inventory = {
   lastCheckDate: string;
 };
 
-export type Order = {
-  OrderID: number;
-  CustomerID: number;
-  OrderStatus: string;
-  PaymentMethod: string;
-  PaymentStatus: string;
-  ShippingAddress: string;
-  BillingAddress: string;
-  TotalAmount: number;
-  Subtotal: number;
-  TaxAmount: number;
-  ShippingCost: number;
-  DiscountsApplied: string;
-  OrderItems: string;
-  OrderTrackingNumberID: string;
-  ShippingMethod: string;
-  EstimatedDeliveryDate: string;
-  ActualDeliveryDate: string;
-  CustomerNotes: number;
-  InternalNotes: number;
-  ReturnStatus: string;
-  RefundAmount: number;
-  GiftWrap: string;
-  GiftMessage: string;
-  CouponCodeUsed: string;
-  OrderSource: string;
-  OrderPriority: string;
-  InvoiceNumber: number;
-  SalesRepresentative: string;
-  CustomerIPAddress: string;
-  OrderDate: string;
+export type Orders = {
+  _id?: string;
+  orderNumber: string;
+  userId: string;
+  products: CartItem[];
+  subtotal: number;
+  tax: number;
+  shippingCost: number;
+  total: number;
+  paymentStatus: string;
+  paymentMethod: string;
+  transactionId: string;
+  shippingAddress: {
+    street: string;
+    city: string;
+    state: string;
+    postalCode: string;
+    country: string;
+  };
+  shippingStatus: string;
+  shippingDate: string;
+  deliveryDate: string;
+  orderStatus: string;
+  notes: string;
+  couponCode: string;
+  discount: number;
 };
 
 export type ProductsFiles = {

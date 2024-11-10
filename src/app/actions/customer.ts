@@ -10,6 +10,7 @@ export async function findCustomer(_id: string) {
     return {
       ...data.toObject(),
       _id: data._id.toString(),
+      userId: data.userId.toString(),
       timestamps: data.timestamps?.toISOString(),
     };
   }
