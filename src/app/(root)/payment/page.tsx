@@ -40,7 +40,7 @@ const PaymentPage: React.FC = () => {
   }
 
   return (
-    <div className="p-2">
+    <div className=" p-2">
       <h2 className="text-2xl font-bold">Payment Page</h2>
       <div className="my-2 ">
         <p>
@@ -52,7 +52,7 @@ const PaymentPage: React.FC = () => {
         </p>
       </div>
 
-      <div className="my-2">{content}</div>
+      <div className="h-screen  my-2">{content}</div>
     </div>
   );
 };
