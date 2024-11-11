@@ -1,20 +1,22 @@
 import Product from "@/models/Product";
 import { connection } from "@/utils/connection";
-import mongoose from "mongoose";
 
 export async function getSearch(query: string) {
+  await connection();
   try {
-    await connection();
-
     if (query) {
       const products = await Product.find({
-        $or: [
-          { name: { $regex: query, $options: "i" } },
-          { category_id: new mongoose.Types.ObjectId(query) }
-        ]
+        productName: { $regex: query, $options: "i" },
       });
-
-      return products.length > 0 ? products : []; // Return empty array if no products found
+      console.log(products);
+      return products.length > 0
+        ? products.map((prod) => ({
+            ...prod?.toObject(),
+            _id: prod._id?.toString(),
+            category_id: prod.category_id?.toString(),
+            brand_id: prod.brand_id?.toString(),
+          }))
+        : []; // Return empty array if no products found
     } else {
       return []; // Return empty array if no query provided
     }

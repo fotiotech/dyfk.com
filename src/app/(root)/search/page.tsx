@@ -36,9 +36,9 @@ const Search = () => {
         setIsloading(false);
       }
     }
-    search()
-  }, [query])
-  
+    search();
+  }, [query]);
+
   return (
     <>
       <div className="relative flex w-full min-h-0 overflow-hidden">

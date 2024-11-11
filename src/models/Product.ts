@@ -1,15 +1,15 @@
-import mongoose, { Schema, model, models } from "mongoose";
+import { Schema, model, models } from "mongoose";
 
 const ProductSchema = new Schema({
   url_slug: {
     type: String,
-    unique: [true],
-    required: [true],
+    unique: true,
+    required: true,
   },
   dsin: {
     type: String,
-    unique: [true],
-    required: [true],
+    unique: true,
+    required: true,
   },
   sku: {
     type: String,
@@ -33,18 +33,19 @@ const ProductSchema = new Schema({
     type: String,
   },
   brand_id: {
-    type: mongoose.Types.ObjectId,
+    type: Schema.Types.ObjectId,
     ref: "Brand",
   },
   status: {
     type: String,
   },
   created_at: {
-    type: String,
+    type: Date,
     default: Date.now,
   },
-  updated_ad: {
-    type: String,
+  updated_at: {
+    type: Date,
+    default: Date.now,
   },
 });
 
