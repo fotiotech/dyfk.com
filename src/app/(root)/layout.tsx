@@ -9,8 +9,7 @@ export default function Layout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body >
+    
         <div className=" flex flex-col">
           <Header />
           <Suspense fallback={<Loading />}>
@@ -18,7 +17,6 @@ export default function Layout({
           </Suspense>
           <Footer />
         </div>
-      </body>
-    </html>
+      
   );
 }

@@ -76,9 +76,9 @@ const DetailsPage = ({
 
             <div className="flex flex-col gap-2 p-2 lg:p-0">
               <div className="flex items-baseline gap-2">
-                <span className="font-bold text-xl">
+                <div className="font-bold text-xl">
                   <Prices amount={details?.price as number} />
-                </span>
+                </div>
               </div>
 
               <div className="flex justify-between items-center gap-3 w-full py-2">

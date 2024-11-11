@@ -18,7 +18,7 @@ const Profile = () => {
         <Link href={"/"}>
           <li className="p-2 rounded-lg bg-gray-300">Go back to Home Page</li>
         </Link>
-        <Link href={"/profile/billing_addresses"}>
+        <Link href={"/checkout/billing_addresses"}>
           <li className="p-2 rounded-lg bg-gray-300">Billing Addresses</li>
         </Link>
         {user?.role === "admin" ? (

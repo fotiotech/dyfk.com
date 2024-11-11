@@ -23,12 +23,6 @@ const CheckoutPage = () => {
     useState<boolean>(true);
   const [selectedPaymentMethod, setSelectedPaymentMethod] =
     useState<string>("");
-  const [isClient, setIsClient] = useState(false);
-  const router = isClient ? useRouter() : null;
-
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
 
   useEffect(() => {
     async function getCustomer() {
@@ -112,7 +106,7 @@ const CheckoutPage = () => {
         <div>
           <p className="font-bold">Billing Address</p>
           {customer ? (
-            <Link href={`/profile/edit_billing_addresses/${customer._id}`}>
+            <Link href={`/checkout/edit_billing_addresses/${customer._id}`}>
               <div className="border rounded-lg p-2 cursor-pointer">
                 <p>
                   {customer.billingAddress.lastName}{" "}
@@ -127,7 +121,7 @@ const CheckoutPage = () => {
             </Link>
           ) : (
             <Link
-              href={"/profile/billing_addresses"}
+              href={"/checkout/billing_addresses"}
               className="p-2 rounded-lg cursor-pointer"
             >
               <p>Complete Billing Address</p>

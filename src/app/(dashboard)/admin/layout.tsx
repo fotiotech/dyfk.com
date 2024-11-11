@@ -6,10 +6,8 @@ export default async function Layout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body>
-        <AdminLayout>{children}</AdminLayout>
-      </body>
-    </html>
+    <div>
+      <AdminLayout>{children}</AdminLayout>
+    </div>
   );
 }

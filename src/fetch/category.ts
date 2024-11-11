@@ -6,7 +6,13 @@ export const getCategory = async () => {
   if (!response) {
     throw new Error("Network response was not ok!");
   }
-  return response.data.results;
+  return response.data.results.map((cat: any) => ({
+    ...cat,
+    _id: cat._id?.toString(),
+    parent_id: cat.parent_id?.toString(),
+    created_at: cat.created_at?.toString(),
+    updated_at: cat.updated_at?.toString(),
+  }));
 };
 
 export const getCategoryEdit = async (id?: string) => {
@@ -15,7 +21,12 @@ export const getCategoryEdit = async (id?: string) => {
   if (!response) {
     throw new Error("Network response was not ok!");
   }
-  return response.data.results;
+  return {
+    ...response.data.results,
+    _id: response.data.results._id?.toString(),
+    created_at: response.data.results.created_at?.toString(),
+    updated_at: response.data.results.updated_at?.toString(),
+  };
 };
 
 export const getBrands = async () => {
@@ -33,7 +44,13 @@ export const getSubcategories = async (id: string | null) => {
   if (!response) {
     throw new Error("Network response was not ok!");
   }
-  return response.data.results;
+  return response.data.results.map((cat: any) => ({
+    ...cat,
+    _id: cat._id?.toString(),
+    parent_id: cat.parent_id?.toString(),
+    created_at: cat.created_at?.toString(),
+    updated_at: cat.updated_at?.toString(),
+  }));
 };
 
 export const postCategory = async () => {

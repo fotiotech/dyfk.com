@@ -29,14 +29,28 @@ export async function findProducts(id?: string) {
   if (id) {
     const products = await Product.find({ _id: id }).sort({ created_at: -1 });
     if (products) {
-      return products;
+      return products.map((product) => ({
+        ...product.toObject(),
+        _id: product._id?.toString(),
+        category_id: product.category_id?.toString(),
+        brand_id: product.brand_id?.toString(),
+        created_at: product.created_at?.toString(),
+        updated_at: product.updated_at?.toString(),
+      }));
     } else {
-      console.log('Error');
+      console.log("Error");
     }
   } else {
     const products = await Product.find().sort({ created_at: -1 });
     if (products) {
-      return products;
+      return products.map((prod) => ({
+        ...prod.toObject(),
+        _id: prod._id.toString(),
+        category_id: prod.category_id?.toString(),
+        brand_id: prod.brand_id?.toString(),
+        created_at: prod.created_at?.toString(),
+        updated_at: prod.updated_at?.toString(),
+      }));
     } else {
       console.log("Nothing found");
     }
@@ -47,7 +61,7 @@ export async function createProduct(
   categoryId: string,
   attributes: {},
   files: string[],
-  formData: FormData,
+  formData: FormData
 ) {
   const sku = formData.get("sku") as string | null;
   const product_name = formData.get("product_name") as string | null;
@@ -57,7 +71,7 @@ export async function createProduct(
   const price = formData.get("price") as string | null;
   const status = formData.get("status") as string | null;
 
-  if (product_name === '' || categoryId === '') {
+  if (product_name === "" || categoryId === "") {
     return { error: "Product name is required." };
   }
 
@@ -92,41 +106,42 @@ export async function updateProduct(
   categoryId: string,
   attributes: {},
   files: string[],
-  formData: FormData,) {
-    
+  formData: FormData
+) {
   await connection();
-  if(id && formData) {
-  const sku = formData.get("sku") as string | null;
-  const product_name = formData.get("product_name") as string | null;
-  const brandId = formData.get("brandId") as string;
-  const department = formData.get("department") as string | null;
-  const description = formData.get("description") as string | null;
-  const price = formData.get("price") as string | null;
-  const status = formData.get("status") as string | null;
+  if (id && formData) {
+    const sku = formData.get("sku") as string | null;
+    const product_name = formData.get("product_name") as string | null;
+    const brandId = formData.get("brandId") as string;
+    const department = formData.get("department") as string | null;
+    const description = formData.get("description") as string | null;
+    const price = formData.get("price") as string | null;
+    const status = formData.get("status") as string | null;
 
-
-
-    const updatedProduct = await Product.findByIdAndUpdate( id, {
-      $set: {
-    sku: sku,
-    productName: product_name,
-    category_id: new mongoose.Types.ObjectId(categoryId),
-    brand_id: new mongoose.Types.ObjectId(brandId),
-    department: department,
-    description: description,
-    price: price,
-    attributes: attributes,
-    imageUrls: files,
-    status: status,
-    created_at: new Date().toISOString(),
-    updated_ad: new Date().toISOString(),
+    const updatedProduct = await Product.findByIdAndUpdate(
+      id,
+      {
+        $set: {
+          sku: sku,
+          productName: product_name,
+          category_id: new mongoose.Types.ObjectId(categoryId),
+          brand_id: new mongoose.Types.ObjectId(brandId),
+          department: department,
+          description: description,
+          price: price,
+          attributes: attributes,
+          imageUrls: files,
+          status: status,
+          created_at: new Date().toISOString(),
+          updated_ad: new Date().toISOString(),
+        },
+      },
+      {
+        new: true,
       }
-    }, {
-    new: true,
-  });
-  return updatedProduct;
+    );
+    return updatedProduct;
   }
-  
 }
 
 export async function deleteProduct(id: string) {
