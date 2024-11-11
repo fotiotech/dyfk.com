@@ -1,5 +1,5 @@
 "use client";
-import { findOrder } from "@/app/actions/order";
+import { findOrders } from "@/app/actions/order";
 import { Orders } from "@/constant/types";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
@@ -10,7 +10,7 @@ const AllOrderPage = () => {
   useEffect(() => {
     async function getAllOrder() {
       try {
-        const response = await findOrder();
+        const response = await findOrders();
         if (response) {
           console.log("response", response);
           setAllOrder(response);
@@ -25,12 +25,12 @@ const AllOrderPage = () => {
 
   return (
     <div>
-      All Order
-      <ul>
+      <h2 className="text-xl font-bold">All Order</h2>
+      <ul className="flex flex-col gap-4 my-2">
         {allOrder &&
           allOrder.map((order) => (
-            <li key={order._id}>
-              <p>{order.orderNumber}</p>
+            <li key={order._id} className="border rounded-lg p-2">
+              <p>Order Number: {order.orderNumber}</p>
               <ul className="flex flex-col gap-3">
                 {order?.products?.map((item) => (
                   <li className="flex gap-3">

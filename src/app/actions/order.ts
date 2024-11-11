@@ -3,22 +3,47 @@
 import Order from "@/models/Order";
 import { revalidatePath } from "next/cache";
 
-export async function findOrder() {
-  const response = await Order.find();
-  // if response is not null
-  if (response) {
-    return response.map((order: any) => ({
-      ...order.toObject(), // Convert the Mongoose document to a plain object
-      _id: order._id.toString(), // Convert ObjectId to string
-      userId: order.userId.toString(), // Convert ObjectId to string
-    }));
+export async function findOrders(orderNumber?: string, userId?: string) {
+  try {
+    if (orderNumber) {
+      // Find a single order by its unique order ID
+      const order = await Order.findOne({
+        orderNumber: { $regex: new RegExp(orderNumber, "i") },
+      });
+
+      if (order) {
+        return order
+          ? {
+              ...order.toObject(),
+              _id: order._id.toString(),
+              userId: order.userId.toString(),
+            }
+          : null;
+      }
+    } else if (userId) {
+      // Find all orders for a specific user by user ID
+      const orders = await Order.find({ userId });
+      return orders.map((order) => ({
+        ...order.toObject(),
+        _id: order._id.toString(),
+        userId: order.userId.toString(),
+      }));
+    } else {
+      // Return all orders (usually for admin view)
+      const orders = await Order.find();
+      return orders.map((order) => ({
+        ...order.toObject(),
+        _id: order._id.toString(),
+        userId: order.userId.toString(),
+      }));
+    }
+  } catch (error: any) {
+    throw new Error(`Error fetching orders: ${error.message}`);
   }
 }
 
 export async function createOrder(orderNumber: string, data: any) {
   try {
-    
-
     // Check if an order with the same orderNumber already exists
     const existingOrder = await Order.findOne({ orderNumber });
 

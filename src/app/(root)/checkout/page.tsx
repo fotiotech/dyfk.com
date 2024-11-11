@@ -2,7 +2,6 @@
 
 import { findCustomer } from "@/app/actions/customer";
 import ShippingForm from "@/components/customers/ShippingForm";
-import PayPalButton from "@/components/payments/PaypalButton";
 import { useUser } from "@/app/context/UserContext";
 import { useState, useEffect } from "react";
 import { Customer } from "@/constant/types";
@@ -18,7 +17,6 @@ const CheckoutPage = () => {
   const { cart } = useCart();
   const [customer, setCustomer] = useState<Customer>();
   const [orderNumber, setOrderNumber] = useState("");
-  const [paymentStatus, setPaymentStatus] = useState<string | null>(null);
   const [shippingAddressCheck, setShippingAddressCheck] =
     useState<boolean>(true);
   const [selectedPaymentMethod, setSelectedPaymentMethod] =
@@ -33,23 +31,12 @@ const CheckoutPage = () => {
   useEffect(() => {
     async function getCustomer() {
       if (user?._id) {
-        const cust = await findCustomer(user._id);
-        setCustomer(cust);
+        const response = await findCustomer(user._id);
+        setCustomer(response);
       }
     }
     getCustomer();
   }, [user?._id]);
-
-  const handleSuccess = (details: any) => {
-    setPaymentStatus(
-      "Payment successful! Transaction completed by " +
-        details.payer.name.given_name
-    );
-  };
-
-  const handleError = (error: any) => {
-    setPaymentStatus("Payment failed! " + error);
-  };
 
   async function handleOrderData(e: any) {
     e.preventDefault();
@@ -85,7 +72,6 @@ const CheckoutPage = () => {
       total: calculateTotal(cart),
       paymentStatus: "pending",
       paymentMethod: selectedPaymentMethod,
-      transactionId: "",
       shippingAddress: {
         street: customer?.shippingAddress?.street || "",
         city: customer?.shippingAddress?.city || "",
@@ -102,8 +88,8 @@ const CheckoutPage = () => {
       discount: 0,
     });
 
-    if (router) {
-      router.push("/payment");
+    if (orderNumber) {
+      router?.replace(`/payment?orderNumber=${orderNumber}`);
     }
   }
 
@@ -210,9 +196,6 @@ const CheckoutPage = () => {
         </div>
       </div>
 
-      {/* PayPal button example, uncomment if needed */}
-      {/* <PayPalButton amount="0.01" onSuccess={handleSuccess} onError={handleError} /> */}
-      {/* {paymentStatus && <p>{paymentStatus}</p>} */}
       <div className="text-center">
         <button
           title="place order"
