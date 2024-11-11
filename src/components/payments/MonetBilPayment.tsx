@@ -40,8 +40,8 @@ function MonetbilPayment() {
     lastName: customer?.billingAddress.lastName,
     email: customer?.billingAddress.email,
     operator: operator,
-    returnUrl: `${process.env.NEXT_PUBLIC_API_URL}/payment/success`,
-    notifyUrl: `${process.env.NEXT_PUBLIC_API_URL}/payment/notification`,
+    returnUrl: `${process.env.NEXT_PUBLIC_API_URL}/checkout/payment/success`,
+    notifyUrl: `${process.env.NEXT_PUBLIC_API_URL}/checkout/payment/notification`,
   };
 
   const fetchPaymentLink = async () => {

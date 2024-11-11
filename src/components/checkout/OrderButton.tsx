@@ -25,7 +25,7 @@ const OrderButton: React.FC<OrderButtonProps> = ({
     <div className="text-center">
       {orderNumber ? (
         <div onClick={handlePlaceOrder}>
-          <Link href={`/payment?orderNumber=${orderNumber}`} passHref>
+          <Link href={`/checkout/payment?orderNumber=${orderNumber}`} passHref>
             <button
               title="Place Order"
               type="button"
