@@ -60,14 +60,14 @@ export async function createOrder(orderNumber: string, data: any) {
       );
       // Revalidate path if using server-side caching
       revalidatePath("/admin/orders");
-      return updatedOrder;
+      // return updatedOrder;
     } else {
       // If it doesn't exist, create a new order
       const newOrder = new Order(data);
       const savedOrder = await newOrder.save();
       // Revalidate path if using server-side caching
       revalidatePath("/admin/orders");
-      return savedOrder;
+      // return savedOrder;
     }
   } catch (error: any) {
     console.error(`Error in creating or updating order: ${error.message}`);

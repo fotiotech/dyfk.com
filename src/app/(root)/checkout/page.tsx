@@ -17,7 +17,7 @@ const CheckoutPage = () => {
   const { user } = useUser();
   const { cart } = useCart();
   const [customer, setCustomer] = useState<Customer>();
-  const [transactionId, setTransactionId] = useState(6);
+  const [transactionId, setTransactionId] = useState(0);
   const [orderNumber, setOrderNumber] = useState("");
   const [shippingAddressCheck, setShippingAddressCheck] =
     useState<boolean>(true);
@@ -74,7 +74,7 @@ const CheckoutPage = () => {
       total: calculateTotal(cart),
       paymentStatus: "pending",
       paymentMethod: selectedPaymentMethod,
-      transactionId: transactionId,
+      transactionId: Math.floor(Math.random() * 1000000),
       shippingAddress: {
         street: customer?.shippingAddress?.street || "",
         city: customer?.shippingAddress?.city || "",

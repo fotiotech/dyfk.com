@@ -15,7 +15,7 @@ const OrderButton: React.FC<OrderButtonProps> = ({
   handleOrderData,
 }) => {
   const handlePlaceOrder = (e: React.SyntheticEvent) => {
-    setTransactionId((prevId) => prevId + 1); // Update transactionId safely
+    setTransactionId(Math.floor(Math.random() * 1000000)); // Update transactionId safely
     handleOrderData(e); // Call the order handler before navigation
   };
 
@@ -24,16 +24,17 @@ const OrderButton: React.FC<OrderButtonProps> = ({
   return (
     <div className="text-center">
       {orderNumber ? (
-        <Link href={`/payment?orderNumber=${orderNumber}`} passHref>
-          <button
-            title="Place Order"
-            type="button"
-            onClick={handlePlaceOrder}
-            className="btn border rounded-2xl w-full p-2 text-white font-bold"
-          >
-            Place Order
-          </button>
-        </Link>
+        <div onClick={handlePlaceOrder}>
+          <Link href={`/payment?orderNumber=${orderNumber}`} passHref>
+            <button
+              title="Place Order"
+              type="button"
+              className="btn border rounded-2xl w-full p-2 text-white font-bold"
+            >
+              Place Order
+            </button>
+          </Link>
+        </div>
       ) : (
         <p>Order number is missing</p>
       )}
