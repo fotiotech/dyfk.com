@@ -275,3 +275,23 @@ export type Customer = {
   createdAt: Date;
   updatedAt: Date;
 };
+
+export type MonetbilPaymentRequest = {
+  serviceKey: string;
+  amount: number;
+  phone?: string;
+  phoneLock?: boolean;
+  locale?: string;
+  operator?: string;
+  country?: string;
+  currency?: string;
+  itemRef?: string;
+  paymentRef?: string;
+  user?: string;
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  returnUrl?: string;
+  notifyUrl?: string;
+  logo?: string;
+}

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import Providers from "./providers";
+import Script from "next/script";
 
 
 
@@ -16,6 +17,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <Script type="text/javascript" src="https://www.monetbil.com/widget/v2/monetbil.min.js"></Script>
       <body >
         <Providers>{children}</Providers>
       </body>

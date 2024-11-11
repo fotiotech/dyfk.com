@@ -10,6 +10,7 @@ export async function findOrders(orderNumber?: string, userId?: string) {
       const order = await Order.findOne({
         orderNumber: { $regex: new RegExp(orderNumber, "i") },
       });
+      console.log(order);
 
       if (order) {
         return order

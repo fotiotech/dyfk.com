@@ -2,22 +2,22 @@
 
 import { findOrders } from "@/app/actions/order";
 import { useUser } from "@/app/context/UserContext";
+import MonetBilPayment from "@/components/payments/MonetBilPayment";
 import PaypalPayment from "@/components/payments/PaypalPayment";
 import { Customer, Orders } from "@/constant/types";
 import { useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
-const PaymentPage = () => {
-  const { user } = useUser();
+const PaymentPage: React.FC = () => {
   const orderNumber = useSearchParams().get("orderNumber")?.toLowerCase();
-  const [method, setMethod] = useState<string>("");
-  const [order, setOder] = useState<Orders>();
+  const [order, setOrder] = useState<Orders | null>(null);
 
   useEffect(() => {
     async function getOrder() {
       if (orderNumber) {
         const response = await findOrders(orderNumber);
-        setOder(response);
+        console.log(response);
+        setOrder(response);
       }
     }
     getOrder();
@@ -27,16 +27,23 @@ const PaymentPage = () => {
 
   switch (order?.paymentMethod) {
     case "Mobile Money":
+      content = <MonetBilPayment />;
+      break;
+
+    case "Paypal":
       content = <PaypalPayment />;
       break;
 
     default:
+      content = <p>Invalid payment method or no payment method selected.</p>;
       break;
   }
+
   return (
     <div className="p-2">
       <h2 className="text-2xl font-bold">Payment Page</h2>
       <p>Order Number: {orderNumber}</p>
+      <p>Payment Method: {order?.paymentMethod}</p>
       <div className="my-2">{content}</div>
     </div>
   );

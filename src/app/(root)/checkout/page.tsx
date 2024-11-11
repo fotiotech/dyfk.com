@@ -11,12 +11,13 @@ import OrderSummary from "@/components/cart/OrderSummary";
 import { createOrder } from "@/app/actions/order";
 import { useCart } from "@/app/context/CartContext";
 import { CartItem } from "@/app/reducer/cartReducer";
+import OrderButton from "@/components/checkout/OrderButton";
 
 const CheckoutPage = () => {
   const { user } = useUser();
   const { cart } = useCart();
   const [customer, setCustomer] = useState<Customer>();
-  const [transactionId, setTransactionId] = useState(2);
+  const [transactionId, setTransactionId] = useState(6);
   const [orderNumber, setOrderNumber] = useState("");
   const [shippingAddressCheck, setShippingAddressCheck] =
     useState<boolean>(true);
@@ -39,7 +40,7 @@ const CheckoutPage = () => {
     getCustomer();
   }, [user?._id]);
 
-  async function handleOrderData(e: any) {
+  async function handleOrderData(e?: any) {
     e.preventDefault();
 
     if (!selectedPaymentMethod) {
@@ -194,24 +195,13 @@ const CheckoutPage = () => {
         </div>
       </div>
 
-      <div className="text-center">
-        <Link
-          onClick={() => setTransactionId(transactionId + 1)}
-          href={
-            orderNumber && transactionId
-              ? `/payment?orderNumber=${orderNumber.toString()}`
-              : ""
-          }
-        >
-          <button
-            title="place order"
-            type="button"
-            onClick={handleOrderData}
-            className="btn border rounded-2xl w-full p-2 text-white font-bold"
-          >
-            Place Order
-          </button>
-        </Link>
+      <div>
+        <OrderButton
+          orderNumber={orderNumber}
+          transactionId={transactionId}
+          setTransactionId={setTransactionId}
+          handleOrderData={handleOrderData}
+        />
       </div>
     </div>
   );
