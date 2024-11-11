@@ -14,7 +14,7 @@ const OrderButton: React.FC<OrderButtonProps> = ({
   setTransactionId,
   handleOrderData,
 }) => {
-  const handlePlaceOrder = (e: any) => {
+  const handlePlaceOrder = (e: React.SyntheticEvent) => {
     setTransactionId((prevId) => prevId + 1); // Update transactionId safely
     handleOrderData(e); // Call the order handler before navigation
   };

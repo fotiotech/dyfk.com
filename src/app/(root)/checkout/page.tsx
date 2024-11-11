@@ -40,7 +40,7 @@ const CheckoutPage = () => {
     getCustomer();
   }, [user?._id]);
 
-  async function handleOrderData(e?: any) {
+  async function handleOrderData(e: React.SyntheticEvent) {
     e.preventDefault();
 
     if (!selectedPaymentMethod) {

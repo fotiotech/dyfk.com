@@ -42,8 +42,16 @@ const PaymentPage: React.FC = () => {
   return (
     <div className="p-2">
       <h2 className="text-2xl font-bold">Payment Page</h2>
-      <p>Order Number: {orderNumber}</p>
-      <p>Payment Method: {order?.paymentMethod}</p>
+      <div className="my-2 ">
+        <p>
+          Order Number: <span className="font-semibold">{orderNumber}</span>{" "}
+        </p>
+        <p>
+          Payment Method:{" "}
+          <span className="font-semibold">{order?.paymentMethod}</span>{" "}
+        </p>
+      </div>
+
       <div className="my-2">{content}</div>
     </div>
   );

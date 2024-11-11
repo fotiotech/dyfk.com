@@ -56,7 +56,7 @@ function MonetbilPayment() {
   return (
     <div className="flex justify-center items-center">
       <div>
-        <h2 className="text-2xl font-bold">Monetbil (Mobile Money)</h2>
+        <h2 className="text-xl font-bold">Monetbil (Mobile Money)</h2>
         <ul className="flex flex-col gap-3 my-3 p-2">
           <li
             onClick={() => {
