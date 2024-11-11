@@ -38,7 +38,7 @@ export async function findOrders(orderNumber?: string, userId?: string) {
       }));
     }
   } catch (error: any) {
-    throw new Error(`Error fetching orders: ${error.message}`);
+    console.error(`Error fetching orders: ${error.message}`);
   }
 }
 
@@ -69,6 +69,6 @@ export async function createOrder(orderNumber: string, data: any) {
       return savedOrder;
     }
   } catch (error: any) {
-    throw new Error(`Error in creating or updating order: ${error.message}`);
+    console.error(`Error in creating or updating order: ${error.message}`);
   }
 }

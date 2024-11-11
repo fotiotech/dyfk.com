@@ -16,6 +16,7 @@ const CheckoutPage = () => {
   const { user } = useUser();
   const { cart } = useCart();
   const [customer, setCustomer] = useState<Customer>();
+  const [transactionId, setTransactionId] = useState(2);
   const [orderNumber, setOrderNumber] = useState("");
   const [shippingAddressCheck, setShippingAddressCheck] =
     useState<boolean>(true);
@@ -72,6 +73,7 @@ const CheckoutPage = () => {
       total: calculateTotal(cart),
       paymentStatus: "pending",
       paymentMethod: selectedPaymentMethod,
+      transactionId: transactionId,
       shippingAddress: {
         street: customer?.shippingAddress?.street || "",
         city: customer?.shippingAddress?.city || "",
@@ -87,10 +89,6 @@ const CheckoutPage = () => {
       couponCode: "",
       discount: 0,
     });
-
-    if (orderNumber) {
-      router?.replace(`/payment?orderNumber=${orderNumber}`);
-    }
   }
 
   const calculateTotal = (cartItems: any) => {
@@ -197,14 +195,23 @@ const CheckoutPage = () => {
       </div>
 
       <div className="text-center">
-        <button
-          title="place order"
-          type="button"
-          onClick={handleOrderData}
-          className="btn border rounded-2xl w-full p-2 text-white font-bold"
+        <Link
+          onClick={() => setTransactionId(transactionId + 1)}
+          href={
+            orderNumber && transactionId
+              ? `/payment?orderNumber=${orderNumber.toString()}`
+              : ""
+          }
         >
-          Place Order
-        </button>
+          <button
+            title="place order"
+            type="button"
+            onClick={handleOrderData}
+            className="btn border rounded-2xl w-full p-2 text-white font-bold"
+          >
+            Place Order
+          </button>
+        </Link>
       </div>
     </div>
   );

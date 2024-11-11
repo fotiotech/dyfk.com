@@ -36,6 +36,7 @@ const PaymentPage = () => {
   return (
     <div className="p-2">
       <h2 className="text-2xl font-bold">Payment Page</h2>
+      <p>Order Number: {orderNumber}</p>
       <div className="my-2">{content}</div>
     </div>
   );
