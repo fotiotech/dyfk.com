@@ -6,7 +6,6 @@ const nextConfig = {
       allowedOrigins: [
         "my-proxy.com",
         "*.my-proxy.com",
-        "http://localhost:3000",
         "https://dyfk-com.vercel.app/",
       ],
     },
