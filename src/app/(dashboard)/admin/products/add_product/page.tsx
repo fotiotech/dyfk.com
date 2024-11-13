@@ -53,7 +53,7 @@ const AddProduct = () => {
         const response = await findCategoryAttributesAndValues(categoryId);
         if (response?.length > 0) {
           // Format response data to match AttributeType structure
-          const formattedAttributes = response[0].inheritedAttributes.map(
+          const formattedAttributes = response[0].allAttributes.map(
             (attr: any) => ({
               attrName: attr.name,
               attrValue: attr.attributeValues.map((val: any) => val.value),
@@ -62,6 +62,7 @@ const AddProduct = () => {
           setAttributes(formattedAttributes);
         } // Ensure this is an array of attributes
       }
+
       const res = await getBrands();
       setBrands(res);
     };

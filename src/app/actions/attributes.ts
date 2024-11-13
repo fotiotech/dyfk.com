@@ -13,6 +13,16 @@ export async function findCategoryAttributesAndValues(categoryId: string) {
     // Match the specified category by _id
     { $match: { _id: new mongoose.Types.ObjectId(categoryId) } },
 
+    // Lookup attributes directly associated with the selected category
+    {
+      $lookup: {
+        from: "attributes",
+        localField: "_id",
+        foreignField: "category_id",
+        as: "directAttributes",
+      },
+    },
+
     // Use $graphLookup to find the entire category hierarchy
     {
       $graphLookup: {
@@ -24,7 +34,7 @@ export async function findCategoryAttributesAndValues(categoryId: string) {
       },
     },
 
-    // Lookup attributes within this hierarchy
+    // Lookup attributes within the ancestry hierarchy
     {
       $lookup: {
         from: "attributes",
@@ -34,26 +44,34 @@ export async function findCategoryAttributesAndValues(categoryId: string) {
       },
     },
 
-    // Unwind inheritedAttributes to fetch attribute values per attribute
-    { $unwind: "$inheritedAttributes" },
+    // Merge direct and inherited attributes
+    {
+      $addFields: {
+        allAttributes: {
+          $concatArrays: ["$directAttributes", "$inheritedAttributes"],
+        },
+      },
+    },
+
+    // Unwind allAttributes to fetch attribute values per attribute
+    { $unwind: "$allAttributes" },
 
     // Lookup attribute values for each attribute
     {
       $lookup: {
         from: "attributevalues",
-        localField: "inheritedAttributes._id",
+        localField: "allAttributes._id",
         foreignField: "attribute_id",
-        as: "inheritedAttributes.attributeValues",
+        as: "allAttributes.attributeValues",
       },
     },
 
-    // Group by category details and re-aggregate inheritedAttributes
+    // Group by category details and re-aggregate allAttributes
     {
       $group: {
         _id: "$_id",
         categoryName: { $first: "$categoryName" },
-        ancestry: { $first: "$ancestry" },
-        inheritedAttributes: { $push: "$inheritedAttributes" },
+        allAttributes: { $push: "$allAttributes" },
       },
     },
   ]);
