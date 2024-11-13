@@ -11,9 +11,9 @@ export default async function Layout({
   const userRole = session?.role;
 
   // If there is no token, redirect to login page
-  // if (userRole !== "admin") {
-  //   return redirect("/auth/login");
-  // }
+  if (userRole !== "admin") {
+    return redirect("/auth/login");
+  }
 
   return (
     <div>
