@@ -8,10 +8,15 @@ import { Attribute as ProdAttributes } from "@/app/(dashboard)/components";
 import { createProduct } from "@/app/actions/products";
 import { getBrands } from "@/app/actions/brand";
 import { getCategory } from "@/app/actions/category";
+import { findCategoryAttributesAndValues } from "@/app/actions/attributes";
 
 type AttributeType = {
   attrName: string;
   attrValue: string[];
+};
+
+type FormDataType = {
+  attributes: { [key: string]: string[] };
 };
 
 const AddProduct = () => {
@@ -27,20 +32,34 @@ const AddProduct = () => {
   };
 
   const [categoryId, setCategoryId] = useState<string>("");
-  const [attributes, setAttributes] = useState<AttributeType[]>([]); // Type as array of attributes
+  const [attributes, setAttributes] = useState<AttributeType[] | any>([]); // Type as array of attributes
   const [brands, setBrands] = useState<Brand[]>([]);
   const [formData, setFormData] = useState<typeof initialState>(initialState);
   const [files, setFiles] = useState<string[]>([]);
 
   const images = files?.length! > 1 ? files : files?.[0];
 
-  const toCreateProduct = createProduct.bind(null, categoryId, formData.attributes, images as string[])
+  const toCreateProduct = createProduct.bind(
+    null,
+    categoryId,
+    formData.attributes,
+    images as string[]
+  );
 
   useEffect(() => {
     const fetchData = async () => {
       if (categoryId !== "") {
-        const res = await getCategory(categoryId, null, null);
-        setAttributes(res.attributes); // Ensure this is an array of attributes
+        const response = await findCategoryAttributesAndValues(categoryId);
+        if (response?.length > 0) {
+          // Format response data to match AttributeType structure
+          const formattedAttributes = response[0].inheritedAttributes.map(
+            (attr: any) => ({
+              attrName: attr.name,
+              attrValue: attr.attributeValues.map((val: any) => val.value),
+            })
+          );
+          setAttributes(formattedAttributes);
+        } // Ensure this is an array of attributes
       }
       const res = await getBrands();
       setBrands(res);
@@ -48,7 +67,6 @@ const AddProduct = () => {
 
     fetchData();
   }, [categoryId]);
-
 
   const handleAttributeChange = (
     attrName: string,
@@ -60,28 +78,25 @@ const AddProduct = () => {
     }));
   };
 
-
   return (
     <>
       <div>
         <h2 className="text-2xl font-bold">Add Product</h2>
         <FilesUploader files={files} setFiles={setFiles} />
         <div className="p-2 bg-pri dark:bg-pri-dark rounded-xl mb-2">
-              <h2 className="font-semibold text-xl m-2 mt-5">Category</h2>
-              <Category setCategoryId={setCategoryId} />
+          <h2 className="font-semibold text-xl m-2 mt-5">Category</h2>
+          <Category setCategoryId={setCategoryId} />
         </div>
         <ProdAttributes
-            attributes={attributes}
-            handleAttributeChange={handleAttributeChange}
-            formData={formData}
-          />
+          attributes={attributes}
+          handleAttributeChange={handleAttributeChange}
+          formData={formData}
+        />
         <form
           action={toCreateProduct}
           className="md:flex justify-between gap-3 w-full"
         >
-          
           <div className="flex-1">
-            
             <div className="p-2 bg-pri dark:bg-pri-dark rounded-xl mb-2">
               <h2 className="font-semibold text-xl m-2 mt-5">
                 Basic Information
@@ -124,7 +139,6 @@ const AddProduct = () => {
                     <input
                       name={name}
                       type={type}
-            
                       placeholder={placeholder}
                       className="w-[90%] p-2 rounded-lg bg-[#eee] dark:bg-sec-dark"
                       {...rest}
@@ -163,7 +177,6 @@ const AddProduct = () => {
                   <textarea
                     title="description"
                     name="description"
-                    
                     className="w-[90%] p-2 rounded-lg bg-[#eee] dark:bg-sec-dark"
                     rows={4}
                   />
@@ -171,20 +184,18 @@ const AddProduct = () => {
               </div>
             </div>
           </div>
-          
-        <div className="p-2 bg-pri dark:bg-pri-dark rounded-xl mb-2">
-        
-          <div className="flex justify-end items-center p-2">
-          <button
-            type="submit"
-            className="border-2 border-thi font-bold p-2 px-20 bg-thi hover:bg-opacity-90 transition-all rounded-lg"
-          >
-            Add Product
-          </button>
+
+          <div className="p-2 bg-pri dark:bg-pri-dark rounded-xl mb-2">
+            <div className="flex justify-end items-center p-2">
+              <button
+                type="submit"
+                className="border-2 border-thi font-bold p-2 px-20 bg-thi hover:bg-opacity-90 transition-all rounded-lg"
+              >
+                Add Product
+              </button>
+            </div>
           </div>
-        </div>
         </form>
-        
       </div>
     </>
   );

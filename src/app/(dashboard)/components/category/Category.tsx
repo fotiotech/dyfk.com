@@ -20,7 +20,6 @@ const Category = ({
     fetchData();
   }, []);
 
-
   return (
     <div className={` p-2 mt-4`}>
       <div>
@@ -36,7 +35,7 @@ const Category = ({
           </option>
           {category &&
             category.map((item, index) => (
-              <option key={index} value={item._id} className="text-sec">
+              <option key={index} value={item._id} className="">
                 {item.categoryName}
               </option>
             ))}

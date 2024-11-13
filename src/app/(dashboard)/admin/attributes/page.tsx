@@ -1,6 +1,6 @@
 "use client";
 
-import { createAttribues } from "@/app/actions/attributes";
+import { createAttribute } from "@/app/actions/attributes";
 import { getCategory } from "@/app/actions/category";
 import { Category } from "@/constant/types";
 import React, { useEffect, useState } from "react";
@@ -32,18 +32,28 @@ const Attributes = () => {
     fetchData();
   }, [catId]);
 
-
   function addAttributes() {
-    setFormData((prev) => [
-      ...prev,
-      { attrName: "", attrValue: [""] },
-    ]);
+    setFormData((prev) => [...prev, { attrName: "", attrValue: [""] }]);
   }
+
+  // Handle changes for both attrName and attrValue in formData
+  const handleInputChange = (index: number, field: string, value: string) => {
+    setFormData((prev) =>
+      prev.map((attr, i) =>
+        i === index
+          ? {
+              ...attr,
+              [field]: field === "attrValue" ? value.split(",") : value,
+            }
+          : attr
+      )
+    );
+  };
 
   return (
     <>
       <h2 className="font-bold text-xl my-2">Attributes</h2>
-      <form action={createAttribues}>
+      <form action={createAttribute}>
         <select
           title="Parent Category"
           name="catId"
@@ -51,9 +61,13 @@ const Attributes = () => {
           value={catId}
           className="w-3/4 p-2 rounded-lg bg-[#eee] dark:bg-sec-dark"
         >
-          <option value="" className="text-gray-700">Select category</option>
+          <option value="" className="text-gray-700">
+            Select category
+          </option>
           {category?.map((cat) => (
-            <option key={cat._id} value={cat._id}>{cat.categoryName}</option>
+            <option key={cat._id} value={cat._id}>
+              {cat.categoryName}
+            </option>
           ))}
         </select>
 
@@ -64,8 +78,11 @@ const Attributes = () => {
               <input
                 id={`attrName-${index}`}
                 type="text"
-                name="attrName"
+                name={`attrName-${index}`}
                 value={attr.attrName}
+                onChange={(e) =>
+                  handleInputChange(index, "attrName", e.target.value)
+                }
                 className="p-2 rounded-lg bg-[#eee] dark:bg-sec-dark"
               />
             </div>
@@ -74,9 +91,12 @@ const Attributes = () => {
               <input
                 id={`attrValue-${index}`}
                 type="text"
-                name="attrValue"
+                name={`attrValue-${index}`}
                 value={attr.attrValue.join(",")}
-                placeholder="Words, separated by commas"
+                placeholder="Values separated by commas"
+                onChange={(e) =>
+                  handleInputChange(index, "attrValue", e.target.value)
+                }
                 className="p-2 rounded-lg bg-[#eee] dark:bg-sec-dark"
               />
             </div>
@@ -84,14 +104,12 @@ const Attributes = () => {
         ))}
 
         <div className="flex justify-end items-center gap-2">
-          <button
-            onClick={addAttributes}
-            type="button"
-            className="btn text-sm"
-          >
+          <button onClick={addAttributes} type="button" className="btn text-sm">
             Add new property
           </button>
-          <button type="submit" className="btn my-2">Save</button>
+          <button type="submit" className="btn my-2">
+            Save
+          </button>
         </div>
       </form>
 

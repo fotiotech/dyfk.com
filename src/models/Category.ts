@@ -1,12 +1,28 @@
-import mongoose, { Schema, model, models, Document, Model } from "mongoose";
+import mongoose, { Schema, model, models, Document } from "mongoose";
 
-// Define the schema with type annotations
-const CategorySchema = new Schema({
+// Category Interface
+interface ICategory extends Document {
+  url_slug: string;
+  categoryName: string;
+  parent_id?: mongoose.Types.ObjectId;
+  description?: string;
+  imageUrl?: string[];
+  seo_title?: string;
+  seo_desc?: string;
+  keywords?: string;
+  sort_order?: number;
+  status: "active" | "inactive";
+  created_at: Date;
+  updated_at: Date;
+}
+
+// Category Schema
+const CategorySchema = new Schema<ICategory>({
   url_slug: {
     type: String,
     unique: true,
     required: [true, "URL slug is required"],
-    match: /^[a-z0-9]+(?:-[a-z0-9]+)*$/, // Example regex for slugs
+    match: /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
   },
   categoryName: {
     type: String,
@@ -17,63 +33,31 @@ const CategorySchema = new Schema({
     type: mongoose.Types.ObjectId,
     ref: "Category",
   },
-  attributes: [
+  description: { type: String, maxLength: 500 },
+  imageUrl: [
     {
-      attrName: { type: String, required: true },
-      attrValue: { type: [String], required: true }, // Array of strings
+      type: String,
+      validate: {
+        validator: (v: string) => /^https?:\/\/.+\..+$/.test(v),
+        message: (props: { value: string }) => `${props.value} is not a valid URL!`,
+      },
     },
   ],
-
-  description: {
-    type: String,
-    maxLength: 500, // Example constraint
-  },
-  imageUrl: {
-    type: [String],
-    validate: {
-      validator: function (v: string) {
-        return /^https?:\/\/.+\..+$/.test(v);
-      },
-      message: (props: { value: string }) =>
-        `${props.value} is not a valid URL!`,
-    },
-  },
-  seo_title: {
-    type: String,
-    maxLength: 60,
-  },
-  seo_desc: {
-    type: String,
-    maxLength: 160,
-  },
-  keywords: {
-    type: String,
-  },
-  sort_order: {
-    type: Number, // Changed to Number
-  },
-  status: {
-    type: String,
-    enum: ["active", "inactive"],
-    default: "active",
-  },
-  created_at: {
-    type: Date,
-    default: Date.now,
-  },
-  updated_at: {
-    type: Date,
-    default: Date.now,
-  },
+  seo_title: { type: String, maxLength: 60 },
+  seo_desc: { type: String, maxLength: 160 },
+  keywords: { type: String },
+  sort_order: { type: Number },
+  status: { type: String, enum: ["active", "inactive"], default: "active" },
+  created_at: { type: Date, default: Date.now },
+  updated_at: { type: Date, default: Date.now },
 });
 
-// Middleware to auto-update `updated_at` before saving
+// Update `updated_at` on save
 CategorySchema.pre("save", function (next) {
   this.updated_at = new Date();
   next();
 });
 
-// Export the model with type annotation
-const Category = models.Category || model("Category", CategorySchema);
-
+// Category Model
+const Category = models.Category || model<ICategory>("Category", CategorySchema);
 export default Category;
