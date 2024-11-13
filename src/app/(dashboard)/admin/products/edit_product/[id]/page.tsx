@@ -86,14 +86,14 @@ const EditDeleteProduct: React.FC<PageProps> = ({ params }) => {
         const response = await findCategoryAttributesAndValues(categoryId);
         if (response?.length > 0) {
           // Format response data to match AttributeType structure
-          const formattedAttributes = response[0].inheritedAttributes.map(
+          const formattedAttributes = response[0].allAttributes.map(
             (attr: any) => ({
               attrName: attr.name,
               attrValue: attr.attributeValues.map((val: any) => val.value),
             })
           );
           setAttributes(formattedAttributes);
-        } // Ensure this is an array of attributes
+        }// Ensure this is an array of attributes
       }
       const brandsData = await getBrands();
       setBrands(brandsData);
@@ -179,7 +179,7 @@ const EditDeleteProduct: React.FC<PageProps> = ({ params }) => {
                   <input
                     name={name}
                     type={type}
-                    value={String(
+                    defaultValue={String(
                       formData[name as keyof typeof formData] ?? ""
                     )}
                     placeholder={placeholder}
@@ -198,7 +198,7 @@ const EditDeleteProduct: React.FC<PageProps> = ({ params }) => {
                 <select
                   title="brand id"
                   name="brandId"
-                  value={formData.brandId}
+                  defaultValue={formData.brandId}
                   className="w-[90%] p-2 rounded-lg bg-[#eee] dark:bg-sec-dark"
                 >
                   <option value="">Select brand</option>

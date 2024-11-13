@@ -140,7 +140,7 @@ export async function updateProduct(
         new: true,
       }
     );
-    return updatedProduct;
+    revalidatePath("/admin/products/products_list");
   }
 }
 
