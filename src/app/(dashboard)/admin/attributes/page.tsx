@@ -1,6 +1,9 @@
 "use client";
 
-import { createAttribute } from "@/app/actions/attributes";
+import {
+  createAttribute,
+  findCategoryAttributesAndValues,
+} from "@/app/actions/attributes";
 import { getCategory } from "@/app/actions/category";
 import { Category } from "@/constant/types";
 import React, { useEffect, useState } from "react";
@@ -21,8 +24,17 @@ const Attributes = () => {
   useEffect(() => {
     const fetchData = async () => {
       if (catId) {
-        const res = await getCategory(catId);
-        setAttributes(res.attributes || []);
+        const response = await findCategoryAttributesAndValues(catId);
+        if (response?.length > 0) {
+          // Format response data to match AttributeType structure
+          const formattedAttributes = response[0].allAttributes.map(
+            (attr: any) => ({
+              attrName: attr.name,
+              attrValue: attr.attributeValues.map((val: any) => val.value),
+            })
+          );
+          setAttributes(formattedAttributes);
+        } // Ensure this is an array of attributes
       } else {
         const res = await getCategory();
         setCategory(res || []);
