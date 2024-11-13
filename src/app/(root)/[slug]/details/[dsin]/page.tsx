@@ -4,7 +4,7 @@ import Loading from "@/app/loading";
 import AddToCart from "@/components/AddToCart";
 import CheckoutButton from "@/components/CheckoutButton";
 import DetailImages from "@/components/DetailImages";
-import {Prices} from "@/components/cart/Prices";
+import { Prices } from "@/components/cart/Prices";
 import { Product } from "@/constant/types";
 import { getProductDetail } from "@/fetch/products";
 import { useQuery } from "@tanstack/react-query";
@@ -18,10 +18,10 @@ const RenderAttribute = ({
   value: any;
 }) => {
   return (
-    <div className="flex flex-col ml-2">
-      <strong>{keyName}:</strong>
+    <div className="grid grid-cols-2 gap-3 ml-2">
+      {keyName === "0" ? "" : <strong>{keyName}:</strong>}
       {typeof value === "object" && !Array.isArray(value) && value !== null ? (
-        <div className="ml-4">
+        <div className="">
           {Object.entries(value).map(([nestedKey, nestedValue]) => (
             <RenderAttribute
               key={nestedKey}
