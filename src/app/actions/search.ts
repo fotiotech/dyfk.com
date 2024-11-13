@@ -1,14 +1,22 @@
+"use server";
+
 import Product from "@/models/Product";
 import { connection } from "@/utils/connection";
 
 export async function getSearch(query: string) {
   await connection();
+  if (query) {
+    console.log(query);
+  }
   try {
     if (query) {
       const products = await Product.find({
         productName: { $regex: query, $options: "i" },
       });
-      console.log(products);
+      if (products) {
+        console.log(products);
+      }
+
       return products.length > 0
         ? products.map((prod) => ({
             ...prod?.toObject(),

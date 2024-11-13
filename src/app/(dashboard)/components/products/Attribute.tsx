@@ -21,16 +21,23 @@ const Attribute: React.FC<AttributeProps> = ({
   handleAttributeChange,
 }) => {
   // Helper to handle multiple selections
-  const onAttributeChange = (event: React.ChangeEvent<HTMLSelectElement>, attrName: string) => {
-    const selectedValues = Array.from(event.target.selectedOptions, (option) => option.value);
+  const onAttributeChange = (
+    event: React.ChangeEvent<HTMLSelectElement>,
+    attrName: string
+  ) => {
+    const selectedValues = Array.from(
+      event.target.selectedOptions,
+      (option) => option.value
+    );
     handleAttributeChange(attrName, selectedValues); // Pass selected values to handler
   };
+
 
   return (
     <div className="flex-1">
       <div className="p-2 bg-pri dark:bg-pri-dark rounded-xl mb-2">
         <h2 className="font-semibold text-xl m-2 mt-5">Product Attributes</h2>
-        <div className="grid grid-cols-2 lg:grid-cols-3 gap-2 p-2">
+        <div className="flex flex-col lg:grid-cols-3 gap-2 p-2">
           {attributes?.length > 0 &&
             attributes.map((p) => (
               <div key={p.attrName}>
@@ -44,7 +51,7 @@ const Attribute: React.FC<AttributeProps> = ({
                     name={p.attrName}
                     value={formData.attributes[p.attrName] || []} // Ensure value is an array
                     onChange={(e) => onAttributeChange(e, p.attrName)} // Use helper to handle multiple selections
-                    className="p-2 rounded-lg bg-[#eee] dark:bg-sec-dark scrollbar-none"
+                    className="w-3/4 p-2 rounded-lg bg-[#eee] dark:bg-sec-dark scrollbar-none"
                   >
                     <option value="">Select {p.attrName}</option>
                     {p.attrValue.map((v) => (
@@ -58,7 +65,6 @@ const Attribute: React.FC<AttributeProps> = ({
             ))}
         </div>
       </div>
-      
     </div>
   );
 };

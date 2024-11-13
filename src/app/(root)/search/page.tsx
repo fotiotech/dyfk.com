@@ -24,7 +24,10 @@ const Search = () => {
   const [screenSize, setScreenSize] = useState(0);
 
   useScreenSize(() => {
-    setScreenSize(window.innerWidth);
+    if (typeof window !== "undefined") {
+      // Safe to use window
+      setScreenSize(window.innerWidth);
+    }
   });
 
   useEffect(() => {

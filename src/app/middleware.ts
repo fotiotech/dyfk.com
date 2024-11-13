@@ -1,21 +1,25 @@
-export { auth as middleware } from "./auth";
-import { NextRequest, NextResponse } from "next/server";
+// export { auth as middleware } from "./auth";
+import { NextRequest } from "next/server";
 import { verifySession } from "./lib/dal";
 
-export default async function middleware(req: NextRequest) {
+export async function middleware(request: NextRequest) {
   const session = await verifySession();
-  console.log(session);
-  const userRole = session?.role;
 
-  // If there is no token, redirect to login page
-  if (userRole !== "admin") {
-    return NextResponse.redirect(new URL("/auth/login", req.url));
+  if (
+    session?.role === "admin" &&
+    !request.nextUrl.pathname.startsWith("/admin")
+  ) {
+    return Response.redirect(new URL("/admin", request.url));
   }
 
-  return NextResponse.next();
+  if (
+    session?.role !== "admin" &&
+    !request.nextUrl.pathname.startsWith("/login")
+  ) {
+    return Response.redirect(new URL("/login", request.url));
+  }
 }
 
-// Routes Middleware should not run on
 export const config = {
-  matcher: ["/admin/:path*"],
+  matcher: ["/admin/path:*"],
 };

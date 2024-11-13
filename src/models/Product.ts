@@ -1,53 +1,68 @@
 import { Schema, model, models } from "mongoose";
 
-const ProductSchema = new Schema({
-  url_slug: {
-    type: String,
-    unique: true,
-    required: true,
+const ProductSchema = new Schema(
+  {
+    url_slug: {
+      type: String,
+      unique: true,
+      required: [true, "URL slug is required"],
+      trim: true,
+    },
+    dsin: {
+      type: String,
+      unique: true,
+      required: [true, "DSIN is required"],
+      trim: true,
+    },
+    sku: {
+      type: String,
+      trim: true,
+    },
+    productName: {
+      type: String,
+      trim: true,
+    },
+    category_id: {
+      type: Schema.Types.ObjectId,
+      ref: "Category",
+      required: [true, "Category ID is required"],
+    },
+    price: {
+      type: Number,
+      required: [true, "Price is required"],
+      min: [0, "Price must be a positive number"],
+    },
+    imageUrls: {
+      type: [String],
+      required: [true, "At least one image URL is required"],
+    },
+    attributes: [
+      {
+        type: Object,
+      },
+    ],
+    department: {
+      type: String,
+      trim: true,
+    },
+    description: {
+      type: String,
+      trim: true,
+    },
+    brand_id: {
+      type: Schema.Types.ObjectId,
+      ref: "Brand",
+    },
+    status: {
+      type: String,
+      enum: ["active", "inactive"],
+      default: "active",
+    },
   },
-  dsin: {
-    type: String,
-    unique: true,
-    required: true,
-  },
-  sku: {
-    type: String,
-  },
-  productName: {
-    type: String,
-  },
-  category_id: { type: Schema.Types.ObjectId, ref: "Category", required: true },
-  price: {
-    type: Number,
-  },
-  imageUrls: {
-    type: [String],
-    required: true,
-  },
-  attributes: [{ type: Object }],
-  department: {
-    type: String,
-  },
-  description: {
-    type: String,
-  },
-  brand_id: {
-    type: Schema.Types.ObjectId,
-    ref: "Brand",
-  },
-  status: {
-    type: String,
-  },
-  created_at: {
-    type: Date,
-    default: Date.now,
-  },
-  updated_at: {
-    type: Date,
-    default: Date.now,
-  },
-});
+  {
+    timestamps: { createdAt: "created_at", updatedAt: "updated_at" },
+  }
+);
 
 const Product = models.Product || model("Product", ProductSchema);
 

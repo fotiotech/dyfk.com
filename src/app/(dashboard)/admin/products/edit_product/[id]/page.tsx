@@ -15,6 +15,7 @@ import { getCategory } from "@/app/actions/category";
 import { Brand, Product } from "@/constant/types";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ObjectId } from "mongoose";
+import { findCategoryAttributesAndValues } from "@/app/actions/attributes";
 
 type AttributeType = {
   attrName: string;
@@ -50,7 +51,13 @@ const EditDeleteProduct: React.FC<PageProps> = ({ params }) => {
 
   const images = files?.length! > 1 ? files : files?.[0];
 
-  const toupdateProduct = updateProduct.bind(null, productId, categoryId, formData.attributes, images as string[])
+  const toupdateProduct = updateProduct.bind(
+    null,
+    productId,
+    categoryId,
+    formData.attributes,
+    images as string[]
+  );
 
   useEffect(() => {
     const fetchData = async () => {
@@ -75,9 +82,18 @@ const EditDeleteProduct: React.FC<PageProps> = ({ params }) => {
       }
 
       // Load brands and attributes based on category
-      if (categoryId) {
-        const categoryData = await getCategory(categoryId);
-        setAttributes(categoryData.attributes || []);
+      if (categoryId !== "") {
+        const response = await findCategoryAttributesAndValues(categoryId);
+        if (response?.length > 0) {
+          // Format response data to match AttributeType structure
+          const formattedAttributes = response[0].inheritedAttributes.map(
+            (attr: any) => ({
+              attrName: attr.name,
+              attrValue: attr.attributeValues.map((val: any) => val.value),
+            })
+          );
+          setAttributes(formattedAttributes);
+        } // Ensure this is an array of attributes
       }
       const brandsData = await getBrands();
       setBrands(brandsData);
@@ -85,7 +101,6 @@ const EditDeleteProduct: React.FC<PageProps> = ({ params }) => {
 
     fetchData();
   }, [productId, categoryId]);
-
 
   const handleAttributeChange = (
     attrName: string,
@@ -97,8 +112,6 @@ const EditDeleteProduct: React.FC<PageProps> = ({ params }) => {
     }));
   };
 
-
-
   const handleDeleteProduct = async () => {
     if (productId) {
       await deleteProduct(productId);
@@ -106,29 +119,27 @@ const EditDeleteProduct: React.FC<PageProps> = ({ params }) => {
     }
   };
 
-
   return (
     <div>
-      <h2 className="text-2xl font-bold">
-        Edit Product
-      </h2>
+      <h2 className="text-2xl font-bold">Edit Product</h2>
       <FilesUploader files={files} setFiles={setFiles} />
-          <div className="p-2 bg-pri dark:bg-pri-dark rounded-xl mb-2">
-            <h2 className="font-semibold text-xl m-2 mt-5">Category</h2>
-            <Category
-              setCategoryId={setCategoryId}
-              selectedCategoryId={formData.category_id}
-            />
-          </div>
-          <ProdAttributes
-          attributes={attributes}
-          handleAttributeChange={handleAttributeChange}
-          formData={formData}
+      <div className="p-2 bg-pri dark:bg-pri-dark rounded-xl mb-2">
+        <h2 className="font-semibold text-xl m-2 mt-5">Category</h2>
+        <Category
+          setCategoryId={setCategoryId}
+          selectedCategoryId={formData.category_id}
         />
-      <form action={toupdateProduct} className="md:flex justify-between gap-3 w-full">
-        
+      </div>
+      <ProdAttributes
+        attributes={attributes}
+        handleAttributeChange={handleAttributeChange}
+        formData={formData}
+      />
+      <form
+        action={toupdateProduct}
+        className="md:flex justify-between gap-3 w-full"
+      >
         <div className="flex-1">
-          
           <div className="p-2 bg-pri dark:bg-pri-dark rounded-xl mb-2">
             <h2 className="font-semibold text-xl m-2 mt-5">
               Basic Information
@@ -168,7 +179,9 @@ const EditDeleteProduct: React.FC<PageProps> = ({ params }) => {
                   <input
                     name={name}
                     type={type}
-                    value={String(formData[name as keyof typeof formData] ?? "")}
+                    value={String(
+                      formData[name as keyof typeof formData] ?? ""
+                    )}
                     placeholder={placeholder}
                     className="w-[90%] p-2 rounded-lg bg-[#eee] dark:bg-sec-dark"
                     {...rest}
@@ -206,28 +219,27 @@ const EditDeleteProduct: React.FC<PageProps> = ({ params }) => {
                 <textarea
                   title="description"
                   name="description"
-                  value={formData.description}
+                  defaultValue={formData.description}
                   className="w-[90%] p-2 rounded-lg bg-[#eee] dark:bg-sec-dark"
                   rows={4}
                 />
               </div>
             </div>
           </div>
-          
-          
         </div>
-        <div className="flex justify-end p-2 px-5 bg-pri
-         dark:bg-pri-dark rounded-xl mb-2">
-            <button
-        type="submit"
-          className="px-4 py-2 bg-blue-500 text-white rounded"
+        <div
+          className="flex justify-end p-2 px-5 bg-pri
+         dark:bg-pri-dark rounded-xl mb-2"
         >
-          Update Product
-        </button>
-          </div>
+          <button
+            type="submit"
+            className="px-4 py-2 bg-blue-500 text-white rounded"
+          >
+            Update Product
+          </button>
+        </div>
       </form>
       <div className="mt-4 flex gap-4">
-        
         {productId && (
           <button
             onClick={handleDeleteProduct}

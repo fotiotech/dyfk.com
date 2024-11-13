@@ -7,7 +7,6 @@ import FilesUploader from "@/components/FilesUploader";
 import { Attribute as ProdAttributes } from "@/app/(dashboard)/components";
 import { createProduct } from "@/app/actions/products";
 import { getBrands } from "@/app/actions/brand";
-import { getCategory } from "@/app/actions/category";
 import { findCategoryAttributesAndValues } from "@/app/actions/attributes";
 
 type AttributeType = {
@@ -45,6 +44,8 @@ const AddProduct = () => {
     formData.attributes,
     images as string[]
   );
+
+  console.log(attributes);
 
   useEffect(() => {
     const fetchData = async () => {
