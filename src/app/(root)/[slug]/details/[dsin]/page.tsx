@@ -60,7 +60,7 @@ const DetailsPage = ({
                 {details?.attributes && (
                   <div className="p-2">
                     {details.attributes.map((attribute, index) => (
-                      <ul key={index}>
+                      <ul key={index} className="w-3/4">
                         {Object.entries(attribute)
                           .reverse()
                           .map(([key, values], idx) => (
