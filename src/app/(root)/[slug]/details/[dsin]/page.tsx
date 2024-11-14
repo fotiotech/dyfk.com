@@ -83,7 +83,7 @@ const DetailsPage = ({
               </div>
               <div className="border-t">
                 <p className="m-2 text-lg font-medium">Description</p>
-                <p className="lg:w-[600px] w-full py-5 p-2">
+                <p className="lg:w-[600px] w-full py-2 p-2">
                   {details?.description}
                 </p>
               </div>
