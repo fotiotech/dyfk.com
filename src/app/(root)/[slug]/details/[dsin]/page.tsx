@@ -41,7 +41,7 @@ const DetailsPage = ({
               <DetailImages file={details?.imageUrls} />
             </div>
 
-            <div className="flex flex-col gap-2 p-2 lg:p-0">
+            <div className="flex flex-col gap-3 p-2 lg:p-0">
               <div className="flex items-baseline gap-2">
                 <div className="font-bold text-xl">
                   <Prices amount={details?.price as number} />
@@ -55,11 +55,10 @@ const DetailsPage = ({
                 {details && <AddToCart product={details} />}
               </div>
 
-              <div>
-                <h3>Details</h3>
-
+              <div className="mt-2 border-t">
+                <h3 className="font-bold text-lg mt-2">Details</h3>
                 {details?.attributes && (
-                  <div>
+                  <div className="p-2">
                     {details.attributes.map((attribute, index) => (
                       <ul key={index}>
                         {Object.entries(attribute)
@@ -82,7 +81,7 @@ const DetailsPage = ({
                   </div>
                 )}
               </div>
-              <div className="border-t mt-2">
+              <div className="border-t">
                 <p className="m-2 text-lg font-medium">Description</p>
                 <p className="lg:w-[600px] w-full py-5 p-2">
                   {details?.description}
