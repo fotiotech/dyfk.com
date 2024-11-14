@@ -62,19 +62,21 @@ const DetailsPage = ({
                   <div>
                     {details.attributes.map((attribute, index) => (
                       <ul key={index}>
-                        {Object.entries(attribute).map(([key, values], idx) => (
-                          <li
-                            className="grid grid-cols-2 my-2"
-                            key={`${key}-${idx}`}
-                          >
-                            <strong>{key}</strong>
-                            <span>
-                              {Array.isArray(values)
-                                ? values.join(", ") // Join array values as a comma-separated string
-                                : values}
-                            </span>
-                          </li>
-                        ))}
+                        {Object.entries(attribute)
+                          .reverse()
+                          .map(([key, values], idx) => (
+                            <li
+                              className="grid grid-cols-2 my-2"
+                              key={`${key}-${idx}`}
+                            >
+                              <strong>{key}</strong>
+                              <span>
+                                {Array.isArray(values)
+                                  ? values.join(", ") // Join array values as a comma-separated string
+                                  : values}
+                              </span>
+                            </li>
+                          ))}
                       </ul>
                     ))}
                   </div>
