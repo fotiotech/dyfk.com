@@ -10,6 +10,8 @@ import { getProductDetail } from "@/fetch/products";
 import { useQuery } from "@tanstack/react-query";
 import React from "react";
 
+
+
 const DetailsPage = ({
   params,
 }: {
@@ -20,7 +22,6 @@ const DetailsPage = ({
     queryFn: () => getProductDetail(params.dsin),
   });
 
-  console.log(details?.attributes);
 
   return (
     <div className="relative w-full overflow-hidden bg-[#efefef]">

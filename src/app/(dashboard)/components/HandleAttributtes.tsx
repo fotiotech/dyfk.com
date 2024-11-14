@@ -9,14 +9,17 @@ const HandleAttributtes = ({
   setAttributes,
 }: {
   product: Product;
-  attributes: Product;
-  setAttributes: (arg: Product) => void;
+  attributes: { attributes?: Record<string, string | string[]> };
+  setAttributes: (arg: {
+    attributes?: Record<string, string | string[]>;
+  }) => void;
 }) => {
-  const { data: parentCategory, isLoading: loadingCategory } = useQuery<Category>({
-    queryKey: ["category", product?.category_id],
-    queryFn: () => getCategoryEdit(product?.category_id),
-    enabled: !!product?.category_id, // Ensure query runs only if categoryId is available
-  });
+  const { data: parentCategory, isLoading: loadingCategory } =
+    useQuery<Category>({
+      queryKey: ["category", product?.category_id],
+      queryFn: () => getCategoryEdit(product?.category_id),
+      enabled: !!product?.category_id, // Ensure query runs only if categoryId is available
+    });
   return (
     <div className="p-2 bg-pri dark:bg-pri-dark rounded-xl mb-2">
       <h2 className="font-semibold text-xl m-2 mt-5">Product Attributes</h2>
@@ -33,8 +36,8 @@ const HandleAttributtes = ({
                 setAttributes({
                   ...attributes,
                   attributes: {
-                  ...attributes.attributes,
-                  [p.attrName]: e.target.value,
+                    ...attributes.attributes,
+                    [p.attrName]: e.target.value,
                   },
                 })
               }
