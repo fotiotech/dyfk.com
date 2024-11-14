@@ -53,10 +53,10 @@ const EditDeleteProduct: React.FC<PageProps> = ({ params }) => {
 
   const toupdateProduct = updateProduct.bind(
     null,
-    productId,
-    categoryId,
-    formData.attributes,
-    images as string[]
+    productId || "", // Use empty string or default value if productId is falsy
+    categoryId || "", // Default to empty string if categoryId is falsy
+    formData.attributes || {}, // Default to empty object if formData.attributes is falsy
+    images as string[] // Ensure images is treated as an array
   );
 
   useEffect(() => {
@@ -93,7 +93,7 @@ const EditDeleteProduct: React.FC<PageProps> = ({ params }) => {
             })
           );
           setAttributes(formattedAttributes);
-        }// Ensure this is an array of attributes
+        } // Ensure this is an array of attributes
       }
       const brandsData = await getBrands();
       setBrands(brandsData);
@@ -131,7 +131,7 @@ const EditDeleteProduct: React.FC<PageProps> = ({ params }) => {
         />
       </div>
       <ProdAttributes
-        attributes={attributes}
+        attributes={attributes && attributes}
         handleAttributeChange={handleAttributeChange}
         formData={formData}
       />
