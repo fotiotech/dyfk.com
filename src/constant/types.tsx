@@ -51,7 +51,7 @@ export type Product = {
   brand_id?: string;
   imageUrls?: string[];
   productName: string;
-  attributes?: Record<string, string>;
+  attributes?: Record<string, string | string[]>[];
   price: number;
   color?: string;
   discount?: number;
@@ -294,4 +294,4 @@ export type MonetbilPaymentRequest = {
   returnUrl?: string;
   notifyUrl?: string;
   logo?: string;
-}
+};

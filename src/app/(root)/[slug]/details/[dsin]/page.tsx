@@ -10,41 +10,6 @@ import { getProductDetail } from "@/fetch/products";
 import { useQuery } from "@tanstack/react-query";
 import React from "react";
 
-const RenderAttribute = ({
-  keyName,
-  value,
-}: {
-  keyName: string;
-  value: any;
-}) => {
-  return (
-    <div className="grid grid-cols-2 gap-3 ml-2">
-      {keyName === "0" ? "" : <strong>{keyName}:</strong>}
-      {typeof value === "object" && !Array.isArray(value) && value !== null ? (
-        <div className="">
-          {Object.entries(value).map(([nestedKey, nestedValue]) => (
-            <RenderAttribute
-              key={nestedKey}
-              keyName={nestedKey}
-              value={nestedValue}
-            />
-          ))}
-        </div>
-      ) : Array.isArray(value) ? (
-        value.map((item, index) => (
-          <RenderAttribute
-            key={index}
-            keyName={`${keyName} ${index + 1}`}
-            value={item}
-          />
-        ))
-      ) : (
-        <span>{value}</span>
-      )}
-    </div>
-  );
-};
-
 const DetailsPage = ({
   params,
 }: {
@@ -54,6 +19,8 @@ const DetailsPage = ({
     queryKey: ["new-Arrival"],
     queryFn: () => getProductDetail(params.dsin),
   });
+
+  console.log(details?.attributes);
 
   return (
     <div className="relative w-full overflow-hidden bg-[#efefef]">
@@ -90,12 +57,28 @@ const DetailsPage = ({
 
               <div>
                 <h3>Details</h3>
-                <div>
-                  {details?.attributes &&
-                    Object.entries(details.attributes).map(([key, value]) => (
-                      <RenderAttribute key={key} keyName={key} value={value} />
+
+                {details?.attributes && (
+                  <div>
+                    {details.attributes.map((attribute, index) => (
+                      <ul key={index}>
+                        {Object.entries(attribute).map(([key, values], idx) => (
+                          <li
+                            className="grid grid-cols-2 my-2"
+                            key={`${key}-${idx}`}
+                          >
+                            <strong>{key}</strong>
+                            <span>
+                              {Array.isArray(values)
+                                ? values.join(", ") // Join array values as a comma-separated string
+                                : values}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
                     ))}
-                </div>
+                  </div>
+                )}
               </div>
               <div className="border-t mt-2">
                 <p className="m-2 text-lg font-medium">Description</p>
