@@ -18,8 +18,15 @@ import { ObjectId } from "mongoose";
 import { findCategoryAttributesAndValues } from "@/app/actions/attributes";
 
 type AttributeType = {
-  attrName: string;
-  attrValue: string[];
+  groupName: string;
+  attributes: {
+    attrName: string;
+    attrValue: string[];
+  }[];
+};
+
+type FormDataType = {
+  [groupName: string]: { [attrName: string]: string[] }; // Grouped structure for dynamic access
 };
 
 interface PageProps {
@@ -40,7 +47,7 @@ const EditDeleteProduct: React.FC<PageProps> = ({ params }) => {
     department: "",
     description: "",
     price: 0.0,
-    attributes: {} as Record<string, string[]>,
+    attributes: {} as { [groupName: string]: { [attrName: string]: string[] } },
   };
 
   const [formData, setFormData] = useState<typeof initialState>(initialState);
@@ -104,12 +111,19 @@ const EditDeleteProduct: React.FC<PageProps> = ({ params }) => {
   }, [productId, categoryId]);
 
   const handleAttributeChange = (
+    groupName: string,
     attrName: string,
     selectedValues: string[]
   ) => {
     setFormData((prev) => ({
       ...prev,
-      attributes: { ...prev.attributes, [attrName]: selectedValues },
+      attributes: {
+        ...prev.attributes,
+        [groupName]: {
+          ...prev.attributes[groupName],
+          [attrName]: selectedValues,
+        },
+      },
     }));
   };
 
