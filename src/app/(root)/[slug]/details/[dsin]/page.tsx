@@ -47,7 +47,40 @@ const DetailsPage = ({
                   <Prices amount={details?.price as number} />
                 </div>
               </div>
-
+              {details?.attributes && (
+                <div className="">
+                  {details.attributes.map((group, groupIndex) => (
+                    <div key={groupIndex} className="mb-3">
+                      {Object.entries(group)
+                        .filter(([groupName]) =>
+                          ["general"].includes(groupName)
+                        ) // Only include "general" and "display"
+                        .map(([groupName, attributes]) => (
+                          <div key={groupName}>
+                            <h4 className="font-semibold capitalize">
+                              {/* {groupName} */}
+                            </h4>
+                            {Object.entries(attributes).map(
+                              ([attrName, values], idx) => (
+                                <div
+                                  key={`${attrName}-${idx}`}
+                                  className="border-b my-2"
+                                >
+                                  <strong>{attrName}</strong>
+                                  <span className="ml-10">
+                                    {Array.isArray(values)
+                                      ? values.join(", ")
+                                      : values}
+                                  </span>
+                                </div>
+                              )
+                            )}
+                          </div>
+                        ))}
+                    </div>
+                  ))}
+                </div>
+              )}
               <div className="flex justify-between items-center gap-3 w-full py-2">
                 <CheckoutButton width="1/2" height="10">
                   Check Out
@@ -76,7 +109,7 @@ const DetailsPage = ({
                                     key={`${attrName}-${idx}`}
                                     className="grid grid-cols-2 my-2"
                                   >
-                                    <strong>{attrName}:</strong>
+                                    <strong>{attrName}</strong>
                                     <span>
                                       {Array.isArray(values)
                                         ? values.join(", ")
