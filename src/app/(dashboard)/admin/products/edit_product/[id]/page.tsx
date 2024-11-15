@@ -92,6 +92,7 @@ const EditDeleteProduct: React.FC<PageProps> = ({ params }) => {
               attrValue: attr.attributeValues.map((val: any) => val.value),
             })
           );
+          console.log(formattedAttributes);
           setAttributes(formattedAttributes);
         } // Ensure this is an array of attributes
       }

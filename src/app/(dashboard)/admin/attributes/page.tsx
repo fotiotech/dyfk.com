@@ -1,6 +1,10 @@
 "use client";
 
 import {
+  createAttributeGroup,
+  findAllAttributeGroups,
+} from "@/app/actions/attributegroup";
+import {
   createAttribute,
   findCategoryAttributesAndValues,
 } from "@/app/actions/attributes";
@@ -11,6 +15,14 @@ import React, { useEffect, useState } from "react";
 type AttributeType = {
   attrName: string;
   attrValue: string[];
+  group?: string;
+};
+
+type AttributesGroup = {
+  _id: string;
+  name: string;
+  parent_id: string;
+  category_id: string;
 };
 
 const Attributes = () => {
@@ -20,13 +32,16 @@ const Attributes = () => {
   const [formData, setFormData] = useState<AttributeType[]>([
     { attrName: "", attrValue: [""] },
   ]);
+  const [groups, setGroups] = useState<AttributesGroup[]>([]);
+  const [isNewGroup, setIsNewGroup] = useState<string>("");
+  const [newGroupName, setNewGroupName] = useState<string>("");
+  const [groupId, setGroupId] = useState<string>("");
 
   useEffect(() => {
     const fetchData = async () => {
       if (catId) {
         const response = await findCategoryAttributesAndValues(catId);
         if (response?.length > 0) {
-          // Format response data to match AttributeType structure
           const formattedAttributes = response[0].allAttributes.map(
             (attr: any) => ({
               attrName: attr.name,
@@ -34,22 +49,30 @@ const Attributes = () => {
             })
           );
           setAttributes(formattedAttributes);
-        } // Ensure this is an array of attributes
-      } else {
-        const res = await getCategory();
-        setCategory(res || []);
+        }
       }
+      const res = await getCategory();
+      setCategory(res || []);
     };
 
+    async function getGroups() {
+      const groupResponse = await findAllAttributeGroups();
+      setGroups(groupResponse as unknown as AttributesGroup[]);
+    }
+
     fetchData();
+    getGroups();
   }, [catId]);
 
   function addAttributes() {
     setFormData((prev) => [...prev, { attrName: "", attrValue: [""] }]);
   }
 
-  // Handle changes for both attrName and attrValue in formData
-  const handleInputChange = (index: number, field: string, value: string) => {
+  const handleInputChange = (
+    index: number,
+    field: keyof AttributeType,
+    value: string
+  ) => {
     setFormData((prev) =>
       prev.map((attr, i) =>
         i === index
@@ -60,6 +83,15 @@ const Attributes = () => {
           : attr
       )
     );
+  };
+
+  const handleCreateGroup = async () => {
+    if (newGroupName.trim() === "") return;
+
+    const response = await createAttributeGroup(newGroupName, groupId, catId);
+    if (response) {
+      setNewGroupName("");
+    }
   };
 
   return (
@@ -76,15 +108,75 @@ const Attributes = () => {
           <option value="" className="text-gray-700">
             Select category
           </option>
-          {category?.map((cat) => (
+          {category.map((cat) => (
             <option key={cat._id} value={cat._id}>
               {cat.categoryName}
             </option>
           ))}
         </select>
 
+        <div>
+          <label htmlFor={`group`}>Group:</label>
+          <select
+            title="group"
+            name="groupName"
+            onChange={(e) => {
+              setIsNewGroup(e.target.value);
+            }}
+            className="p-2 rounded-lg bg-[#eee] dark:bg-sec-dark"
+          >
+            <option value="">Select or Create New Group</option>
+            {groups.map((group) => (
+              <option key={group._id} value={group.name}>
+                {group.name}
+              </option>
+            ))}
+            <option value="create">Create New Group</option>
+          </select>
+          {isNewGroup === "create" && (
+            <div>
+              <div>
+                <select
+                  title="group"
+                  name="groupId"
+                  value={groupId}
+                  onChange={(e) => {
+                    setGroupId(e.target.value);
+                  }}
+                  className="p-2 rounded-lg bg-[#eee] dark:bg-sec-dark"
+                >
+                  <option value="">Select parent group</option>
+                  {groups.map((group) => (
+                    <option key={group._id} value={group._id}>
+                      {group.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="flex gap-2 mt-2">
+                <input
+                  type="text"
+                  name="newGroupName"
+                  value={newGroupName}
+                  onChange={(e) => setNewGroupName(e.target.value)}
+                  placeholder="Enter new group name"
+                  className="p-2 rounded-lg bg-[#eee] dark:bg-sec-dark"
+                />
+                <button
+                  type="button"
+                  onClick={handleCreateGroup}
+                  className="btn text-sm"
+                >
+                  Create Group
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+
         {formData.map((attr, index) => (
-          <div key={index} className="flex gap-2">
+          <div key={index} className="flex gap-2 my-2">
             <div>
               <label htmlFor={`attrName-${index}`}>Attribute Name:</label>
               <input
@@ -128,7 +220,7 @@ const Attributes = () => {
       <div>
         <h3 className="font-bold text-lg">Attributes</h3>
         <ul className="flex flex-col gap-1 max-h-96 overflow-hidden overflow-y-auto scrollbar-none">
-          {attributes?.map((attr) => (
+          {attributes.map((attr) => (
             <li
               key={attr.attrName}
               className="flex justify-between cursor-pointer font-bold hover:bg-pri-dark bg-opacity-5"

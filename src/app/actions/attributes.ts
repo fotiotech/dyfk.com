@@ -6,6 +6,7 @@ import Category from "@/models/Category";
 import { connection } from "@/utils/connection";
 import mongoose from "mongoose";
 
+// Function to fetch category attributes and values
 export async function findCategoryAttributesAndValues(categoryId: string) {
   await connection();
 
@@ -66,24 +67,58 @@ export async function findCategoryAttributesAndValues(categoryId: string) {
       },
     },
 
-    // Group by category details and re-aggregate allAttributes
+    // Group attributes by the 'group' field to organize by attribute groups
     {
       $group: {
-        _id: "$_id",
+        _id: {
+          categoryId: "$_id",
+          groupName: "$allAttributes.group",
+        },
         categoryName: { $first: "$categoryName" },
-        allAttributes: { $push: "$allAttributes" },
+        attributes: {
+          $push: {
+            attributeId: "$allAttributes._id",
+            attributeName: "$allAttributes.name",
+            attributeValues: "$allAttributes.attributeValues",
+          },
+        },
+      },
+    },
+
+    // Group again to combine all groups under the category
+    {
+      $group: {
+        _id: "$_id.categoryId",
+        categoryName: { $first: "$categoryName" },
+        groupedAttributes: {
+          $push: {
+            groupName: "$_id.groupName",
+            attributes: "$attributes",
+          },
+        },
+      },
+    },
+
+    // Project the final format
+    {
+      $project: {
+        _id: 0,
+        categoryId: "$_id",
+        categoryName: 1,
+        groupedAttributes: 1,
       },
     },
   ]);
 
-  console.log("Aggregated Response:", response);
   return response;
 }
 
+// Function to create a new attribute or select an existing attribute group
 export async function createAttribute(formData: FormData) {
   await connection();
 
   const categoryId = formData.get("catId") as string;
+  const groupName = formData.get("groupName") as string; // New field to handle group selection
   const attrNames: string[] = [];
   const attrValues: string[][] = []; // Array of arrays to hold multiple values per attribute
 
@@ -98,23 +133,23 @@ export async function createAttribute(formData: FormData) {
     }
   }
 
-  console.log("Parsed Values:", { categoryId, attrNames, attrValues });
-
   if (!categoryId || !attrNames.length || !attrValues.length) {
     console.error("Missing required data:", {
       categoryId,
+      groupName,
       attrNames,
       attrValues,
     });
     return;
   }
 
-  // Save attributes asynchronously
+  // Save attributes and associate them with the group
   const savedAttributes = await Promise.all(
     attrNames.map((name, index) =>
       new Attribute({
         name,
         category_id: categoryId,
+        group: groupName, // Associate attribute with the group
       }).save()
     )
   );

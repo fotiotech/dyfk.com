@@ -51,16 +51,21 @@ const AddProduct = () => {
     const fetchData = async () => {
       if (categoryId !== "") {
         const response = await findCategoryAttributesAndValues(categoryId);
+
         if (response?.length > 0) {
-          // Format response data to match AttributeType structure
-          const formattedAttributes = response[0].allAttributes.map(
-            (attr: any) => ({
-              attrName: attr.name,
-              attrValue: attr.attributeValues.map((val: any) => val.value),
+          // Format response data to match AttributeType structure, grouped by attribute groups
+          const formattedAttributes = response[0].groupedAttributes.map(
+            (group: any) => ({
+              groupName: group.groupName,
+              attributes: group.attributes.map((attr: any) => ({
+                attrName: attr.attributeName,
+                attrValue: attr.attributeValues.map((val: any) => val.value),
+              })),
             })
           );
+
           setAttributes(formattedAttributes);
-        } // Ensure this is an array of attributes
+        }
       }
 
       const res = await getBrands();
@@ -89,11 +94,11 @@ const AddProduct = () => {
           <h2 className="font-semibold text-xl m-2 mt-5">Category</h2>
           <Category setCategoryId={setCategoryId} />
         </div>
-        <ProdAttributes
+        {/* <ProdAttributes
           attributes={attributes}
           handleAttributeChange={handleAttributeChange}
           formData={formData}
-        />
+        /> */}
         <form
           action={toCreateProduct}
           className="md:flex justify-between gap-3 w-full"
