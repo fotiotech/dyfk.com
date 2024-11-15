@@ -91,17 +91,21 @@ const EditDeleteProduct: React.FC<PageProps> = ({ params }) => {
       // Load brands and attributes based on category
       if (categoryId !== "") {
         const response = await findCategoryAttributesAndValues(categoryId);
+
         if (response?.length > 0) {
-          // Format response data to match AttributeType structure
-          const formattedAttributes = response[0].allAttributes.map(
-            (attr: any) => ({
-              attrName: attr.name,
-              attrValue: attr.attributeValues.map((val: any) => val.value),
+          // Format response data to match AttributeType structure, grouped by attribute groups
+          const formattedAttributes = response[0].groupedAttributes.map(
+            (group: any) => ({
+              groupName: group.groupName,
+              attributes: group.attributes.map((attr: any) => ({
+                attrName: attr.attributeName,
+                attrValue: attr.attributeValues.map((val: any) => val.value),
+              })),
             })
           );
-          console.log(formattedAttributes);
+
           setAttributes(formattedAttributes);
-        } // Ensure this is an array of attributes
+        }
       }
       const brandsData = await getBrands();
       setBrands(brandsData);
@@ -133,6 +137,8 @@ const EditDeleteProduct: React.FC<PageProps> = ({ params }) => {
       router.push("/dashboard/products"); // Redirect after deletion
     }
   };
+
+  console.log(formData.attributes);
 
   return (
     <div>

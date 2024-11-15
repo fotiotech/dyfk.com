@@ -10,8 +10,6 @@ import { getProductDetail } from "@/fetch/products";
 import { useQuery } from "@tanstack/react-query";
 import React from "react";
 
-
-
 const DetailsPage = ({
   params,
 }: {
@@ -22,6 +20,7 @@ const DetailsPage = ({
     queryFn: () => getProductDetail(params.dsin),
   });
 
+  console.log(details);
 
   return (
     <div className="relative w-full overflow-hidden bg-[#efefef]">
@@ -60,28 +59,40 @@ const DetailsPage = ({
                 <h3 className="font-bold text-lg mt-2">Details</h3>
                 {details?.attributes && (
                   <div className="p-2">
-                    {details.attributes.map((attribute, index) => (
-                      <ul key={index} className="">
-                        {Object.entries(attribute)
-                          .reverse()
-                          .map(([key, values], idx) => (
-                            <li
-                              className="grid grid-cols-2 my-2"
-                              key={`${key}-${idx}`}
-                            >
-                              <strong>{key}</strong>
-                              <span>
-                                {Array.isArray(values)
-                                  ? values.join(", ") // Join array values as a comma-separated string
-                                  : values}
-                              </span>
-                            </li>
+                    {details.attributes.map((group, groupIndex) => (
+                      <div key={groupIndex} className="mb-3">
+                        {Object.entries(group)
+                          .filter(([groupName]) =>
+                            ["general", "display"].includes(groupName)
+                          ) // Only include "general" and "display"
+                          .map(([groupName, attributes]) => (
+                            <div key={groupName}>
+                              <h4 className="font-semibold capitalize">
+                                {/* {groupName} */}
+                              </h4>
+                              {Object.entries(attributes).map(
+                                ([attrName, values], idx) => (
+                                  <div
+                                    key={`${attrName}-${idx}`}
+                                    className="grid grid-cols-2 my-2"
+                                  >
+                                    <strong>{attrName}:</strong>
+                                    <span>
+                                      {Array.isArray(values)
+                                        ? values.join(", ")
+                                        : values}
+                                    </span>
+                                  </div>
+                                )
+                              )}
+                            </div>
                           ))}
-                      </ul>
+                      </div>
                     ))}
                   </div>
                 )}
               </div>
+
               <div className="border-t">
                 <p className="m-2 text-lg font-medium">Description</p>
                 <p className="lg:w-[600px] w-full py-2 p-2">

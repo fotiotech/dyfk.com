@@ -113,140 +113,107 @@ const AddProduct = () => {
         className="md:flex justify-between gap-3 w-full"
       >
         <div className="flex-1">
-          <div className="p-2 bg-pri dark:bg-pri-dark rounded-xl mb-2">
-            <h2 className="font-semibold text-xl m-2 mt-5">
-              Basic Information
-            </h2>
-            <div className="flex flex-col gap-4 p-2">
-              <div className="flex-1">
-                <div className="p-2 bg-pri dark:bg-pri-dark rounded-xl mb-2">
-                  <h2 className="font-semibold text-xl m-2 mt-5">
-                    Basic Information
-                  </h2>
-                  <div className="flex flex-col gap-4 p-2">
-                    <div>
-                      <label
-                        htmlFor="sku"
-                        className="text-lg font-semibold block"
-                      >
-                        SKU:
-                      </label>
-                      <input
-                        name="sku"
-                        type="text"
-                        placeholder="e.g ABC123-XL"
-                        className="w-[90%] p-2 rounded-lg bg-[#eee] dark:bg-sec-dark"
-                        value={formData.sku}
-                        onChange={(e) =>
-                          setFormData({ ...formData, sku: e.target.value })
-                        }
-                      />
-                    </div>
-                    <div>
-                      <label
-                        htmlFor="product_name"
-                        className="text-lg font-semibold block"
-                      >
-                        Product Name:
-                      </label>
-                      <input
-                        name="product_name"
-                        type="text"
-                        placeholder="e.g iPhone 13"
-                        className="w-[90%] p-2 rounded-lg bg-[#eee] dark:bg-sec-dark"
-                        value={formData.product_name}
-                        onChange={(e) =>
-                          setFormData({
-                            ...formData,
-                            product_name: e.target.value,
-                          })
-                        }
-                      />
-                    </div>
-                    <div>
-                      <label
-                        htmlFor="price"
-                        className="text-lg font-semibold block"
-                      >
-                        Price in (CFA):
-                      </label>
-                      <input
-                        name="price"
-                        type="number"
-                        min="0"
-                        step="0.01"
-                        placeholder="e.g 20000"
-                        className="w-[90%] p-2 rounded-lg bg-[#eee] dark:bg-sec-dark"
-                        value={formData.price}
-                        onChange={(e) =>
-                          setFormData({
-                            ...formData,
-                            price: parseFloat(e.target.value),
-                          })
-                        }
-                      />
-                    </div>
-                    <div>
-                      <label
-                        htmlFor="department"
-                        className="text-lg font-semibold block"
-                      >
-                        Department:
-                      </label>
-                      <input
-                        name="department"
-                        type="text"
-                        placeholder="e.g Electronics"
-                        className="w-[90%] p-2 rounded-lg bg-[#eee] dark:bg-sec-dark"
-                        value={formData.department}
-                        onChange={(e) =>
-                          setFormData({
-                            ...formData,
-                            department: e.target.value,
-                          })
-                        }
-                      />
-                    </div>
+          <div className="flex flex-col gap-4 p-2">
+            <div className="flex-1">
+              <div className="p-2 bg-pri dark:bg-pri-dark rounded-xl mb-2">
+                <h2 className="font-semibold text-xl m-2 mt-5">
+                  Basic Information
+                </h2>
+                <div className="flex flex-col gap-4 p-2">
+                  <div>
+                    <label
+                      htmlFor="sku"
+                      className="text-lg font-semibold block"
+                    >
+                      SKU:
+                    </label>
+                    <input
+                      name="sku"
+                      type="text"
+                      placeholder="e.g ABC123-XL"
+                      className="w-[90%] p-2 rounded-lg bg-[#eee] dark:bg-sec-dark"
+                    />
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="product_name"
+                      className="text-lg font-semibold block"
+                    >
+                      Product Name:
+                    </label>
+                    <input
+                      name="product_name"
+                      type="text"
+                      placeholder="e.g iPhone 13"
+                      className="w-[90%] p-2 rounded-lg bg-[#eee] dark:bg-sec-dark"
+                    />
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="price"
+                      className="text-lg font-semibold block"
+                    >
+                      Price in (CFA):
+                    </label>
+                    <input
+                      name="price"
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      placeholder="e.g 20000"
+                      className="w-[90%] p-2 rounded-lg bg-[#eee] dark:bg-sec-dark"
+                    />
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="department"
+                      className="text-lg font-semibold block"
+                    >
+                      Department:
+                    </label>
+                    <input
+                      name="department"
+                      type="text"
+                      placeholder="e.g Electronics"
+                      className="w-[90%] p-2 rounded-lg bg-[#eee] dark:bg-sec-dark"
+                    />
                   </div>
                 </div>
               </div>
+            </div>
 
-              <div>
-                <label
-                  htmlFor="brandId"
-                  className="text-lg font-semibold block"
-                >
-                  Brand:
-                </label>
-                <select
-                  title="brand Id"
-                  name="brandId"
-                  className="w-[90%] p-2 rounded-lg bg-[#eee] dark:bg-sec-dark"
-                >
-                  <option value="" className="text-gray-500">
-                    Select brand
+            <div>
+              <label htmlFor="brandId" className="text-lg font-semibold block">
+                Brand:
+              </label>
+              <select
+                title="brand Id"
+                name="brandId"
+                className="w-[90%] p-2 rounded-lg bg-[#eee] dark:bg-sec-dark"
+              >
+                <option value="" className="text-gray-500">
+                  Select brand
+                </option>
+                {brands?.map((item) => (
+                  <option key={item._id} value={item._id}>
+                    {item.name}
                   </option>
-                  {brands?.map((item) => (
-                    <option key={item._id} value={item._id}>
-                      {item.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label
-                  htmlFor="description"
-                  className="text-lg font-semibold block"
-                >
-                  Description:
-                </label>
-                <textarea
-                  title="description"
-                  name="description"
-                  className="w-[90%] p-2 rounded-lg bg-[#eee] dark:bg-sec-dark"
-                  rows={4}
-                />
-              </div>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label
+                htmlFor="description"
+                className="text-lg font-semibold block"
+              >
+                Description:
+              </label>
+              <textarea
+                title="description"
+                name="description"
+                className="w-[90%] p-2 rounded-lg bg-[#eee] dark:bg-sec-dark"
+                rows={4}
+              />
             </div>
           </div>
         </div>

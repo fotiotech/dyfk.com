@@ -72,7 +72,7 @@ export default function Home() {
             )}
           </div>
         </div>
-        <div className={`w-full p-2 lg:px-10 lg:mt-1 mb-1 bg-pri border-y `}>
+        {/* <div className={`w-full p-2 lg:px-10 lg:mt-1 mb-1 bg-pri border-y `}>
           <h2 className=" lg:mb-4 mb-2 font-bold  text-xl lg:text-3xl">
             Electronics
           </h2>
@@ -96,7 +96,7 @@ export default function Home() {
               <Spinner />
             )}
           </div>
-        </div>
+        </div> */}
       </main>
     </Layout>
   );
