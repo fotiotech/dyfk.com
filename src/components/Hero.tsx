@@ -55,12 +55,14 @@ const HeaderScroll = () => {
                 >
                   <Link href={hero.cta_link}>
                     <div
-                      className="w-full h-60 bg-cover "
+                      className="w-full h-full bg-cover bg-center "
                       style={{ backgroundImage: `url(${hero.imageUrl})` }}
                     >
                       <div className=" flex flex-col bg-sec bg-opacity-10 h-full p-10">
                         <h1 className="w-52 whitespace-normal font-bold text-2xl line-clamp-3">
-                          {hero.title}
+                          {hero.title === "Enjoy Up to 25% off" && (
+                            <p className="text-white">{hero.title}</p>
+                          )}
                         </h1>
                       </div>
                     </div>

@@ -74,7 +74,7 @@ export async function updateHeroContent(
   const cta_text = formData.get("cta_text") as string | null;
   const cta_link = formData.get("cta_link") as string | null;
 
-  if (!title || !cta_link) {
+  if (!cta_link) {
     console.warn("Incomplete form data. Ensure all fields are filled.");
     return;
   }

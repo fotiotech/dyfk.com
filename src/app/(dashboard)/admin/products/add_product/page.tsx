@@ -48,7 +48,7 @@ const AddProduct = () => {
     images as string[]
   );
 
-  console.log(attributes)
+  console.log(attributes);
 
   useEffect(() => {
     const fetchData = async () => {
