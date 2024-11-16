@@ -24,16 +24,21 @@ const DetailsPage = ({
   useEffect(() => {
     async function getDetails() {
       setIsLoading(true);
-      if (params.dsin) {
-        const response = await findProductDetails(params.dsin);
-        if (response) {
+      try {
+        if (params.dsin) {
+          const response = await findProductDetails(params.dsin);
           setDetails(response);
-          setIsLoading(false);
+        } else {
+          console.warn("DSIN is undefined, skipping fetch.");
         }
+      } catch (error) {
+        console.error("Error fetching product details:", error);
+      } finally {
+        setIsLoading(false); // Always reset loading state
       }
     }
     getDetails();
-  }, []);
+  }, [params.dsin]);
 
   console.log(details?.attributes);
 
@@ -62,24 +67,24 @@ const DetailsPage = ({
                   <Prices amount={details?.price as number} />
                 </div>
               </div>
-              {details?.attributes && (
+              {details?.attributes && details.attributes.length > 0 && (
                 <div className="">
-                  {details?.attributes
-                    .filter(
+                  {details
+                    ?.attributes!.filter(
                       (attributeGroup) => attributeGroup.groupName === "general"
                     )
-                    .map((attributeGroup, groupIndex) => (
-                      
+                    ?.map((attributeGroup, groupIndex) => (
                       <div key={groupIndex} className="mb-3">
                         {/* <h4 className="font-semibold capitalize">
                           {attributeGroup.groupName}
                         </h4> */}
-                        {Object.entries(attributeGroup.attributes)
+
+                        {Array.from(attributeGroup.attributes)
                           .filter(
-                            ([attributeName]) =>
+                            ([attributeName]: any) =>
                               attributeName !== "_id" && attributeName !== "0"
-                          ) // Exclude _id and 0
-                          .map(([attributeName, attributeValues], idx) => (
+                          )
+                          .map(([attributeName, attributeValues]: any, idx) => (
                             <div
                               key={`${attributeName}-${idx}`}
                               className="border-b my-2"
@@ -116,19 +121,19 @@ const DetailsPage = ({
 
               <div className="mt-2 border-t">
                 <h3 className="font-bold text-lg mt-2">Details</h3>
-                {details?.attributes && (
+                {details?.attributes && details.attributes.length > 0 && (
                   <div className="">
-                    {details.attributes.map((attributeGroup, groupIndex) => (
+                    {details?.attributes?.map((attributeGroup, groupIndex) => (
                       <div key={groupIndex} className="mb-3">
-                        <h4 className="font-semibold capitalize">
-                          {/* {attributeGroup.groupName} */}
-                        </h4>
-                        {Object.entries(attributeGroup.attributes)
+                        {/* <h4 className="font-semibold capitalize">
+                          {attributeGroup.groupName}
+                        </h4> */}
+                        {Array.from(attributeGroup.attributes)
                           .filter(
-                            ([attributeName]) =>
+                            ([attributeName]: any) =>
                               attributeName !== "_id" && attributeName !== "0"
                           ) // Exclude _id and 0
-                          .map(([attributeName, attributeValues], idx) => (
+                          .map(([attributeName, attributeValues]: any, idx) => (
                             <div
                               key={`${attributeName}-${idx}`}
                               className="grid grid-cols-2 w-3/4"

@@ -1,5 +1,6 @@
 "use server";
 
+import { Product as Prod } from "@/constant/types";
 import Product from "@/models/Product";
 import { connection } from "@/utils/connection";
 import mongoose, { ObjectId } from "mongoose";
@@ -57,23 +58,29 @@ export async function findProducts(id?: string) {
   }
 }
 
-export async function findProductDetails(dsin?: string) {
-  await connection();
+export async function findProductDetails(dsin?: string): Promise<Prod | null> {
+  try {
+    await connection();
 
-  if (dsin) {
-    const product = await Product.findOne({ dsin });
-    if (product) {
-      return {
-        ...product.toObject(),
-        _id: product._id?.toString(),
-        category_id: product.category_id?.toString(),
-        brand_id: product.brand_id?.toString(),
-        created_at: product.created_at?.toString(),
-        updated_at: product.updated_at?.toString(),
-      };
-    } else {
-      console.log("Error");
+    if (dsin) {
+      const product = await Product.findOne({ dsin });
+      if (product) {
+        return {
+          ...product.toObject(),
+          _id: product._id?.toString(),
+          category_id: product.category_id?.toString() ?? null,
+          brand_id: product.brand_id?.toString() ?? null,
+          created_at: product.created_at?.toString() ?? null,
+          updated_at: product.updated_at?.toString() ?? null,
+        };
+      }
     }
+    // Explicitly return null if no product is found
+    return null;
+  } catch (error) {
+    console.error("Error fetching product details:", error);
+    // Throw an error or return null to ensure consistent return type
+    throw new Error("Failed to fetch product details");
   }
 }
 
