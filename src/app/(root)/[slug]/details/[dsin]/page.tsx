@@ -56,14 +56,18 @@ const DetailsPage = ({
                   {details.attributes
                     .filter(
                       (attributeGroup) => attributeGroup.groupName === "general"
-                    ) // Only include groupName "general"
+                    )
                     .map((attributeGroup, groupIndex) => (
                       <div key={groupIndex} className="mb-3">
-                        <h4 className="font-semibold capitalize">
-                          {/* {attributeGroup.groupName} */}
-                        </h4>
-                        {Object.entries(attributeGroup.attributes).map(
-                          ([attributeName, attributeValues], idx) => (
+                        {/* <h4 className="font-semibold capitalize">
+                          {attributeGroup.groupName}
+                        </h4> */}
+                        {Object.entries(attributeGroup.attributes)
+                          .filter(
+                            ([attributeName]) =>
+                              attributeName !== "_id" && attributeName !== "0"
+                          ) // Exclude _id and 0
+                          .map(([attributeName, attributeValues], idx) => (
                             <div
                               key={`${attributeName}-${idx}`}
                               className="border-b my-2"
@@ -75,8 +79,7 @@ const DetailsPage = ({
                                   : attributeValues}
                               </span>
                             </div>
-                          )
-                        )}
+                          ))}
                       </div>
                     ))}
                 </div>
@@ -108,8 +111,12 @@ const DetailsPage = ({
                         <h4 className="font-semibold capitalize">
                           {/* {attributeGroup.groupName} */}
                         </h4>
-                        {Object.entries(attributeGroup.attributes).map(
-                          ([attributeName, attributeValues], idx) => (
+                        {Object.entries(attributeGroup.attributes)
+                          .filter(
+                            ([attributeName]) =>
+                              attributeName !== "_id" && attributeName !== "0"
+                          ) // Exclude _id and 0
+                          .map(([attributeName, attributeValues], idx) => (
                             <div
                               key={`${attributeName}-${idx}`}
                               className="grid grid-cols-2"
@@ -121,8 +128,7 @@ const DetailsPage = ({
                                   : attributeValues}
                               </span>
                             </div>
-                          )
-                        )}
+                          ))}
                       </div>
                     ))}
                   </div>
