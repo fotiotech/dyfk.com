@@ -30,15 +30,28 @@ const HeroContent = () => {
       <ul className="flex flex-col gap-3 mt-4">
         {heroContent &&
           heroContent.map((hero, index) => (
-            <li key={index} className="flex gap-3 rounded-lg">
-              <img
-                title="hero"
-                src={hero.imageUrl}
-                width={50}
-                height={50}
-                alt="hero"
-              />
-              <span>{hero.title}</span>
+            <li key={index} className="flex gap-3 justify-between rounded-lg">
+              <div className="flex gap-3">
+                <img
+                  title="hero"
+                  src={hero.imageUrl}
+                  width={50}
+                  height={50}
+                  alt="hero"
+                />
+                <span>{hero.title}</span>
+              </div>
+              <Link
+                href={`/admin/content_management/banner_sliders/edit_hero_content?id=${hero._id}`}
+              >
+                <button
+                  title="edit"
+                  type="button"
+                  className="border p-2 px-3 bg-blue-700"
+                >
+                  Edit
+                </button>
+              </Link>
             </li>
           ))}
       </ul>

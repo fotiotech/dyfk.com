@@ -231,12 +231,13 @@ export type ProductsFiles = {
 };
 
 export type HeroSection = {
+  _id?: string;
   title: string;
-  description: string;
-  imageUrl: string;
-  cta_text: string;
+  description?: string;
+  imageUrl?: string[];
+  cta_text?: string;
   cta_link: string;
-  created_at: string;
+  created_at?: string;
 };
 
 export type Customer = {
