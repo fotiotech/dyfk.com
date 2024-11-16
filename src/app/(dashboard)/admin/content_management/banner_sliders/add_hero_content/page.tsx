@@ -5,14 +5,11 @@ import FilesUploader from "@/components/FilesUploader";
 import React, { useState } from "react";
 
 const AddHeroContent = () => {
-
   const [imageFile, setImageFile] = useState<string[]>([]);
 
   const files = imageFile?.length! > 1 ? imageFile : imageFile?.[0];
 
-  const toCreateHeroContent = createHeroContent.bind(null,files as string[])
-
-
+  const toCreateHeroContent = createHeroContent.bind(null, files as string[]);
 
   return (
     <>
@@ -27,7 +24,7 @@ const AddHeroContent = () => {
             id="title"
             type="text"
             name="title"
-    
+            className="bg-transparent"
           />
         </div>
         <div>
@@ -36,17 +33,17 @@ const AddHeroContent = () => {
             id="description"
             type="text"
             name="description"
-           
+            className="bg-transparent"
           />
         </div>
-        
+
         <div>
           <label htmlFor="cta_text">CTA Text:</label>
           <input
             id="cta_text"
             type="text"
             name="cta_text"
-            
+            className="bg-transparent"
           />
         </div>
         <div>
@@ -55,7 +52,7 @@ const AddHeroContent = () => {
             id="cta_link"
             type="text"
             name="cta_link"
-           
+            className="bg-transparent"
           />
         </div>
         <button

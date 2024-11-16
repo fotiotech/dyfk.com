@@ -21,7 +21,9 @@ const HeroContent = () => {
     <>
       <div className="flex justify-between items-center">
         <h2 className=" font-bold text-lg">Hero Content</h2>
-        <Link href={"/admin/settings/add_hero_content"}>
+        <Link
+          href={"/admin/content_management/banner_sliders/add_hero_content"}
+        >
           <button type="button" className="p-2 rounded-lg bg-thiR">
             Add Hero Content
           </button>
@@ -34,7 +36,7 @@ const HeroContent = () => {
               <div className="flex gap-3">
                 <img
                   title="hero"
-                  src={hero.imageUrl}
+                  src={hero.imageUrl as unknown as string}
                   width={50}
                   height={50}
                   alt="hero"
