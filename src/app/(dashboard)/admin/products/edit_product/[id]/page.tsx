@@ -96,7 +96,9 @@ const EditDeleteProduct: React.FC<PageProps> = ({ params }) => {
           // Format response data to match AttributeType structure, grouped by attribute groups
           const formattedAttributes = response[0].groupedAttributes.map(
             (group: any) => ({
-              groupName: group.groupName,
+              groupName: group.groupName
+                ? group.groupName.toLowerCase()
+                : "defaultGroupName", // Ensure it's not undefined and consistent
               attributes: group.attributes.map((attr: any) => ({
                 attrName: attr.attributeName,
                 attrValue: attr.attributeValues.map((val: any) => val.value),

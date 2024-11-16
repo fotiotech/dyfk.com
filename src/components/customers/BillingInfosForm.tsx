@@ -4,12 +4,13 @@ import React from "react";
 
 const BillingAddresses: React.FC = () => {
   const { user } = useUser();
+  const { customerInfos } = useUser();
   const toUpdateBillingAddresses = updateBillingAddresses.bind(
     null,
     user?._id as string
   );
 
-  console.log(toUpdateBillingAddresses);
+  const billingAddress = customerInfos?.billingAddress;
 
   return (
     <div>
@@ -17,39 +18,87 @@ const BillingAddresses: React.FC = () => {
       <form action={toUpdateBillingAddresses}>
         <div>
           <label>First Name</label>
-          <input title="firstName" type="text" name="firstName" required />
+          <input
+            title="firstName"
+            type="text"
+            name="firstName"
+            defaultValue={billingAddress?.firstName}
+            required
+          />
         </div>
         <div>
           <label>Last Name</label>
-          <input title="lastName" type="text" name="lastName" required />
+          <input
+            title="lastName"
+            type="text"
+            name="lastName"
+            defaultValue={billingAddress?.lastName}
+            required
+          />
         </div>
         <div>
           <label>Email</label>
-          <input title="email" type="email" name="email" required />
+          <input
+            title="email"
+            type="email"
+            name="email"
+            defaultValue={billingAddress?.email}
+            required
+          />
         </div>
         <div>
           <label>Phone</label>
-          <input title="phone" type="tel" name="phone" />
+          <input
+            title="phone"
+            type="tel"
+            name="phone"
+            defaultValue={billingAddress?.phone}
+          />
         </div>
         <div>
           <label>Address</label>
-          <input title="address" type="text" name="address" />
+          <input
+            title="address"
+            type="text"
+            name="address"
+            defaultValue={billingAddress?.address}
+          />
         </div>
         <div>
           <label>City</label>
-          <input title="city" type="text" name="city" />
+          <input
+            title="city"
+            type="text"
+            name="city"
+            defaultValue={billingAddress?.city}
+          />
         </div>
         <div>
           <label>Country</label>
-          <input title="country" type="text" name="country" />
+          <input
+            title="country"
+            type="text"
+            name="country"
+            defaultValue={billingAddress?.country}
+          />
         </div>
         <div>
           <label>Postal Code</label>
-          <input title="postalCode" type="text" name="postalCode" />
+          <input
+            title="postalCode"
+            type="text"
+            name="postalCode"
+            defaultValue={billingAddress?.postalCode}
+          />
         </div>
         <div>
           <label>Preferences</label>
-          <input title="preferences" type="text" name="preferences" />
+          <input
+            title="preferences"
+            type="text"
+            name="preferences"
+            defaultValue={billingAddress?.preferences}
+          />
         </div>
         <div className="text-center">
           <button type="submit" className="btn px-10">

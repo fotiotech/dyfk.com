@@ -38,7 +38,16 @@ const ProductSchema = new Schema(
     },
     attributes: [
       {
-        type: Object,
+        groupName: {
+          type: String,
+          required: true,
+          trim: true,
+        },
+        attributes: {
+          type: Map,
+          of: [String], // Each attribute name maps to an array of string values
+          required: true,
+        },
       },
     ],
     department: {

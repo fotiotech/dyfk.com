@@ -14,7 +14,7 @@ import { CartItem } from "@/app/reducer/cartReducer";
 import OrderButton from "@/components/checkout/OrderButton";
 
 const CheckoutPage = () => {
-  const { user } = useUser();
+  const { user, customerInfos } = useUser();
   const { cart } = useCart();
   const [customer, setCustomer] = useState<Customer>();
   const [transactionId, setTransactionId] = useState(0);

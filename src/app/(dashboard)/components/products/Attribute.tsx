@@ -40,6 +40,7 @@ const Attribute: React.FC<AttributeProps> = ({
     handleAttributeChange(groupName, attrName, selectedValues); // Pass selected values to handler
   };
 
+  console.log(attributes);
 
   return (
     <div className="flex-1">

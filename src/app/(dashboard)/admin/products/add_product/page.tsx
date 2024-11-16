@@ -57,7 +57,9 @@ const AddProduct = () => {
           // Format response data to match AttributeType structure, grouped by attribute groups
           const formattedAttributes = response[0].groupedAttributes.map(
             (group: any) => ({
-              groupName: group.groupName,
+              groupName: group.groupName
+                ? group.groupName.toLowerCase()
+                : "Additional Details", // Ensure it's not undefined and consistent
               attributes: group.attributes.map((attr: any) => ({
                 attrName: attr.attributeName,
                 attrValue: attr.attributeValues.map((val: any) => val.value),
@@ -178,42 +180,44 @@ const AddProduct = () => {
                       className="w-[90%] p-2 rounded-lg bg-[#eee] dark:bg-sec-dark"
                     />
                   </div>
+                  <div>
+                    <label
+                      htmlFor="brandId"
+                      className="text-lg font-semibold block"
+                    >
+                      Brand:
+                    </label>
+                    <select
+                      title="brand Id"
+                      name="brandId"
+                      className="w-[90%] p-2 rounded-lg bg-[#eee] dark:bg-sec-dark"
+                    >
+                      <option value="" className="text-gray-500">
+                        Select brand
+                      </option>
+                      {brands?.map((item) => (
+                        <option key={item._id} value={item._id}>
+                          {item.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="description"
+                      className="text-lg font-semibold block"
+                    >
+                      Description:
+                    </label>
+                    <textarea
+                      title="description"
+                      name="description"
+                      className="w-[90%] p-2 rounded-lg bg-[#eee] dark:bg-sec-dark"
+                      rows={4}
+                    />
+                  </div>
                 </div>
               </div>
-            </div>
-
-            <div>
-              <label htmlFor="brandId" className="text-lg font-semibold block">
-                Brand:
-              </label>
-              <select
-                title="brand Id"
-                name="brandId"
-                className="w-[90%] p-2 rounded-lg bg-[#eee] dark:bg-sec-dark"
-              >
-                <option value="" className="text-gray-500">
-                  Select brand
-                </option>
-                {brands?.map((item) => (
-                  <option key={item._id} value={item._id}>
-                    {item.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <label
-                htmlFor="description"
-                className="text-lg font-semibold block"
-              >
-                Description:
-              </label>
-              <textarea
-                title="description"
-                name="description"
-                className="w-[90%] p-2 rounded-lg bg-[#eee] dark:bg-sec-dark"
-                rows={4}
-              />
             </div>
           </div>
         </div>

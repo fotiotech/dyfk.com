@@ -1,5 +1,6 @@
 "use client";
 
+import { useUser } from "@/app/context/UserContext";
 import Loading from "@/app/loading";
 import AddToCart from "@/components/AddToCart";
 import CheckoutButton from "@/components/CheckoutButton";
@@ -7,7 +8,9 @@ import DetailImages from "@/components/DetailImages";
 import { Prices } from "@/components/cart/Prices";
 import { Product } from "@/constant/types";
 import { getProductDetail } from "@/fetch/products";
+import { LocationOn } from "@mui/icons-material";
 import { useQuery } from "@tanstack/react-query";
+import Link from "next/link";
 import React from "react";
 
 const DetailsPage = ({
@@ -15,12 +18,11 @@ const DetailsPage = ({
 }: {
   params: { slug: string; dsin: string };
 }) => {
+  const { customerInfos } = useUser();
   const { data: details, isLoading } = useQuery<Product>({
     queryKey: ["new-Arrival"],
     queryFn: () => getProductDetail(params.dsin),
   });
-
-  console.log(details);
 
   return (
     <div className="relative w-full overflow-hidden bg-[#efefef]">
@@ -80,6 +82,17 @@ const DetailsPage = ({
                     </div>
                   ))}
                 </div>
+              )}
+              {customerInfos && (
+                <Link href={"/checkout/billing_address"}>
+                  <div className="flex gap-2">
+                    <LocationOn />
+                    <p>
+                      Shipping to {customerInfos?.billingAddress.lastName},{" "}
+                      {customerInfos?.shippingAddress.city}
+                    </p>
+                  </div>
+                </Link>
               )}
               <div className="flex justify-between items-center gap-3 w-full py-2">
                 <CheckoutButton width="1/2" height="10">

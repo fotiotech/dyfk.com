@@ -118,22 +118,21 @@ export async function createAttribute(formData: FormData) {
   await connection();
 
   const categoryId = formData.get("catId") as string;
-  const groupName = formData.get("groupName") as string; // New field to handle group selection
+  const groupName = formData.get("groupName") as string; // Group name
   const attrNames: string[] = [];
   const attrValues: string[][] = []; // Array of arrays to hold multiple values per attribute
 
-  // Process formData entries to manually collect attrNames and attrValues
+  // Collect attribute names and values
   for (const [key, value] of formData.entries() as unknown as any) {
     if (key.startsWith("attrName")) {
       attrNames.push(value as string);
     } else if (key.startsWith("attrValue")) {
-      // Split values by comma, trim extra spaces, and push as an array
       const values = (value as string).split(",").map((v) => v.trim());
       attrValues.push(values);
     }
   }
 
-  if (!categoryId || !attrNames.length || !attrValues.length) {
+  if (!categoryId || !groupName || !attrNames.length || !attrValues.length) {
     console.error("Missing required data:", {
       categoryId,
       groupName,
@@ -143,30 +142,48 @@ export async function createAttribute(formData: FormData) {
     return;
   }
 
-  // Save attributes and associate them with the group
-  const savedAttributes = await Promise.all(
-    attrNames.map((name, index) =>
-      new Attribute({
-        name,
-        category_id: categoryId,
-        group: groupName, // Associate attribute with the group
-      }).save()
-    )
+  // Check if the group already exists in the category
+  const category = await Category.findById(categoryId);
+  if (!category) {
+    console.error("Category not found");
+    return;
+  }
+
+  const existingGroup = category.attributes.find(
+    (group: any) => group.groupName === groupName
   );
 
-  // Save attribute values for each attribute
-  const savedAttributeValues = await Promise.all(
-    savedAttributes.flatMap((attribute, index) =>
-      attrValues[index].map((value) =>
-        new AttributeValue({
-          attribute_id: attribute._id,
-          value,
-        }).save()
-      )
-    )
-  );
+  if (existingGroup) {
+    // Update existing group
+    attrNames.forEach((name, index) => {
+      if (!existingGroup.attributes[name]) {
+        existingGroup.attributes[name] = attrValues[index];
+      } else {
+        // Merge new values into existing ones, avoiding duplicates
+        existingGroup.attributes[name] = Array.from(
+          new Set([...existingGroup.attributes[name], ...attrValues[index]])
+        );
+      }
+    });
+  } else {
+    if (!existingGroup) {
+      // Create new group
+      const newGroup = {
+        groupName,
+        attributes: attrNames.reduce(
+          (acc: Record<string, string[]>, name, index) => {
+            acc[name] = attrValues[index];
+            return acc;
+          },
+          {}
+        ), // Initialize `acc` as an empty object with proper type
+      };
+      category.attributes.push(newGroup);
+    }
+  }
 
-  console.log("Saved Data:", { savedAttributes, savedAttributeValues });
+  // Save the updated category
+  await category.save();
 
-  return { savedAttributes, savedAttributeValues };
+  console.log("Updated Category Attributes:", category.attributes);
 }
