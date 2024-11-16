@@ -10,9 +10,9 @@ export async function findHeroContent() {
   if (heroContent) {
     return heroContent.map((res) => ({
       ...res.toObject(),
-      _id: res._id.toString(),
-      created_at: res.created_at.toISOString(),
-      updated_at: res.updated_at.toISOString(),
+      _id: res._id?.toString(),
+      // created_at: res.created_at?.toISOString(),
+      // updated_at: res.updated_at?.toISOString(),
     }));
   }
 }

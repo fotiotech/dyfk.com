@@ -5,12 +5,15 @@ import { connection } from "@/utils/connection";
 import Category from "@/models/Category";
 import mongoose from "mongoose";
 
-
 function generateSlug(name: string) {
   return slugify(name, { lower: true });
 }
 
-export async function getCategory(id?: string | null, parentId?: string | null, name?: string| null) { 
+export async function getCategory(
+  id?: string | null,
+  parentId?: string | null,
+  name?: string | null
+) {
   await connection();
   if (name) {
     // Find the category by name
@@ -18,16 +21,15 @@ export async function getCategory(id?: string | null, parentId?: string | null, 
     if (category) {
       const subCategories = await Category.find({ parent_id: category._id });
 
-      const  res = subCategories.map((subCategory) => ({
-          ...subCategory.toObject(),
-          _id: subCategory._id.toString(),
-          created_at: subCategory.created_at.toISOString(),
-          updated_at: subCategory.updated_at.toISOString(),
-        }));
+      const res = subCategories.map((subCategory) => ({
+        ...subCategory.toObject(),
+        _id: subCategory._id.toString(),
+        created_at: subCategory.created_at.toISOString(),
+        updated_at: subCategory.updated_at.toISOString(),
+      }));
 
       return res;
     }
-    
   } else if (id) {
     const category = await Category.findById(id);
     if (category) {
@@ -42,10 +44,10 @@ export async function getCategory(id?: string | null, parentId?: string | null, 
     const subCategories = await Category.find({ parent_id: parentId });
     if (subCategories.length) {
       return subCategories.map((subCategory) => ({
-        ...subCategory.toObject(),
-        _id: subCategory._id.toString(),
-        created_at: subCategory.created_at.toISOString(),
-        updated_at: subCategory.updated_at.toISOString(),
+        ...subCategory?.toObject(),
+        _id: subCategory._id?.toString(),
+        created_at: subCategory.created_at?.toISOString(),
+        updated_at: subCategory.updated_at?.toISOString(),
       }));
     }
   } else {
@@ -57,19 +59,23 @@ export async function getCategory(id?: string | null, parentId?: string | null, 
       updated_at: category.updated_at.toISOString(),
     }));
   }
-
-  
 }
 
-export async function createCategory(formData: { _id?: string; categoryName?: string; description?: string; imageUrl?: string[] }, id?: string | null) {
-  
+export async function createCategory(
+  formData: {
+    _id?: string;
+    categoryName?: string;
+    description?: string;
+    imageUrl?: string[];
+  },
+  id?: string | null
+) {
   try {
     const { _id, categoryName, description, imageUrl } = formData;
 
     if (!categoryName) return { error: "Category name is required." };
 
     const url_slug = generateSlug(categoryName + (description || ""));
-    
 
     await connection();
 
@@ -96,17 +102,17 @@ export async function createCategory(formData: { _id?: string; categoryName?: st
         description,
         imageUrl: imageUrl || undefined,
       });
-       await newCategory.save();
+      await newCategory.save();
     }
-    
   } catch (error: any) {
-    console.error("Error while processing the request:\n", error.message, error.stack);
+    console.error(
+      "Error while processing the request:\n",
+      error.message,
+      error.stack
+    );
     return { error: "Something went wrong." };
   }
-
-  
 }
-
 
 export async function deleteCategory(id: string) {
   try {
@@ -118,4 +124,3 @@ export async function deleteCategory(id: string) {
     return { error: "Could not delete the category." };
   }
 }
-
