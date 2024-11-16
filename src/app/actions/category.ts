@@ -88,7 +88,6 @@ export async function createCategory(formData: { _id?: string; categoryName?: st
           },
         }
       );
-      return updatedCategory;
     } else {
       const newCategory = new Category({
         url_slug,
@@ -97,8 +96,7 @@ export async function createCategory(formData: { _id?: string; categoryName?: st
         description,
         imageUrl: imageUrl || undefined,
       });
-      const savedCategory = await newCategory.save();
-      return { message: `Inserted successfully! ${savedCategory}` };
+       await newCategory.save();
     }
     
   } catch (error: any) {

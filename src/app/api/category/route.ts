@@ -67,7 +67,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(
       {
-        results: `Inserted successfully! ${savedCategory}`,
+        results: `Inserted successfully! `,
       },
       { status: 201 }
     );

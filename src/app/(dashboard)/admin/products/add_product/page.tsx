@@ -48,6 +48,8 @@ const AddProduct = () => {
     images as string[]
   );
 
+  console.log(attributes)
+
   useEffect(() => {
     const fetchData = async () => {
       if (categoryId !== "") {

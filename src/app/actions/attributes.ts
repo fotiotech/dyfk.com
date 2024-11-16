@@ -113,7 +113,7 @@ export async function findCategoryAttributesAndValues(categoryId: string) {
   return response;
 }
 
-// Function to create a new attribute or select an existing attribute group
+// Function to create or update attributes and their values
 export async function createAttribute(formData: FormData) {
   await connection();
 
@@ -127,7 +127,10 @@ export async function createAttribute(formData: FormData) {
     if (key.startsWith("attrName")) {
       attrNames.push(value as string);
     } else if (key.startsWith("attrValue")) {
-      const values = (value as string).split(",").map((v) => v.trim());
+      const values = (value as string)
+        .split(",")
+        .map((v) => v.trim())
+        .filter((v) => v); // Filter out empty values
       attrValues.push(values);
     }
   }
@@ -142,48 +145,46 @@ export async function createAttribute(formData: FormData) {
     return;
   }
 
-  // Check if the group already exists in the category
-  const category = await Category.findById(categoryId);
-  if (!category) {
-    console.error("Category not found");
-    return;
-  }
+  try {
+    for (let i = 0; i < attrNames.length; i++) {
+      const attributeName = attrNames[i];
+      const attributeValues = attrValues[i];
 
-  const existingGroup = category.attributes.find(
-    (group: any) => group.groupName === groupName
-  );
+      // Check if the attribute already exists
+      let attribute = await Attribute.findOne({
+        group: groupName,
+        name: attributeName,
+        category_id: new mongoose.Types.ObjectId(categoryId),
+      });
 
-  if (existingGroup) {
-    // Update existing group
-    attrNames.forEach((name, index) => {
-      if (!existingGroup.attributes[name]) {
-        existingGroup.attributes[name] = attrValues[index];
-      } else {
-        // Merge new values into existing ones, avoiding duplicates
-        existingGroup.attributes[name] = Array.from(
-          new Set([...existingGroup.attributes[name], ...attrValues[index]])
-        );
+      if (!attribute) {
+        // Create a new attribute if it doesn't exist
+        attribute = await Attribute.create({
+          group: groupName,
+          name: attributeName,
+          category_id: new mongoose.Types.ObjectId(categoryId),
+        });
       }
-    });
-  } else {
-    if (!existingGroup) {
-      // Create new group
-      const newGroup = {
-        groupName,
-        attributes: attrNames.reduce(
-          (acc: Record<string, string[]>, name, index) => {
-            acc[name] = attrValues[index];
-            return acc;
-          },
-          {}
-        ), // Initialize `acc` as an empty object with proper type
-      };
-      category.attributes.push(newGroup);
+
+      // Add or update attribute values in the AttributeValue collection
+      for (const value of attributeValues) {
+        const existingValue = await AttributeValue.findOne({
+          attribute_id: attribute._id,
+          value,
+        });
+
+        if (!existingValue) {
+          // Create a new attribute value if it doesn't exist
+          await AttributeValue.create({
+            attribute_id: attribute._id,
+            value,
+          });
+        }
+      }
     }
+
+    console.log("Attributes and their values successfully created or updated");
+  } catch (error) {
+    console.error("Error creating or updating attributes and values:", error);
   }
-
-  // Save the updated category
-  await category.save();
-
-  console.log("Updated Category Attributes:", category.attributes);
 }

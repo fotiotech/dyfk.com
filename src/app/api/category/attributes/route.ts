@@ -54,7 +54,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(
       {
         message: "Attribute and values inserted successfully!",
-        attribute: savedAttribute,
       },
       { status: 201 }
     );

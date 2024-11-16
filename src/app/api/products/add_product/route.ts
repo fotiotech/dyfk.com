@@ -91,7 +91,7 @@ export async function POST(req: NextRequest) {
       const savedProduct = await newProduct.save();
 
       return NextResponse.json(
-        { message: "Product created successfully!", results: savedProduct },
+        { message: "Product created successfully!" },
         { status: 201 }
       );
     }

@@ -59,7 +59,7 @@ export async function findProducts(id?: string) {
 
 export async function createProduct(
   categoryId: string,
-  attributes: {},
+  attributes: { [groupName: string]: { [attrName: string]: string[] } }, // Original structure
   files: string[],
   formData: FormData
 ) {
@@ -78,6 +78,23 @@ export async function createProduct(
   const urlSlug = generateSlug(product_name as string, department);
   const dsin = generateDsin();
 
+  // Reformat and clean up the attributes to remove unwanted keys
+  const cleanedAttributes = Object.keys(attributes)
+    .filter((groupName) => groupName !== "0") // Remove invalid group names like '0'
+    .map((groupName) => {
+      const group = attributes[groupName];
+
+      // Ensure that each group only contains valid attributes
+      const cleanedAttributesObj = Object.fromEntries(
+        Object.entries(group).filter(([key]) => key !== "undefined") // Remove 'undefined' keys
+      );
+
+      return {
+        groupName: groupName, // The group name itself
+        attributes: cleanedAttributesObj, // Cleaned attributes inside that group
+      };
+    });
+
   await connection();
   const newProduct = new Product({
     url_slug: urlSlug,
@@ -89,26 +106,25 @@ export async function createProduct(
     department: department,
     description: description,
     price: price,
-    attributes: attributes,
+    attributes: cleanedAttributes.length > 0 ? cleanedAttributes : null, // Set formatted attributes
     imageUrls: files,
     status: status,
     created_at: new Date().toISOString(),
     updated_ad: new Date().toISOString(),
   });
 
-  const savedProduct = await newProduct.save();
-
-  return savedProduct;
+  await newProduct.save();
 }
 
 export async function updateProduct(
   id: string,
   categoryId: string,
-  attributes: {},
+  attributes: { [groupName: string]: { [attrName: string]: string[] } }, // Original structure
   files: string[],
   formData: FormData
 ) {
   await connection();
+
   if (id && formData) {
     const sku = formData.get("sku") as string | null;
     const product_name = formData.get("product_name") as string | null;
@@ -118,33 +134,53 @@ export async function updateProduct(
     const price = formData.get("price") as string | null;
     const status = formData.get("status") as string | null;
 
-    const updatedProduct = await Product.findByIdAndUpdate(
+    // Reformat and clean up the attributes to remove unwanted keys
+    const cleanedAttributes = Object.keys(attributes)
+      .filter((groupName) => groupName !== "0") // Remove invalid group names like '0'
+      .map((groupName) => {
+        const group = attributes[groupName];
+
+        // Ensure that each group only contains valid attributes
+        const cleanedAttributesObj = Object.fromEntries(
+          Object.entries(group).filter(([key]) => key !== "undefined") // Remove 'undefined' keys
+        );
+
+        return {
+          groupName: groupName, // The group name itself
+          attributes: cleanedAttributesObj, // Cleaned attributes inside that group
+        };
+      });
+
+    const response = await Product.findByIdAndUpdate(
       id,
       {
         $set: {
           sku: sku,
           productName: product_name,
-          category_id: new mongoose.Types.ObjectId(categoryId),
-          brand_id: new mongoose.Types.ObjectId(brandId),
+          category_id: new mongoose.Types.ObjectId(categoryId) || null,
+          brand_id: new mongoose.Types.ObjectId(brandId) || null,
           department: department,
           description: description,
           price: price,
-          attributes: attributes,
-          imageUrls: files,
+          attributes: cleanedAttributes.length > 0 ? cleanedAttributes : null, // Set cleaned attributes
+          imageUrls: files || null,
           status: status,
           created_at: new Date().toISOString(),
-          updated_ad: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
         },
       },
       {
         new: true,
       }
     );
-    revalidatePath("/admin/products/products_list");
+
+    console.log(cleanedAttributes, response);
   }
+
+  revalidatePath("/admin/products/products_list");
 }
 
 export async function deleteProduct(id: string) {
   await connection();
-  return await Product.findByIdAndDelete(id);
+  await Product.findByIdAndDelete(id);
 }

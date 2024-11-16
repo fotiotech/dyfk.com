@@ -77,7 +77,6 @@ export async function updateBillingAddresses(_id: string, formData: FormData) {
       customer = await customer.save();
     }
 
-    return { success: true, customer }; // Return the saved/updated customer
   } catch (error: any) {
     console.error("Error updating billing address:", error);
     return { success: false, error: error.message };

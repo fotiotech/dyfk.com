@@ -29,7 +29,7 @@ export async function createBrand(data: { name: string; logoUrl?: string; status
 
   const newBrand = new Brand({url_slug, name, logoUrl, status });
   
-  return await newBrand.save();
+  await newBrand.save();
   }
 }
 
@@ -44,7 +44,7 @@ export async function updateBrand(
   }>
 ) {
   await connection();
-  return await Brand.findByIdAndUpdate(id, data, { new: true });
+  await Brand.findByIdAndUpdate(id, data, { new: true });
 }
 
 // Delete a brand

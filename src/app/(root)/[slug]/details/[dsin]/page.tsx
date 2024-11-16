@@ -24,6 +24,8 @@ const DetailsPage = ({
     queryFn: () => getProductDetail(params.dsin),
   });
 
+  console.log(details);
+
   return (
     <div className="relative w-full overflow-hidden bg-[#efefef]">
       <div className="xl:flex w-full bg-white lg:px-10">
@@ -51,36 +53,32 @@ const DetailsPage = ({
               </div>
               {details?.attributes && (
                 <div className="">
-                  {details.attributes.map((group, groupIndex) => (
-                    <div key={groupIndex} className="mb-3">
-                      {Object.entries(group)
-                        .filter(([groupName]) =>
-                          ["general"].includes(groupName)
-                        ) // Only include "general" and "display"
-                        .map(([groupName, attributes]) => (
-                          <div key={groupName}>
-                            <h4 className="font-semibold capitalize">
-                              {/* {groupName} */}
-                            </h4>
-                            {Object.entries(attributes).map(
-                              ([attrName, values], idx) => (
-                                <div
-                                  key={`${attrName}-${idx}`}
-                                  className="border-b my-2"
-                                >
-                                  <strong>{attrName}</strong>
-                                  <span className="ml-10">
-                                    {Array.isArray(values)
-                                      ? values.join(", ")
-                                      : values}
-                                  </span>
-                                </div>
-                              )
-                            )}
-                          </div>
-                        ))}
-                    </div>
-                  ))}
+                  {details.attributes
+                    .filter(
+                      (attributeGroup) => attributeGroup.groupName === "general"
+                    ) // Only include groupName "general"
+                    .map((attributeGroup, groupIndex) => (
+                      <div key={groupIndex} className="mb-3">
+                        <h4 className="font-semibold capitalize">
+                          {/* {attributeGroup.groupName} */}
+                        </h4>
+                        {Object.entries(attributeGroup.attributes).map(
+                          ([attributeName, attributeValues], idx) => (
+                            <div
+                              key={`${attributeName}-${idx}`}
+                              className="border-b my-2"
+                            >
+                              <strong>{attributeName}</strong>
+                              <span className="ml-10">
+                                {Array.isArray(attributeValues)
+                                  ? attributeValues.join(", ")
+                                  : attributeValues}
+                              </span>
+                            </div>
+                          )
+                        )}
+                      </div>
+                    ))}
                 </div>
               )}
               {customerInfos && (
@@ -104,35 +102,27 @@ const DetailsPage = ({
               <div className="mt-2 border-t">
                 <h3 className="font-bold text-lg mt-2">Details</h3>
                 {details?.attributes && (
-                  <div className="p-2">
-                    {details.attributes.map((group, groupIndex) => (
+                  <div className="">
+                    {details.attributes.map((attributeGroup, groupIndex) => (
                       <div key={groupIndex} className="mb-3">
-                        {Object.entries(group)
-                          .filter(([groupName]) =>
-                            ["general", "display"].includes(groupName)
-                          ) // Only include "general" and "display"
-                          .map(([groupName, attributes]) => (
-                            <div key={groupName}>
-                              <h4 className="font-semibold capitalize">
-                                {/* {groupName} */}
-                              </h4>
-                              {Object.entries(attributes).map(
-                                ([attrName, values], idx) => (
-                                  <div
-                                    key={`${attrName}-${idx}`}
-                                    className="grid grid-cols-2 my-2"
-                                  >
-                                    <strong>{attrName}</strong>
-                                    <span>
-                                      {Array.isArray(values)
-                                        ? values.join(", ")
-                                        : values}
-                                    </span>
-                                  </div>
-                                )
-                              )}
+                        <h4 className="font-semibold capitalize">
+                          {/* {attributeGroup.groupName} */}
+                        </h4>
+                        {Object.entries(attributeGroup.attributes).map(
+                          ([attributeName, attributeValues], idx) => (
+                            <div
+                              key={`${attributeName}-${idx}`}
+                              className="grid grid-cols-2"
+                            >
+                              <strong className="my-1">{attributeName}</strong>
+                              <span className="ml-10">
+                                {Array.isArray(attributeValues)
+                                  ? attributeValues.join(", ")
+                                  : attributeValues}
+                              </span>
                             </div>
-                          ))}
+                          )
+                        )}
                       </div>
                     ))}
                   </div>

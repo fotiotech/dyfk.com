@@ -19,7 +19,6 @@ export async function createHeroContent(files: string[], formData: FormData) {
             cta_link: cta_link,
           });
           const savedHeroContent = await newHeroContent.save();
-          return savedHeroContent;
     } catch (error) {
         console.error(error)
     }
