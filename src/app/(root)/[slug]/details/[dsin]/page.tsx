@@ -119,7 +119,7 @@ const DetailsPage = ({
                           .map(([attributeName, attributeValues], idx) => (
                             <div
                               key={`${attributeName}-${idx}`}
-                              className="grid grid-cols-2"
+                              className="grid grid-cols-2 w-3/4"
                             >
                               <strong className="my-1">{attributeName}</strong>
                               <span className="ml-10">
