@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Menu,
   NavigateNext,
@@ -11,20 +11,24 @@ import Image from "next/image";
 import Link from "next/link";
 import useClickOusite from "./Hooks";
 import { Category } from "@/constant/types";
-import { getCategory } from "@/fetch/category";
-import { useQuery } from "@tanstack/react-query";
 import { useUser } from "@/app/context/UserContext";
 import { useCart } from "@/app/context/CartContext";
+import { getCategory } from "@/app/actions/category";
 
 const Header = () => {
   const { user } = useUser();
   const { cart } = useCart();
   const [showSearchBox, setShowSearchBox] = useState(false);
   const [searchInput, setSearchInput] = useState("");
-  const { data: category, isLoading } = useQuery<Category[]>({
-    queryKey: ["category"],
-    queryFn: getCategory,
-  });
+  const [category, setCategory] = useState<Category[]>([]);
+
+  useEffect(() => {
+    async function findCategories() {
+      const res = await getCategory();
+      setCategory(res);
+    }
+    findCategories();
+  }, []);
 
   const domNode = useClickOusite(() => setShowSearchBox(false));
 

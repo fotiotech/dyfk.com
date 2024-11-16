@@ -1,17 +1,23 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
-import { getHeroContent } from "@/fetch/Home";
 import { HeroSection } from "@/constant/types";
+import { findHeroContent } from "@/app/actions/content_management";
 
 const HeaderScroll = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const { data: heroContent, isLoading } = useQuery<HeroSection[]>({
-    queryKey: ["hero-content"],
-    queryFn: getHeroContent,
-  });
+  const [heroContent, setHeroContent] = useState<HeroSection[] | null>([]);
+
+  useEffect(() => {
+    async function getHeroContent() {
+      const content = await findHeroContent();
+      if (content) {
+        setHeroContent(content);
+      }
+    }
+    getHeroContent();
+  }, []);
 
   useEffect(() => {
     if (typeof window !== "undefined") {

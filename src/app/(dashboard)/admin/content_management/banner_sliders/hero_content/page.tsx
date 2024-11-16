@@ -1,16 +1,22 @@
 "use client";
 
+import { findHeroContent } from "@/app/actions/content_management";
 import { HeroSection } from "@/constant/types";
-import { getHeroContent } from "@/fetch/Home";
-import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 const HeroContent = () => {
-  const { data: heroContent, isLoading } = useQuery<HeroSection[]>({
-    queryKey: ["hero-content"],
-    queryFn: getHeroContent,
-  });
+  const [heroContent, setHeroContent] = useState<HeroSection[] | null>([]);
+
+  useEffect(() => {
+    async function getHeroContent() {
+      const content = await findHeroContent();
+      if (content) {
+        setHeroContent(content);
+      }
+    }
+    getHeroContent();
+  }, []);
   return (
     <>
       <div className="flex justify-between items-center">

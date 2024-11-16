@@ -1,16 +1,22 @@
 "use client";
 
-import { getUsersData } from "@/fetch/users";
 import { Users as usersTypes } from "@/constant/types";
-import { useQuery } from "@tanstack/react-query";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { DateComponent } from "@/components/Date";
+import { findUsers } from "@/app/actions/users";
 
 const Users = () => {
-  const { data: users, isLoading } = useQuery<usersTypes[]>({
-    queryKey: ["users-data"],
-    queryFn: getUsersData,
-  });
+  const [users, setUsers] = useState<usersTypes[] | null>([]);
+
+  useEffect(() => {
+    async function getUsers() {
+      const content = await findUsers();
+      if (content) {
+        setUsers(content);
+      }
+    }
+    getUsers();
+  }, []);
 
   return (
     <>

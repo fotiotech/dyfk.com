@@ -1,5 +1,6 @@
 "use client";
 
+import { findProductDetails } from "@/app/actions/products";
 import { useUser } from "@/app/context/UserContext";
 import Loading from "@/app/loading";
 import AddToCart from "@/components/AddToCart";
@@ -7,11 +8,9 @@ import CheckoutButton from "@/components/CheckoutButton";
 import DetailImages from "@/components/DetailImages";
 import { Prices } from "@/components/cart/Prices";
 import { Product } from "@/constant/types";
-import { getProductDetail } from "@/fetch/products";
 import { LocationOn } from "@mui/icons-material";
-import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 const DetailsPage = ({
   params,
@@ -19,10 +18,20 @@ const DetailsPage = ({
   params: { slug: string; dsin: string };
 }) => {
   const { customerInfos } = useUser();
-  const { data: details, isLoading } = useQuery<Product>({
-    queryKey: ["new-Arrival"],
-    queryFn: () => getProductDetail(params.dsin),
-  });
+  const [details, setDetails] = useState<Product | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    async function getDetails() {
+      setIsLoading(true);
+      const response = await findProductDetails();
+      if (response) {
+        setDetails(response);
+        setIsLoading(false);
+      }
+    }
+    getDetails();
+  }, []);
 
   console.log(details);
 

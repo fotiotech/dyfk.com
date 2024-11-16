@@ -21,7 +21,7 @@ const HeroContentSchema = new Schema({
     type: String,
     default: Date.now,
   },
-  updated_ad: {
+  updated_at: {
     type: String,
   },
 });

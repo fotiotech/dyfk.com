@@ -57,6 +57,26 @@ export async function findProducts(id?: string) {
   }
 }
 
+export async function findProductDetails(dsin?: string) {
+  await connection();
+
+  if (dsin) {
+    const product = await Product.findOne({ dsin });
+    if (product) {
+      return {
+        ...product.toObject(),
+        _id: product._id?.toString(),
+        category_id: product.category_id?.toString(),
+        brand_id: product.brand_id?.toString(),
+        created_at: product.created_at?.toString(),
+        updated_at: product.updated_at?.toString(),
+      };
+    } else {
+      console.log("Error");
+    }
+  }
+}
+
 export async function createProduct(
   categoryId: string,
   attributes: { [groupName: string]: { [attrName: string]: string[] } }, // Original structure

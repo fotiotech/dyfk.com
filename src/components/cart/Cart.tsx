@@ -3,7 +3,7 @@
 import { useCart } from "@/app/context/CartContext";
 import { Delete } from "@mui/icons-material";
 import Image from "next/image";
-import {Prices} from "./Prices";
+import { Prices } from "./Prices";
 
 const Cart = () => {
   const { cart, dispatch } = useCart();
@@ -19,22 +19,25 @@ const Cart = () => {
       ) : (
         <div className="flex flex-col gap-2 p-2">
           {cart.map((item) => (
-            
             <div key={item.id} className="flex gap-2 justify-between">
               <div className="flex gap-2 p-2">
-                {item.imageUrl && <Image
-                  src={item.imageUrl}
-                  width={500}
-                  height={500}
-                  alt="cart item img"
-                  className="w-24 h-24 object-contain"
-                />}
-                
+                {item.imageUrl && (
+                  <Image
+                    src={item.imageUrl}
+                    width={500}
+                    height={500}
+                    alt="cart item img"
+                    className="w-24 h-24 object-contain"
+                  />
+                )}
+
                 <div>
                   <h3>{item.name}</h3>
                   <p>
                     Price:{" "}
-                    <span className=" font-bold mr-1"><Prices amount={item.price} /></span>
+                    <span className=" font-bold mr-1">
+                      <Prices amount={item.price} />
+                    </span>
                   </p>
                   <p>Quantity: {item.quantity}</p>
                 </div>
