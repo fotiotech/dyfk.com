@@ -24,16 +24,18 @@ const DetailsPage = ({
   useEffect(() => {
     async function getDetails() {
       setIsLoading(true);
-      const response = await findProductDetails();
-      if (response) {
-        setDetails(response);
-        setIsLoading(false);
+      if (params.dsin) {
+        const response = await findProductDetails(params.dsin);
+        if (response) {
+          setDetails(response);
+          setIsLoading(false);
+        }
       }
     }
     getDetails();
   }, []);
 
-  console.log(details);
+  console.log(details?.attributes);
 
   return (
     <div className="relative w-full overflow-hidden bg-[#efefef]">
@@ -62,11 +64,12 @@ const DetailsPage = ({
               </div>
               {details?.attributes && (
                 <div className="">
-                  {details.attributes
+                  {details?.attributes
                     .filter(
                       (attributeGroup) => attributeGroup.groupName === "general"
                     )
                     .map((attributeGroup, groupIndex) => (
+                      
                       <div key={groupIndex} className="mb-3">
                         {/* <h4 className="font-semibold capitalize">
                           {attributeGroup.groupName}
