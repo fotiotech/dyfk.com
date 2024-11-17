@@ -94,11 +94,6 @@ export async function authenticate(
     throw new AuthError("Invalid credentials");
   }
 
-  if (response) {
-    redirect("/"); // Redirect on success
-  } else {
-    console.error("Login failed:", response?.error);
-  }
 }
 
 export async function logout(id: string) {
