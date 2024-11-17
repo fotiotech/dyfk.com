@@ -1,9 +1,9 @@
 "use server";
 
 import { AuthError } from "next-auth";
-import { auth, signIn, signOut } from "../auth";
+import { signIn, signOut } from "../auth";
 import { FormState, SigninFormSchema, SignupFormSchema } from "./definitions";
-import { redirect } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { createSession, deleteSession } from "./session";
 import Customer from "@/models/Customer";
 import User from "@/models/users";
@@ -82,18 +82,30 @@ export async function authenticate(
       errors: validatedFields.error.flatten().fieldErrors,
     };
   }
-  const response = await signIn("credentials", formData);
+
+  const response = await signIn("credentials", {
+    ...Object.fromEntries(formData.entries()),
+    redirect: false,
+    callbackUrl: process.env.NEXT_PUBLIC_API_URL, // Replace with your desired callback URL
+  });
 
   if (!response) {
     // Handle sign-in error
     throw new AuthError("Invalid credentials");
   }
 
-  redirect("/");
+  if (response) {
+    redirect("/"); // Redirect on success
+  } else {
+    console.error("Login failed:", response?.error);
+  }
 }
 
 export async function logout(id: string) {
   deleteSession(id);
-  await signOut();
-  redirect("/auth/login");
+  const response = await signOut();
+  console.log(response);
+  if (response) {
+    redirect("/auth/login");
+  }
 }
