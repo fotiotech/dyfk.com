@@ -2,12 +2,24 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import {
+  AtSymbolIcon,
+  KeyIcon,
+  ExclamationCircleIcon,
+  ArrowRightIcon,
+} from "@heroicons/react/24/outline";
 import SignInWithGoogle from "@/components/auth/sign-in";
-import { useFormState, useFormStatus } from "react-dom";
+import { useFormStatus } from "react-dom";
+import { Button } from "@mui/material";
+import { useActionState } from "react";
 import { authenticate } from "@/app/lib/actions";
 
+
 const Login = () => {
-  const [state, action] = useFormState(authenticate, undefined);
+  const [errorMessage, formAction, isPending] = useActionState(
+    authenticate,
+    undefined
+  );
   return (
     <>
       <Link href={"/"}>
@@ -25,32 +37,66 @@ const Login = () => {
       >
         <div className=" p-2">
           <h1 className="my-4 text-2xl text-center font-bold">Login</h1>
-          <form
-            action={action}
-            className="flex justify-center 
-            items-center "
-          >
-            <div>
-              <div>
-                <label htmlFor="email">Email</label>
-                <input name="email" type="email" placeholder="Email" />
-              </div>
-              {state && state?.errors?.email && <p>{state.errors.email}</p>}
-              <div>
-                <label htmlFor="password">Password</label>
-                <input title="password" name="password" type="password" />
-              </div>
-              {state && state?.errors?.password && (
+          <form action={formAction} className="space-y-3">
+            <div className="flex-1 rounded-lg bg-gray-50 px-6 pb-4 pt-8">
+              <h1 className={` mb-3 text-2xl`}>Please log in to continue.</h1>
+              <div className="w-full">
                 <div>
-                  <p>Password must:</p>
-                  <ul>
-                    {state.errors.password.map((error) => (
-                      <li key={error}>- {error}</li>
-                    ))}
-                  </ul>
+                  <label
+                    className="mb-3 mt-5 block text-xs font-medium text-gray-900"
+                    htmlFor="email"
+                  >
+                    Email
+                  </label>
+                  <div className="relative">
+                    <input
+                      className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500"
+                      id="email"
+                      type="email"
+                      name="email"
+                      placeholder="Enter your email address"
+                      required
+                    />
+                    <AtSymbolIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
+                  </div>
                 </div>
-              )}
-              <SubmitButton />
+                <div className="mt-4">
+                  <label
+                    className="mb-3 mt-5 block text-xs font-medium text-gray-900"
+                    htmlFor="password"
+                  >
+                    Password
+                  </label>
+                  <div className="relative">
+                    <input
+                      className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500"
+                      id="password"
+                      type="password"
+                      name="password"
+                      placeholder="Enter password"
+                      required
+                      minLength={6}
+                    />
+                    <KeyIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
+                  </div>
+                </div>
+              </div>
+              <Button className="mt-4 w-full" aria-disabled={isPending}>
+                Log in{" "}
+                <ArrowRightIcon className="ml-auto h-5 w-5 text-gray-50" />
+              </Button>
+              <div
+                className="flex h-8 items-end space-x-1"
+                aria-live="polite"
+                aria-atomic="true"
+              >
+                {errorMessage && (
+                  <>
+                    <ExclamationCircleIcon className="h-5 w-5 text-red-500" />
+                    <p className="text-sm text-red-500">{errorMessage}</p>
+                  </>
+                )}
+              </div>
             </div>
           </form>
           <Link href={"/auth/sign_up"}>

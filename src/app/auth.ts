@@ -56,6 +56,11 @@ export const { auth, signIn, signOut } = NextAuth({
             user.password as string
           );
 
+          if (passwordsMatch) {
+            console.log("password match");
+            return null;
+          }
+
           if (!passwordsMatch) {
             console.log("Invalid credentials");
             return null;
@@ -67,7 +72,6 @@ export const { auth, signIn, signOut } = NextAuth({
           } else {
             await createSession(user._id as string);
           }
-
           // Ensure the user is returned to NextAuth for a successful login
           return {
             id: user._id,
@@ -76,6 +80,7 @@ export const { auth, signIn, signOut } = NextAuth({
             role: user.role, // Include fields required by your app
           };
         }
+        
         console.log("Invalid credentials");
         return null;
       },

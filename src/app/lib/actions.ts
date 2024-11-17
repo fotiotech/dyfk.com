@@ -2,8 +2,8 @@
 
 import { AuthError } from "next-auth";
 import { signIn, signOut } from "../auth";
-import { FormState, SigninFormSchema, SignupFormSchema } from "./definitions";
-import { redirect, useRouter } from "next/navigation";
+import { FormState, SignupFormSchema } from "./definitions";
+import { redirect } from "next/navigation";
 import { createSession, deleteSession } from "./session";
 import Customer from "@/models/Customer";
 import User from "@/models/users";
@@ -66,34 +66,22 @@ export async function signup(state: FormState, formData: FormData) {
 }
 
 export async function authenticate(
-  state:
-    | false
-    | { errors: { email?: string[]; password?: string[] } }
-    | undefined,
+  prevState: string | undefined,
   formData: FormData
 ) {
-  const validatedFields = SigninFormSchema.safeParse({
-    email: formData.get("email"),
-    password: formData.get("password"),
-  });
-
-  if (!validatedFields.success) {
-    return {
-      errors: validatedFields.error.flatten().fieldErrors,
-    };
+  try {
+    await signIn("credentials", formData);
+  } catch (error) {
+    if (error instanceof AuthError) {
+      switch (error.type) {
+        case "CredentialsSignin":
+          return "Invalid credentials.";
+        default:
+          return "Something went wrong.";
+      }
+    }
+    throw error;
   }
-
-  const response = await signIn("credentials", {
-    ...Object.fromEntries(formData.entries()),
-    redirect: false,
-    callbackUrl: process.env.NEXT_PUBLIC_API_URL, // Replace with your desired callback URL
-  });
-
-  if (!response) {
-    // Handle sign-in error
-    throw new AuthError("Invalid credentials");
-  }
-
 }
 
 export async function logout(id: string) {
