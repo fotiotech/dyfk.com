@@ -7,13 +7,13 @@ export default async function Layout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const session = await verifySession();
-  const userRole = session?.role;
+  // const session = await verifySession();
+  // const userRole = session?.role;
 
-  // If there is no token, redirect to login page
-  if (userRole !== "admin") {
-    return redirect("/auth/login");
-  }
+  // // If there is no token, redirect to login page
+  // if (userRole !== "admin") {
+  //   return redirect("/auth/login");
+  // }
 
   return (
     <div>
