@@ -1,8 +1,8 @@
 "use client";
 import React from "react";
 import Link from "next/link";
-import { logout } from "@/app/actions/auth";
 import { useUser } from "@/app/context/UserContext";
+import { logout } from "@/app/lib/actions";
 
 const Profile = () => {
   const { user } = useUser();

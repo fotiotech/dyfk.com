@@ -1,58 +1,86 @@
-import User from "@/models/users";
-import { connection } from "@/utils/connection";
 import NextAuth from "next-auth";
-import GoogleProvider from "next-auth/providers/google";
+import { authConfig } from "./auth.config";
+import Credentials from "next-auth/providers/credentials";
+import { z } from "zod";
+import User from "@/models/users";
+import type { Users } from "@/constant/types";
+import { connection } from "@/utils/connection";
+import bcrypt from "bcrypt";
+import { verifySession } from "./lib/dal";
+import Customer from "@/models/Customer";
+import { redirect } from "next/navigation";
+import { updateSession, createSession } from "./lib/session";
+import mongoose from "mongoose";
 
-export const { handlers, signIn, signOut, auth } = NextAuth({
+async function getUser(email: string): Promise<Users | undefined> {
+  try {
+    await connection();
+    // Find the user by their id from the session
+    const currentUser = await User.findOne({ email });
+
+    return currentUser;
+  } catch (error) {
+    console.error("Failed to fetch user:", error);
+    throw new Error("Failed to fetch user.");
+  }
+}
+
+export const { auth, signIn, signOut } = NextAuth({
+  ...authConfig,
   providers: [
-    GoogleProvider({
-      clientId: process.env.AUTH_GOOGLE_CLIENT_ID || "",
-      clientSecret: process.env.AUTH_GOOGLE_CLIENT_SECRET || "",
+    Credentials({
+      async authorize(credentials) {
+        if (!credentials) return null;
+
+        const parsedCredentials = z
+          .object({
+            email: z
+              .string()
+              .email({ message: "Please enter a valid email." })
+              .trim(),
+            password: z
+              .string()
+              .min(8, { message: "Be at least 8 characters long" })
+              .regex(/[a-zA-Z]/, { message: "Contain at least one letter." })
+              .regex(/[0-9]/, { message: "Contain at least one number." })
+              .regex(/[^a-zA-Z0-9]/, {
+                message: "Contain at least one special character.",
+              })
+              .trim(),
+          })
+          .safeParse(credentials);
+
+        if (parsedCredentials.success) {
+          const { email, password } = parsedCredentials.data;
+          const user = await getUser(email as string);
+          if (!user) return null;
+          const passwordsMatch = await bcrypt.compare(
+            password as string,
+            user.password as string
+          );
+
+          if (!passwordsMatch) {
+            console.log("Invalid credentials");
+            return null;
+          }
+
+          const session = await verifySession();
+          if (session) {
+            await updateSession();
+          } else {
+            await createSession(user._id as string);
+          }
+
+          // Ensure the user is returned to NextAuth for a successful login
+          return {
+            id: user._id,
+            email: user.email,
+            name: user.username, // Include fields required by your app
+          };
+        }
+        console.log("Invalid credentials");
+        return null;
+      },
     }),
   ],
-  secret: process.env.AUTH_SECRET, // Add this if you're using AUTH_SECRET
-  pages: {
-    signIn: "/auth/login", // Optional: Customize sign-in page
-  },
-  callbacks: {
-    async session({ session, token }) {
-      // "use server";
-      // Customize session object if needed
-      return session;
-    },
-    async signIn({ user, account, profile }) {
-      // "use server";
-      await connection();
-      // Check if the user already exists
-      const existingUser = await User.findOne({ email: user.email });
-
-      if (!existingUser) {
-        // Create a new user if they don't exist
-        const newUser = new User({
-          username: user.name,
-          email: user.email,
-          image: user.image,
-          googleId: account?.providerAccountId,
-        });
-
-        await newUser.save();
-      } else {
-        // Optional: Update existing user data if needed
-        existingUser.username = user.name;
-        existingUser.email = user.email;
-        existingUser.image = user.image;
-        existingUser.googleId = account?.providerAccountId;
-
-        await existingUser.save();
-      }
-
-      // Allow the sign-in process to continue
-      return true;
-    },
-    async redirect({ url, baseUrl }) {
-      // "use server";
-      // Redirect to the home page after sign-in
-      return baseUrl; // This redirects to the base URL (home page)
-    },
-  },
 });

@@ -1,6 +1,6 @@
 "use client";
 
-import { signup } from "@/app/actions/auth";
+import { signup } from "@/app/lib/actions";
 import Image from "next/image";
 import Link from "next/link";
 import { useFormState, useFormStatus } from "react-dom";

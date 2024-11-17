@@ -3,7 +3,7 @@ import { cookies } from "next/headers";
 import Session from "@/models/Session";
 import { SignJWT, jwtVerify } from "jose";
 import { SessionPayload } from "@/app/lib/definitions";
-import { HydratedDocument, ObjectId } from "mongoose";
+import mongoose, { HydratedDocument, ObjectId } from "mongoose";
 import { connection } from "@/utils/connection";
 
 const secretKey = process.env.SESSION_SECRET;
@@ -28,7 +28,7 @@ export async function decrypt(session: string | undefined = "") {
   }
 }
 
-export async function createSession(id: ObjectId) {
+export async function createSession(id: string) {
   const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
 
   await connection();
@@ -38,7 +38,7 @@ export async function createSession(id: ObjectId) {
   const existingSession = await Session.findOne({ userId: id });
   if (existingSession) {
     // Update the session if it exists
-    existingSession.userId = id;
+    existingSession.userId = new mongoose.Schema.ObjectId(id);
     existingSession.expiresAt = expiresAt;
     createdSession = await existingSession.save();
   } else {

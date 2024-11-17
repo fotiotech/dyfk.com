@@ -2,12 +2,12 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { signin } from "@/app/actions/auth";
 import SignInWithGoogle from "@/components/auth/sign-in";
 import { useFormState, useFormStatus } from "react-dom";
+import { authenticate } from "@/app/lib/actions";
 
 const Login = () => {
-   const [state, action] = useFormState(signin, undefined);
+  const [state, action] = useFormState(authenticate, undefined);
   return (
     <>
       <Link href={"/"}>
@@ -35,12 +35,12 @@ const Login = () => {
                 <label htmlFor="email">Email</label>
                 <input name="email" type="email" placeholder="Email" />
               </div>
-              {state &&  state?.errors?.email && <p>{state.errors.email}</p>}
+              {state && state?.errors?.email && <p>{state.errors.email}</p>}
               <div>
                 <label htmlFor="password">Password</label>
                 <input title="password" name="password" type="password" />
               </div>
-              {state &&  state?.errors?.password && (
+              {state && state?.errors?.password && (
                 <div>
                   <p>Password must:</p>
                   <ul>
