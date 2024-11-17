@@ -3,7 +3,7 @@ import { connection } from "@/utils/connection";
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 
-export const { handlers, signIn, signOut, auth } = NextAuth({
+export const { auth, signIn, signOut } = NextAuth({
   providers: [
     GoogleProvider({
       clientId: process.env.AUTH_GOOGLE_CLIENT_ID as string,

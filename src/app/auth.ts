@@ -7,10 +7,7 @@ import type { Users } from "@/constant/types";
 import { connection } from "@/utils/connection";
 import bcrypt from "bcrypt";
 import { verifySession } from "./lib/dal";
-import Customer from "@/models/Customer";
-import { redirect } from "next/navigation";
 import { updateSession, createSession } from "./lib/session";
-import mongoose from "mongoose";
 
 async function getUser(email: string): Promise<Users | undefined> {
   try {
@@ -76,6 +73,7 @@ export const { auth, signIn, signOut } = NextAuth({
             id: user._id,
             email: user.email,
             name: user.username, // Include fields required by your app
+            role: user.role, // Include fields required by your app
           };
         }
         console.log("Invalid credentials");

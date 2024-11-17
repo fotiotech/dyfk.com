@@ -93,7 +93,7 @@ export async function authenticate(
 }
 
 export async function logout(id: string) {
-  await signOut();
   deleteSession(id);
+  await signOut();
   redirect("/auth/login");
 }
