@@ -9,7 +9,7 @@ import Spinner from "@/components/Spinner";
 import { findProducts } from "./actions/products";
 import { useEffect, useState } from "react";
 import { getCategory } from "./actions/category";
-import {Prices} from "@/components/cart/Prices";
+import { Prices } from "@/components/cart/Prices";
 
 export default function Home() {
   const [newArrival, setNewArrival] = useState<Product[]>([]);
@@ -41,7 +41,10 @@ export default function Home() {
             {newArrival?.length! > 0 ? (
               newArrival?.slice(0, 4).map((product, index) => (
                 <div key={index} className=" mb-1 rounded">
-                  <Link href={`/${product.url_slug}/details/${product.dsin}`}>
+                  <Link
+                    href={`/${product.url_slug}/details/${product.dsin}`}
+                    aria-label="new arrivals products"
+                  >
                     <div className=" lg:h-60 p-2 content-center bg-[#eee] h-52 rounded-lg overflow-hidden  ">
                       {product.imageUrls && (
                         <ImageRenderer image={product.imageUrls[0]} />
