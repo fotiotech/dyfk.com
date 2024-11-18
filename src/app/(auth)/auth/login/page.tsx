@@ -11,12 +11,11 @@ import {
 import SignInWithGoogle from "@/components/auth/sign-in";
 import { useFormStatus } from "react-dom";
 import { Button } from "@mui/material";
-import { useActionState } from "react";
 import { authenticate } from "@/app/lib/actions";
-
+import { useFormState } from "react-dom";
 
 const Login = () => {
-  const [errorMessage, formAction, isPending] = useActionState(
+  const [errorMessage, formAction, isPending] = useFormState(
     authenticate,
     undefined
   );
