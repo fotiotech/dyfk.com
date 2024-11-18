@@ -22,7 +22,7 @@ const AdminLayout = ({ children }: adminLayoutProps) => {
   });
 
   return (
-    <div className="flex w-full">
+    <div className="min-h-screen flex bg-gray-100 dark:bg-sec-dark">
       <AdminSideBar
         domNode={domNode}
         sideBarToggle={sideBarToggle}
@@ -31,8 +31,8 @@ const AdminLayout = ({ children }: adminLayoutProps) => {
       />
 
       <div
-        className="flex-1 bg-[#eee] dark:bg-pri-dark
-         text-sec dark:text-pri"
+        className="flex-1
+         text-sec dark:text-pri flex flex-col"
       >
         <AdminTopBar
           domNode={domNode}
@@ -42,7 +42,7 @@ const AdminLayout = ({ children }: adminLayoutProps) => {
         />
 
         <div
-          className="  p-2 bg-[#eee] dark:bg-sec-dark
+          className="flex-1 overflow-y-auto  p-2
          text-sec dark:text-pri "
         >
           {children}

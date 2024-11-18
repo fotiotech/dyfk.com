@@ -24,7 +24,10 @@ const AdminTopBar = ({
 }: adminTopBarProps) => {
   const { user } = useUser();
   return (
-    <div className="flex justify-between items-center p-2 shadow ">
+    <div
+      className="flex justify-between items-center p-2 shadow mb-4
+    dark:bg-pri-dark"
+    >
       <div className="flex items-center gap-3 ">
         <div className={`${screenSize >= 1024 ? "invisible" : ""} `}>
           <span
