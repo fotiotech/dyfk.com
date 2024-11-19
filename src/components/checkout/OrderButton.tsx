@@ -1,3 +1,4 @@
+import { triggerNotification } from "@/app/page";
 import Link from "next/link";
 import React from "react";
 
@@ -29,6 +30,7 @@ const OrderButton: React.FC<OrderButtonProps> = ({
             <button
               title="Place Order"
               type="button"
+              onClick={() => triggerNotification("Customer Placed an Order!")}
               className="btn border rounded-2xl w-full p-2 text-white font-bold"
             >
               Place Order

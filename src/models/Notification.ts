@@ -9,7 +9,7 @@ const NotificationSchema = new Schema({
   //   required: true,
   // },
   isRead: { type: Boolean, default: false },
-  createdAt: { type: Date, default: Date.now },
+  timestamp: { type: Date, default: Date.now },
 });
 
 const Notification =
