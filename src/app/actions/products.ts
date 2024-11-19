@@ -49,8 +49,10 @@ export async function findProducts(id?: string) {
         _id: prod._id.toString(),
         category_id: prod.category_id?.toString(),
         brand_id: prod.brand_id?.toString(),
-        created_at: prod.created_at?.toString(),
-        updated_at: prod.updated_at?.toString(),
+        attributes: prod.attributes.map((attr: any) => ({
+          ...attr.toObject(),
+          _id: attr._id?.toString(),
+        })),
       }));
     } else {
       console.log("Nothing found");
@@ -70,8 +72,10 @@ export async function findProductDetails(dsin?: string): Promise<Prod | null> {
           _id: product._id?.toString(),
           category_id: product.category_id?.toString() ?? null,
           brand_id: product.brand_id?.toString() ?? null,
-          created_at: product.created_at?.toString() ?? null,
-          updated_at: product.updated_at?.toString() ?? null,
+          attributes: product.attributes.map((attr: any) => ({
+            ...attr.toObject(),
+            _id: attr._id?.toString(),
+          })),
         };
       }
     }

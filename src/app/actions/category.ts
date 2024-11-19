@@ -24,6 +24,7 @@ export async function getCategory(
       const res = subCategories.map((subCategory) => ({
         ...subCategory.toObject(),
         _id: subCategory._id.toString(),
+        parent_id: subCategory.parent_id.toString(),
         created_at: subCategory.created_at.toISOString(),
         updated_at: subCategory.updated_at.toISOString(),
       }));
@@ -36,6 +37,7 @@ export async function getCategory(
       return {
         ...category.toObject(),
         _id: category._id.toString(),
+        parent_id: category.parent_id.toString(),
         created_at: category.created_at.toISOString(),
         updated_at: category.updated_at.toISOString(),
       };
@@ -46,6 +48,7 @@ export async function getCategory(
       return subCategories.map((subCategory) => ({
         ...subCategory?.toObject(),
         _id: subCategory._id?.toString(),
+        parent_id: subCategory.parent_id?.toString(),
         created_at: subCategory.created_at?.toISOString(),
         updated_at: subCategory.updated_at?.toISOString(),
       }));
@@ -55,6 +58,7 @@ export async function getCategory(
     return categories.map((category) => ({
       ...category.toObject(),
       _id: category._id.toString(),
+      parent_id: category.parent_id.toString(),
       created_at: category.created_at.toISOString(),
       updated_at: category.updated_at.toISOString(),
     }));

@@ -40,7 +40,7 @@ const DetailsPage = ({
     getDetails();
   }, [params.dsin]);
 
-  console.log(details?.attributes);
+  console.log(details);
 
   return (
     <div className="relative w-full overflow-hidden bg-[#efefef]">
@@ -49,7 +49,7 @@ const DetailsPage = ({
           <Loading loading={isLoading} />
         ) : (
           <div
-            key={details?._id}
+            key={details?._id.toString()}
             className="xl:flex-1 lg:grid grid-cols-2 gap-6 relative"
           >
             <div>
