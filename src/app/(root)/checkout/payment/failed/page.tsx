@@ -1,7 +1,14 @@
-import React from "react";
+import { useRouter } from 'next/router';
 
-const PaymentFailed = () => {
-  return <div>Payment Failed</div>;
-};
+export default function PaymentFailed() {
+  const router = useRouter();
+  const { transaction_id } = router.query;
 
-export default PaymentFailed;
+  return (
+    <div>
+      <h1>Payment Failed!</h1>
+      <p>Transaction ID: {transaction_id}</p>
+      <p>Please try again or contact support.</p>
+    </div>
+  );
+}

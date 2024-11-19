@@ -1,43 +1,50 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import { ToastContainer, toast } from "react-toastify";
+
+import { useEffect, useState } from "react";
+import Pusher from "pusher-js";
 import "react-toastify/dist/ReactToastify.css";
-import io from "socket.io-client";
+import { ToastContainer, toast } from "react-toastify";
 
-const notify = (message: string) => toast(message);
-
-const Notifications = () => {
-  const [notifications, setNotifications] = useState<any[]>([]);
-
-  const socket = io("http://localhost:3000"); // Your server URL
+const Dashboard = () => {
+  const [notifications, setNotifications] = useState<string[]>([]);
 
   useEffect(() => {
-    socket.on("newNotification", (notification: any) => {
-      // Update the notifications state with the new notification
-      setNotifications((prevNotifications) => [
-        ...prevNotifications,
-        notification,
-      ]);
+    // Initialize Pusher client
+    const pusher = new Pusher(
+      process.env.NEXT_PUBLIC_PUSHER_APP_KEY as string,
+      {
+        cluster: process.env.NEXT_PUBLIC_PUSHER_APP_CLUSTER as string,
+      }
+    );
+
+    // Subscribe to a channel
+    const channel = pusher.subscribe("admin/notifications");
+
+    // Listen for 'new-notification' events
+    channel.bind("new-notification", (data: { message: string }) => {
+      // Show notification with React Toastify
+      toast.success(data.message);
+      setNotifications((prev) => [...prev, data.message]);
     });
 
+    // Cleanup when component unmounts
     return () => {
-      socket.off("newNotification");
+      pusher.unsubscribe("admin/notifications");
     };
   }, []);
 
   return (
     <div>
-      Notifications{" "}
-      <button
-        title="notification"
-        type="button"
-        onClick={() => notify("New Order Received!")}
-      >
-        Show Notification
-      </button>
+      <h1>Admin Dashboard</h1>
       <ToastContainer />
+      <div>
+        <h2>Recent Notifications:</h2>
+        {notifications.map((message, idx) => (
+          <div key={idx}>{message}</div>
+        ))}
+      </div>
     </div>
   );
 };
 
-export default Notifications;
+export default Dashboard;

@@ -59,6 +59,8 @@ export const getUser = cache(async () => {
       { _id: session.userId } // Assuming session.userId is the user's _id
     );
 
+    
+
     return {
       _id: currentUser?._id.toString(),
       username: currentUser?.username,

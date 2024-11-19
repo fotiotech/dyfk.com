@@ -1,6 +1,8 @@
 import { verifySession } from "@/app/lib/dal";
 import { AdminLayout } from "../components";
 import { redirect } from "next/navigation";
+import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer, toast } from 'react-toastify';
 
 export default async function Layout({
   children,
@@ -17,6 +19,7 @@ export default async function Layout({
 
   return (
     <div>
+      <ToastContainer />
       <AdminLayout>{children}</AdminLayout>
     </div>
   );

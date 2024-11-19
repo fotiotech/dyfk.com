@@ -10,6 +10,8 @@ import { findProducts } from "./actions/products";
 import { useEffect, useState } from "react";
 import { getCategory } from "./actions/category";
 import { Prices } from "@/components/cart/Prices";
+import pusher from "pusher-js";
+import axios from "axios";
 
 export default function Home() {
   const [newArrival, setNewArrival] = useState<Product[]>([]);
@@ -29,6 +31,22 @@ export default function Home() {
     findCategory();
   }, []);
 
+  const triggerNotification = async (message: string) => {
+    try {
+      const res = await axios.post("/api/notify", { message });
+      console.log(res);
+      if (res.data.status === "Notification sent") {
+        console.log("Notification triggered successfully");
+      }
+    } catch (error) {
+      console.error("Error triggering notification:", error);
+    }
+  };
+
+  const handleProductClick = () => {
+    triggerNotification("A customer clicked on a product!");
+  };
+
   return (
     <Layout>
       <main className="">
@@ -40,7 +58,11 @@ export default function Home() {
           <div className="grid grid-cols-2 lg:grid-cols-4 mx-auto gap-3 lg:gap-5 ">
             {newArrival?.length! > 0 ? (
               newArrival?.slice(0, 4).map((product, index) => (
-                <div key={index} className=" mb-1 rounded">
+                <div
+                  key={index}
+                  onClick={handleProductClick}
+                  className=" mb-1 rounded"
+                >
                   <Link
                     href={`/${product.url_slug}/details/${product.dsin}`}
                     aria-label="new arrivals products"

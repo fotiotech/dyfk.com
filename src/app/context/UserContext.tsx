@@ -90,7 +90,6 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-
   // Function to update customer data
   const updateCustomerInfo = (updatedData: Partial<Customer>) => {
     setCustomerInfos((prevCustomerInfos) => {

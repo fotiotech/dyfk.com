@@ -40,8 +40,6 @@ const DetailsPage = ({
     getDetails();
   }, [params.dsin]);
 
-  console.log(details);
-
   return (
     <div className="relative w-full overflow-hidden bg-[#efefef]">
       <div className="xl:flex w-full bg-white lg:px-10">

@@ -1,9 +1,14 @@
-import React from 'react'
+import { useRouter } from "next/router";
 
-const Success = () => {
+export default function PaymentSuccess() {
+  const router = useRouter();
+  const { transaction_id, amount } = router.query;
+
   return (
-    <div>Success</div>
-  )
+    <div>
+      <h1>Payment Successful!</h1>
+      <p>Transaction ID: {transaction_id}</p>
+      <p>Amount Paid: {amount}</p>
+    </div>
+  );
 }
-
-export default Success
