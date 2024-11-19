@@ -73,7 +73,7 @@ const Header = () => {
             {cart.length > 0 ? (
               <p
                 className="absolute right-0 -top-2
-              bg-red-500 text-sm rounded-full px-1"
+              bg-red-500 text-xs rounded-full px-1"
               >
                 {cart.length}
               </p>

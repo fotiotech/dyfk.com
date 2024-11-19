@@ -1,50 +1,53 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Pusher from "pusher-js";
-import "react-toastify/dist/ReactToastify.css";
-import { ToastContainer, toast } from "react-toastify";
+import axios from "axios";
 
-const Dashboard = () => {
-  const [notifications, setNotifications] = useState<string[]>([]);
+type NotificationType = {
+  _id: string;
+  message: string;
+  isRead: boolean;
+  timestamp: string;
+};
+
+const NotificationPage = () => {
+  const [notifications, setNotifications] = useState<NotificationType[]>([]);
 
   useEffect(() => {
-    // Initialize Pusher client
-    const pusher = new Pusher(
-      process.env.NEXT_PUBLIC_PUSHER_APP_KEY as string,
-      {
-        cluster: process.env.NEXT_PUBLIC_PUSHER_APP_CLUSTER as string,
-      }
-    );
-
-    // Subscribe to a channel
-    const channel = pusher.subscribe("admin/notifications");
-
-    // Listen for 'new-notification' events
-    channel.bind("new-notification", (data: { message: string }) => {
-      // Show notification with React Toastify
-      toast.success(data.message);
-      setNotifications((prev) => [...prev, data.message]);
-    });
-
-    // Cleanup when component unmounts
-    return () => {
-      pusher.unsubscribe("admin/notifications");
+    const fetchNotifications = async () => {
+      const res = await axios.get("/api/notify");
+      setNotifications(res.data);
     };
+
+    fetchNotifications();
   }, []);
+
+  const markAsRead = async (id: string) => {
+    await axios.patch(`/api/notify/${id}`);
+    setNotifications((prev) =>
+      prev.map((n) => (n._id === id ? { ...n, isRead: true } : n))
+    );
+  };
 
   return (
     <div>
-      <h1>Admin Dashboard</h1>
-      <ToastContainer />
-      <div>
-        <h2>Recent Notifications:</h2>
-        {notifications.map((message, idx) => (
-          <div key={idx}>{message}</div>
+      <h1 className="mb-4 text-2xl font-bold">Notifications</h1>
+      <ul className="flex flex-col gap-3">
+        {notifications.map((notification) => (
+          <li
+            key={notification._id}
+            onClick={() => markAsRead(notification._id)}
+            className={`${
+              notification.isRead ? "bg-slate-700" : "bg-slate-500"
+            } p-2 border rounded-lg`}
+          >
+            {notification.message} -{" "}
+            {new Date(notification.timestamp).toLocaleString()}
+          </li>
         ))}
-      </div>
+      </ul>
     </div>
   );
 };
 
-export default Dashboard;
+export default NotificationPage;
