@@ -11,18 +11,9 @@ import { useEffect, useState } from "react";
 import { getCategory } from "./actions/category";
 import { Prices } from "@/components/cart/Prices";
 import axios from "axios";
+import { triggerNotification } from "./actions/notifications";
 
-export const triggerNotification = async (message: string) => {
-  try {
-    const res = await axios.post("/api/notify", { message });
-    console.log(res);
-    if (res.data.status === "Notification sent") {
-      console.log("Notification triggered successfully");
-    }
-  } catch (error) {
-    console.error("Error triggering notification:", error);
-  }
-};
+
 
 export default function Home() {
   const [newArrival, setNewArrival] = useState<Product[]>([]);
@@ -41,18 +32,6 @@ export default function Home() {
 
     findCategory();
   }, []);
-
-  const triggerNotification = async (message: string) => {
-    try {
-      const res = await axios.post("/api/notify", { message });
-      console.log(res);
-      if (res.data.status === "Notification sent") {
-        console.log("Notification triggered successfully");
-      }
-    } catch (error) {
-      console.error("Error triggering notification:", error);
-    }
-  };
 
   const handleProductClick = () => {
     triggerNotification("A customer clicked on a product!");

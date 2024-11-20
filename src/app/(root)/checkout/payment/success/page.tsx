@@ -1,8 +1,11 @@
-import { useRouter } from "next/router";
+"use client"
+
+import {  useSearchParams } from "next/navigation";
 
 export default function PaymentSuccess() {
-  const router = useRouter();
-  const { transaction_id, amount } = router.query;
+  const params = useSearchParams();
+  const transaction_id = params.get("transaction_id");
+  const amount = params.get("amount");
 
   return (
     <div>

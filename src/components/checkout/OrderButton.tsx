@@ -1,4 +1,4 @@
-import { triggerNotification } from "@/app/page";
+import { triggerNotification } from "@/app/actions/notifications";
 import Link from "next/link";
 import React from "react";
 
@@ -19,8 +19,6 @@ const OrderButton: React.FC<OrderButtonProps> = ({
     setTransactionId(Math.floor(Math.random() * 1000000)); // Update transactionId safely
     handleOrderData(e); // Call the order handler before navigation
   };
-
-  console.log(transactionId);
 
   return (
     <div className="text-center">

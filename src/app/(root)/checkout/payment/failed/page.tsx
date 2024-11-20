@@ -1,8 +1,10 @@
-import { useRouter } from 'next/router';
+"use client"
+
+import { useSearchParams } from "next/navigation";
 
 export default function PaymentFailed() {
-  const router = useRouter();
-  const { transaction_id } = router.query;
+  const params = useSearchParams();
+  const transaction_id = params.get("transaction_id");
 
   return (
     <div>
