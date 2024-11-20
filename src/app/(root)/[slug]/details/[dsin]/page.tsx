@@ -7,8 +7,11 @@ import AddToCart from "@/components/AddToCart";
 import CheckoutButton from "@/components/CheckoutButton";
 import DetailImages from "@/components/DetailImages";
 import { Prices } from "@/components/cart/Prices";
+import ProductReviews from "@/components/reviews/ProductReviews";
+import ReviewForm from "@/components/reviews/ReviewForm";
 import { Product } from "@/constant/types";
 import { LocationOn } from "@mui/icons-material";
+import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 
@@ -164,6 +167,18 @@ const DetailsPage = ({
             Items in Your Cart
           </h2>
         </div>
+      </div>
+      <div className="flex flex-col">
+        <h2 className="text-lg font-semibold">Product Gallery</h2>
+        <div className="">
+          {details?.imageUrls?.map((image) => (
+            <Image src={image} alt="product images" width={500} height={500} />
+          ))}
+        </div>
+      </div>
+      <div>
+        <ReviewForm productId={details?._id as string} />
+        <ProductReviews productId={details?._id as string} />
       </div>
     </div>
   );
