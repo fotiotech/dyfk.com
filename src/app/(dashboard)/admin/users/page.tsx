@@ -12,7 +12,7 @@ const Users = () => {
     async function getUsers() {
       const content = await findUsers();
       if (content) {
-        setUsers(content);
+        setUsers(content as usersTypes[]);
       }
     }
     getUsers();

@@ -12,6 +12,7 @@ import Customer from "@/models/Customer";
 import User from "@/models/users";
 import { connection } from "@/utils/connection";
 import { verifySession } from "./dal";
+import { ObjectId } from "mongoose";
 
 export async function signup(state: FormState, formData: FormData) {
   // Validate form fields
@@ -59,7 +60,7 @@ export async function signup(state: FormState, formData: FormData) {
 
     // Current steps:
     // 4. Create user session
-    await createSession(user._id);
+    await createSession(user?._id.toString());
 
     const newCustomer = new Customer({ userId: user._id });
     await newCustomer.save();
@@ -100,7 +101,7 @@ export const authenticate = async (
   const user = await User.findOne({ email });
   console.log(user);
 
-  if (!user || !(await user.matchPassword(password, user._id.toString()))) {
+  if (!user || !(await user.matchPassword(password))) {
     console.log("Wrong password");
     return;
   }

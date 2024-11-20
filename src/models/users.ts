@@ -2,7 +2,7 @@ import mongoose, { Document, Schema, Model } from "mongoose";
 import bcrypt from "bcryptjs";
 
 interface IUser extends Document {
-  _id: Types.ObjectId;
+  _id: mongoose.Types.ObjectId;
   username: string;
   email: string;
   password: string;

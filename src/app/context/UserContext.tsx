@@ -110,10 +110,10 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
         const userData = await getUser();
         if (userData) {
           setUser({
-            _id: userData._id,
-            username: userData.username,
-            email: userData.email,
-            role: userData.role,
+            _id: userData?._id || "",
+            username: userData?.username || "",
+            email: userData?.email || "",
+            role: userData?.role || "",
           });
         }
 

@@ -12,10 +12,10 @@ import { getCategory } from "./actions/category";
 import { Prices } from "@/components/cart/Prices";
 import axios from "axios";
 import { triggerNotification } from "./actions/notifications";
-
-
+import { useUser } from "./context/UserContext";
 
 export default function Home() {
+  const { user } = useUser();
   const [newArrival, setNewArrival] = useState<Product[]>([]);
   const [electronics, setElectronics] = useState<Category[]>([]);
 
@@ -34,7 +34,10 @@ export default function Home() {
   }, []);
 
   const handleProductClick = () => {
-    triggerNotification("A customer clicked on a product!");
+    triggerNotification(
+      user?._id as string,
+      "A customer clicked on a product!"
+    );
   };
 
   return (
