@@ -11,12 +11,12 @@ import React, { useEffect, useState } from "react";
 const PaymentPage: React.FC = () => {
   const orderNumber = useSearchParams().get("orderNumber")?.toLowerCase();
   const [order, setOrder] = useState<Orders | null>(null);
+  console.log(orderNumber);
 
   useEffect(() => {
     async function getOrder() {
-      if (orderNumber) {
+      if (orderNumber !== "") {
         const response = await findOrders(orderNumber);
-        console.log(response);
         setOrder(response);
       }
     }

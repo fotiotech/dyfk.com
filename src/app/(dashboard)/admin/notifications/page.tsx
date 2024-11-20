@@ -2,10 +2,12 @@
 
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { Users } from "@/constant/types";
 
 type NotificationType = {
   _id: string;
   message: string;
+  user?: Users;
   isRead: boolean;
   timestamp: string;
 };
@@ -39,8 +41,9 @@ const NotificationPage = () => {
             onClick={() => markAsRead(notification._id)}
             className={`${
               notification.isRead ? "bg-slate-700" : "bg-slate-500"
-            } p-2 border rounded-lg`}
+            } flex items-center gap-3 p-2 border rounded-lg`}
           >
+            <p>{notification?.user?.username}</p>
             {notification.message} -{" "}
             {new Date(notification.timestamp).toLocaleString()}
           </li>

@@ -1,4 +1,5 @@
 import { triggerNotification } from "@/app/actions/notifications";
+import { useUser } from "@/app/context/UserContext";
 import Link from "next/link";
 import React from "react";
 
@@ -15,6 +16,7 @@ const OrderButton: React.FC<OrderButtonProps> = ({
   setTransactionId,
   handleOrderData,
 }) => {
+  const { user } = useUser();
   const handlePlaceOrder = (e: React.SyntheticEvent) => {
     setTransactionId(Math.floor(Math.random() * 1000000)); // Update transactionId safely
     handleOrderData(e); // Call the order handler before navigation
@@ -28,7 +30,12 @@ const OrderButton: React.FC<OrderButtonProps> = ({
             <button
               title="Place Order"
               type="button"
-              onClick={() => triggerNotification("Customer Placed an Order!")}
+              onClick={() =>
+                triggerNotification(
+                  user?._id as string,
+                  "Customer Placed an Order!"
+                )
+              }
               className="btn border rounded-2xl w-full p-2 text-white font-bold"
             >
               Place Order

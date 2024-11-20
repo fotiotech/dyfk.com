@@ -1,13 +1,17 @@
 "use server";
 
-import { AuthError } from "next-auth";
-import { signIn, signOut } from "../auth";
-import { FormState, SignupFormSchema } from "./definitions";
+import {
+  FormState,
+  LoginFormState,
+  SigninFormSchema,
+  SignupFormSchema,
+} from "./definitions";
 import { redirect } from "next/navigation";
-import { createSession, deleteSession } from "./session";
+import { createSession, deleteSession, updateSession } from "./session";
 import Customer from "@/models/Customer";
 import User from "@/models/users";
 import { connection } from "@/utils/connection";
+import { verifySession } from "./dal";
 
 export async function signup(state: FormState, formData: FormData) {
   // Validate form fields
@@ -65,32 +69,55 @@ export async function signup(state: FormState, formData: FormData) {
   }
 }
 
-export async function authenticate(
-  prevState: string | undefined,
-  formData: FormData
-) {
-  try {
-    if (formData) {
-      return await signIn("credentials", formData);
-    }
-  } catch (error) {
-    if (error instanceof AuthError) {
-      switch (error.type) {
-        case "CredentialsSignin":
-          return "Invalid credentials.";
-        default:
-          return "Something went wrong.";
+export const authenticate = async (
+  state:
+    | {
+        errors: {
+          email?: string[] | undefined;
+          password?: string[] | undefined;
+        };
+        message?: string;
       }
-    }
-    throw error;
+    | undefined,
+  formData: FormData
+) => {
+  const validatedFields = SigninFormSchema.safeParse({
+    email: formData.get("email"),
+    password: formData.get("password"),
+  });
+
+  if (!validatedFields.success) {
+    return {
+      ...state,
+      errors: validatedFields.error.flatten().fieldErrors,
+    };
   }
-}
+
+  const { email, password } = validatedFields.data;
+
+  await connection();
+
+  const user = await User.findOne({ email });
+  console.log(user);
+
+  if (!user || !(await user.matchPassword(password, user._id.toString()))) {
+    console.log("Wrong password");
+    return;
+  }
+
+  // Handle session
+  const session = await verifySession();
+  if (session) {
+    const updatedSession = await updateSession();
+    console.log("Session updated:", updatedSession);
+  } else {
+    await createSession(user._id.toString());
+  }
+
+  redirect("/");
+};
 
 export async function logout(id: string) {
   deleteSession(id);
-  const response = await signOut();
-  console.log(response);
-  if (response) {
-    redirect("/auth/login");
-  }
+  redirect("/auth/login");
 }

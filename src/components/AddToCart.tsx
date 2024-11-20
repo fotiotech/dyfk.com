@@ -1,3 +1,4 @@
+import { triggerNotification } from "@/app/actions/notifications";
 import { useCart } from "@/app/context/CartContext";
 import { Product } from "@/constant/types";
 
@@ -21,7 +22,10 @@ const AddToCart = ({ product }: { product: Product }) => {
     <button
       type="button"
       title="add to cart"
-      onClick={handleAddToCart}
+      onClick={() => {
+        handleAddToCart();
+        triggerNotification("A Customer Added a Product to the Cart!");
+      }}
       className="border rounded-lg p-2 bg-blue-600
       hover:bg-blue-700 w-1/2 shadow-lg font-semibold
       text-pri"

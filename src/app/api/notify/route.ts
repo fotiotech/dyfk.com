@@ -1,6 +1,7 @@
 "use server";
 
 import Notification from "@/models/Notification";
+import User from "@/models/users";
 import { NextResponse } from "next/server";
 import Pusher from "pusher";
 
@@ -14,16 +15,41 @@ const pusher = new Pusher({
 });
 
 export async function GET() {
-  const notifications = await Notification.find().sort({ timestamp: -1 });
-  return NextResponse.json(notifications);
+  try {
+    // Fetch notifications sorted by timestamp
+    const notifications = await Notification.find().sort({ timestamp: -1 });
+
+    // Resolve user data for each notification concurrently
+    const users = await Promise.all(
+      notifications.map((notification) =>
+        User.findById(notification.userId).lean()
+      )
+    );
+
+    // Combine notifications with their associated user data
+    const notificationsWithUsers = notifications.map((notification, index) => ({
+      ...notification.toObject(), // Convert Mongoose document to plain JS object
+      user: users[index], // Associate user data
+    }));
+
+    console.log(notificationsWithUsers)
+
+    return NextResponse.json(notificationsWithUsers);
+  } catch (error) {
+    console.error("Error fetching notifications or users:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch data." },
+      { status: 500 }
+    );
+  }
 }
 
 // Your API route that triggers the event
 export async function POST(request: Request) {
-  const { message } = await request.json();
+  const { userId, message } = await request.json();
 
   // Save the notification in the database
-  const notification = new Notification({ message });
+  const notification = new Notification({ userId, message });
   await notification.save();
 
   // Trigger an event on a channel

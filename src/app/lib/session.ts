@@ -38,7 +38,7 @@ export async function createSession(id: string) {
   const existingSession = await Session.findOne({ userId: id });
   if (existingSession) {
     // Update the session if it exists
-    existingSession.userId = new mongoose.Schema.ObjectId(id);
+    existingSession.userId = new mongoose.Types.ObjectId(id);
     existingSession.expiresAt = expiresAt;
     createdSession = await existingSession.save();
   } else {

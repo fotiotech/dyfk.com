@@ -41,12 +41,15 @@ export type FormState =
     }
   | undefined;
 
-export type LoginFormState = {
-  errors: {
-    email?: string[];
-    password?: string[];
-  };
-};
+export type LoginFormState =
+  | {
+      errors: {
+        email?: string[];
+        password?: string[];
+      };
+      message?: string;
+    }
+  | undefined;
 
 export type SessionPayload = {
   sessionId: string;

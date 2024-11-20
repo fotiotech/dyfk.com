@@ -1,7 +1,7 @@
-import { Schema, model, models } from "mongoose";
+import { Schema, Types, model, models } from "mongoose";
 
 const NotificationSchema = new Schema({
-  // user: { type: Types.ObjectId, ref: "User", required: true },
+  userId: { type: Types.ObjectId, ref: "User", required: true },
   message: { type: String, required: true },
   // type: {
   //   type: String,

@@ -50,22 +50,19 @@ export async function createOrder(orderNumber: string, data: any) {
 
     if (existingOrder) {
       // If it exists, update the existing order
-      const updatedOrder = await Order.findByIdAndUpdate(
-        existingOrder._id,
-        data,
-        {
-          new: true, // Return the updated document
-          runValidators: true, // Run schema validations on update
-        }
-      );
+      await Order.findByIdAndUpdate(existingOrder._id, data, {
+        new: true, // Return the updated document
+        runValidators: true, // Run schema validations on update
+      });
       // Revalidate path if using server-side caching
       revalidatePath("/admin/orders");
       // return updatedOrder;
     } else {
       // If it doesn't exist, create a new order
       const newOrder = new Order(data);
-      const savedOrder = await newOrder.save();
+      await newOrder.save();
       // Revalidate path if using server-side caching
+
       revalidatePath("/admin/orders");
       // return savedOrder;
     }

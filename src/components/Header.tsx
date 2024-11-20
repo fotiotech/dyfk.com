@@ -22,6 +22,7 @@ const Header = () => {
   const [searchInput, setSearchInput] = useState("");
   const [category, setCategory] = useState<Category[]>([]);
 
+
   useEffect(() => {
     async function findCategories() {
       const res = await getCategory();

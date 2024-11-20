@@ -1,33 +1,29 @@
-import User from "@/models/users";
-import { connection } from "@/utils/connection";
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
+import { connection } from "@/utils/connection";
+import User from "@/models/users";
 
-export const { auth, signIn, signOut } = NextAuth({
+const authOptions = {
   providers: [
     GoogleProvider({
       clientId: process.env.AUTH_GOOGLE_CLIENT_ID as string,
       clientSecret: process.env.AUTH_GOOGLE_CLIENT_SECRET as string,
     }),
   ],
-  secret: process.env.AUTH_SECRET, // Add this if you're using AUTH_SECRET
+  secret: process.env.AUTH_SECRET,
   pages: {
-    signIn: "/auth/login", // Optional: Customize sign-in page
+    signIn: "/auth/login",
   },
   callbacks: {
-    async session({ session, token }) {
-      // "use server";
-      // Customize session object if needed
+    async session({ session, token }: { session: any; token: any }) {
       return session;
     },
-    async signIn({ user, account, profile }) {
-      // "use server";
+    async signIn({ user, account, profile }: any) {
       await connection();
-      // Check if the user already exists
+
       const existingUser = await User.findOne({ email: user.email });
 
       if (!existingUser) {
-        // Create a new user if they don't exist
         const newUser = new User({
           username: user.name,
           email: user.email,
@@ -37,7 +33,6 @@ export const { auth, signIn, signOut } = NextAuth({
 
         await newUser.save();
       } else {
-        // Optional: Update existing user data if needed
         existingUser.username = user.name;
         existingUser.email = user.email;
         existingUser.image = user.image;
@@ -46,13 +41,11 @@ export const { auth, signIn, signOut } = NextAuth({
         await existingUser.save();
       }
 
-      // Allow the sign-in process to continue
       return true;
     },
-    async redirect({ url, baseUrl }) {
-      // "use server";
-      // Redirect to the home page after sign-in
-      return baseUrl; // This redirects to the base URL (home page)
-    },
   },
-});
+};
+
+// Directly export the NextAuth handler with options
+const handler = NextAuth(authOptions);
+export { handler as GET, handler as POST };
