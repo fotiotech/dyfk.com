@@ -17,7 +17,7 @@ const CheckoutPage = () => {
   const { user, customerInfos } = useUser();
   const { cart } = useCart();
   const [customer, setCustomer] = useState<Customer>();
-  const [transactionId, setTransactionId] = useState(0);
+  const transactionId = Math.floor(Math.random() * 1000000);
   const [orderNumber, setOrderNumber] = useState("");
   const [shippingAddressCheck, setShippingAddressCheck] =
     useState<boolean>(true);
@@ -52,7 +52,7 @@ const CheckoutPage = () => {
       estimatedShippingDate.getDate() + transitDays
     );
 
-    await createOrder(orderNumber, {
+    await createOrder(transactionId, {
       orderNumber,
       userId: user?._id,
       products: cart?.map((item) => ({
@@ -68,7 +68,7 @@ const CheckoutPage = () => {
       total: calculateTotal(cart),
       paymentStatus: "pending",
       paymentMethod: selectedPaymentMethod,
-      transactionId: Math.floor(Math.random() * 1000000),
+      transactionId: transactionId,
       shippingAddress: {
         street: customer?.shippingAddress?.street || "",
         city: customer?.shippingAddress?.city || "",
@@ -190,12 +190,7 @@ const CheckoutPage = () => {
       </div>
 
       <div>
-        <OrderButton
-          orderNumber={orderNumber}
-          transactionId={transactionId}
-          setTransactionId={setTransactionId}
-          handleOrderData={handleOrderData}
-        />
+        <OrderButton transactionId={transactionId} handleOrderData={handleOrderData} />
       </div>
     </div>
   );

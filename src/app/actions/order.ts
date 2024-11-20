@@ -1,15 +1,20 @@
 "use server";
 
 import Order from "@/models/Order";
+import { connection } from "@/utils/connection";
 import { revalidatePath } from "next/cache";
 
-export async function findOrders(orderNumber?: string, userId?: string) {
+export async function findOrders(
+  transactionId?: number | string,
+  userId?: string | null
+) {
+  await connection();
   try {
-    if (orderNumber) {
-      // Find a single order by its unique order ID
-      const order = await Order.findOne({
-        orderNumber: { $regex: new RegExp(orderNumber, "i") },
-      });
+    if (transactionId) {
+      // console.log(transactionId);
+
+      const order = await Order.findOne({ transactionId });
+
       console.log(order);
 
       if (order) {
@@ -43,10 +48,12 @@ export async function findOrders(orderNumber?: string, userId?: string) {
   }
 }
 
-export async function createOrder(orderNumber: string, data: any) {
+export async function createOrder(transactionId: number, data: any) {
+  await connection();
   try {
+    if (transactionId == 0) return null;
     // Check if an order with the same orderNumber already exists
-    const existingOrder = await Order.findOne({ orderNumber });
+    const existingOrder = await Order.findOne({ transactionId });
 
     if (existingOrder) {
       // If it exists, update the existing order

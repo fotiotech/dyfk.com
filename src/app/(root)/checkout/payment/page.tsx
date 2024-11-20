@@ -9,19 +9,19 @@ import { useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
 const PaymentPage: React.FC = () => {
-  const orderNumber = useSearchParams().get("orderNumber")?.toLowerCase();
+  const transactionId = useSearchParams().get("transactionId");
   const [order, setOrder] = useState<Orders | null>(null);
-  console.log(orderNumber);
+  console.log(transactionId);
 
   useEffect(() => {
     async function getOrder() {
-      if (orderNumber !== "") {
-        const response = await findOrders(orderNumber);
+      if (transactionId) {
+        const response = await findOrders(transactionId, null);
         setOrder(response);
       }
     }
     getOrder();
-  }, [orderNumber]);
+  }, [transactionId]);
 
   let content;
 
@@ -43,9 +43,6 @@ const PaymentPage: React.FC = () => {
     <div className=" p-2">
       <h2 className="text-2xl font-bold">Payment Page</h2>
       <div className="my-2 ">
-        <p>
-          Order Number: <span className="font-semibold">{orderNumber}</span>{" "}
-        </p>
         <p>
           Payment Method:{" "}
           <span className="font-semibold">{order?.paymentMethod}</span>{" "}
