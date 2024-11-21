@@ -32,8 +32,6 @@ export async function GET() {
       user: users[index], // Associate user data
     }));
 
-    console.log(notificationsWithUsers)
-
     return NextResponse.json(notificationsWithUsers);
   } catch (error) {
     console.error("Error fetching notifications or users:", error);

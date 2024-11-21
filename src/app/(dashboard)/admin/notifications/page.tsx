@@ -16,18 +16,15 @@ const NotificationPage = () => {
   const [notifications, setNotifications] = useState<NotificationType[]>([]);
 
   useEffect(() => {
-    const fetchNotifications = async (url: string, retries: number = 3) => {
-      for (let i = 0; i < retries; i++) {
-        try {
-          const res = await axios.get(url);
-          setNotifications(res.data);
-        } catch (error) {
-          if (i === retries - 1) throw error; // Throw after max retries
-        }
-      }
+    const fetchNotifications = async () => {
+      const res = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/notify`,
+        { timeout: 10000 }
+      );
+      setNotifications(res.data);
     };
 
-    fetchNotifications(`${process.env.NEXT_PUBLIC_API_URL}/api/notify`);
+    fetchNotifications();
   }, []);
 
   const markAsRead = async (id: string) => {
