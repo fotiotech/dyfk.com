@@ -5,7 +5,6 @@ import User from "@/models/users";
 import { NextResponse } from "next/server";
 import Pusher from "pusher";
 
-// Initialize Pusher server-side with your app credentials
 const pusher = new Pusher({
   appId: process.env.PUSHER_APP_ID as string,
   key: process.env.PUSHER_APP_KEY as string,
@@ -16,25 +15,28 @@ const pusher = new Pusher({
 
 export async function GET() {
   try {
-    // Fetch notifications sorted by timestamp
-    const notifications = await Notification.find().sort({ timestamp: -1 });
+    const PAGE_SIZE = 10; // Limit to avoid overloading
+    const notifications = await Notification.find()
+      .sort({ timestamp: -1 })
+      .limit(PAGE_SIZE);
 
-    // Resolve user data for each notification concurrently
-    const users = await Promise.all(
-      notifications.map((notification) =>
-        User.findById(notification.userId).lean()
-      )
+    const userIds = notifications.map((notification) => notification.userId);
+    const users = await User.find({ _id: { $in: userIds } }).lean();
+    const userMap = Object.fromEntries(
+      users.map((user) => [user._id.toString(), user])
     );
 
-    // Combine notifications with their associated user data
-    const notificationsWithUsers = notifications.map((notification, index) => ({
-      ...notification.toObject(), // Convert Mongoose document to plain JS object
-      user: users[index], // Associate user data
+    const notificationsWithUsers = notifications.map((notification) => ({
+      ...notification.toObject(),
+      user: userMap[notification.userId.toString()],
     }));
 
     return NextResponse.json(notificationsWithUsers);
-  } catch (error) {
-    console.error("Error fetching notifications or users:", error);
+  } catch (error: any) {
+    console.error("Error fetching notifications or users:", {
+      message: error.message,
+      stack: error.stack,
+    });
     return NextResponse.json(
       { error: "Failed to fetch data." },
       { status: 500 }
