@@ -68,7 +68,7 @@ export async function findProducts(id?: string) {
         _id: prod._id.toString(),
         category_id: prod.category_id?.toString(),
         brand_id: prod.brand_id?.toString(),
-        attributes: prod.attributes.map((attr: any) => ({
+        attributes: prod.attributes?.map((attr: any) => ({
           ...attr.toObject(),
           _id: attr._id?.toString(),
         })),
@@ -91,7 +91,7 @@ export async function findProductDetails(dsin?: string): Promise<Prod | null> {
           _id: product._id?.toString(),
           category_id: product.category_id?.toString() ?? null,
           brand_id: product.brand_id?.toString() ?? null,
-          attributes: product.attributes.map((attr: any) => ({
+          attributes: product.attributes?.map((attr: any) => ({
             ...attr.toObject(),
             _id: attr._id?.toString(),
           })),
