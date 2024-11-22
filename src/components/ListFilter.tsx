@@ -1,13 +1,29 @@
 import React, { useEffect, useState } from "react";
 import useClickOusite, { useScreenSize } from "./Hooks";
-import Link from "next/link";
 
-interface filterListProps {
-  openClose: boolean;
-  setOpenClose: (arg: boolean) => void;
+interface Filter {
+  id: string;
+  name: string;
+  count: number;
 }
 
-const ListFilter = ({ openClose, setOpenClose }: filterListProps) => {
+type FilterListProps = {
+  openClose: boolean;
+  setOpenClose: React.Dispatch<React.SetStateAction<boolean>>;
+  filters: {
+    categories: { id: string; name: string; count: number }[];
+    brands: { id: string; name: string; count: number }[];
+    priceRange: { min: number; max: number };
+  };
+  handleFilterClick: (key: string, value: string) => void;
+};
+
+const ListFilter = ({
+  openClose,
+  setOpenClose,
+  filters,
+  handleFilterClick,
+}: FilterListProps) => {
   const [screenSize, setScreenSize] = useState(0);
 
   useEffect(() => {
@@ -33,76 +49,52 @@ const ListFilter = ({ openClose, setOpenClose }: filterListProps) => {
       className={`${
         screenSize <= 1024
           ? openClose
-            ? "absolute z-10 bottom-0"
-            : "hidden "
+            ? "absolute z-10 bottom-0 top-20"
+            : "hidden"
           : ""
-      } w-full lg:w-60  rounded-t-xl 
-       lg:rounded-none bg-pri p-2 pb-8 
-       border-thi lg:border-none border-4 transition-all`}
+      } w-full lg:w-60 h-full rounded-t-xl lg:rounded-none bg-pri p-2 pb-8 border-thi lg:border-none border-4 transition-all`}
     >
       <div>
         <h3 className="font-semibold text-lg">Filter List</h3>
       </div>
       <div className="h-96 overflow-y-auto">
-        <div className="w-full  ">
-          <div>
-            <h3 className=" font-bold text-lg">Category :</h3>
-            <ul className=" pl-20 font-medium list-disc ">
-              <Link href={"/search?category=electronic"}>
-                <li className="">Electronic</li>
-              </Link>
-              <Link href={"/search?category=books"}>
-                <li>Books</li>
-              </Link>
-              <Link href={"/search?category=shopping"}>
-                <li>Shopping</li>
-              </Link>
-              <Link href={"/search?category=construction"}>
-                <li>Construction</li>
-              </Link>
-              <Link href={"/search?category=furniture"}>
-                <li>Furniture</li>
-              </Link>
-            </ul>
-          </div>
-          <div>
-            <h3 className=" font-bold text-lg">Departement :</h3>
-            <ul className=" lg:pl-20 font-medium list-disc">
-              <li>Laptop</li>
-              <li>Tablette</li>
-              <li>Smartphone</li>
-            </ul>
-          </div>
+        {/* Categories */}
+        <div>
+          <h3 className="font-bold text-lg">Categories:</h3>
+          <ul className="pl-5 font-medium list-disc">
+            {filters.categories.map((category) => (
+              <li
+                key={category.id}
+                onClick={() => handleFilterClick("category", category.id)}
+                className="cursor-pointer hover:underline"
+              >
+                {category.name} ({category.count})
+              </li>
+            ))}
+          </ul>
         </div>
-        <div className="w-full ">
-          <div>
-            <h3 className=" font-bold text-lg">Category :</h3>
-            <ul className=" pl-20 font-medium list-disc ">
-              <Link href={"/search?category=electronic"}>
-                <li className="">Electronic</li>
-              </Link>
-              <Link href={"/search?category=books"}>
-                <li>Books</li>
-              </Link>
-              <Link href={"/search?category=shopping"}>
-                <li>Shopping</li>
-              </Link>
-              <Link href={"/search?category=construction"}>
-                <li>Construction</li>
-              </Link>
-              <Link href={"/search?category=furniture"}>
-                <li>Furniture</li>
-              </Link>
-            </ul>
-          </div>
-          <div>
-            <h3 className=" font-bold text-lg">Departement :</h3>
-            <ul className=" lg:pl-20 font-medium list-disc">
-              <li>Laptop</li>
-              <li>Tablette</li>
-              <li>Smartphone</li>
-            </ul>
-          </div>
+
+        {/* Brands */}
+        <div>
+          <h3 className="font-bold text-lg mt-4">Brands:</h3>
+          <ul className="pl-5 font-medium list-disc">
+            {filters.brands.map((brand) => (
+              <li
+                key={brand.id}
+                onClick={() => handleFilterClick("brand", brand.id)}
+                className="cursor-pointer hover:underline"
+              >
+                {brand.name} ({brand.count})
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Price Range */}
+        <h3 className="font-bold text-lg mt-4">Price Range:</h3>
+        <div>
+          <span>Min: {filters.priceRange.min}</span> -{" "}
+          <span>Max: {filters.priceRange.max}</span>
         </div>
       </div>
     </div>

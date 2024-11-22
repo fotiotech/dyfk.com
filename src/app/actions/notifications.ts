@@ -6,7 +6,6 @@ export const triggerNotification = async (userId: string, message: string) => {
       `${process.env.NEXT_PUBLIC_API_URL}/api/notify`,
       { userId, message }
     );
-    console.log(res);
     if (res.data.status === "Notification sent") {
       console.log("Notification triggered successfully");
     }

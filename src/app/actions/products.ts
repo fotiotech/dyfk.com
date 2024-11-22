@@ -24,6 +24,25 @@ function generateDsin() {
   return dsin;
 }
 
+export async function getProductsByAttributes(filters: {
+  brand?: string;
+  priceRange?: [number, number];
+  tags?: string[];
+}) {
+  await connection();
+
+  const query: any = {};
+
+  if (filters.brand) query.brand = filters.brand;
+  if (filters.priceRange)
+    query.price = { $gte: filters.priceRange[0], $lte: filters.priceRange[1] };
+  if (filters.tags && filters.tags.length > 0)
+    query.tags = { $in: filters.tags };
+
+  const products = await Product.find(query).populate("tags", "name");
+  return products;
+}
+
 export async function findProducts(id?: string) {
   await connection();
 

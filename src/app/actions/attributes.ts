@@ -6,6 +6,9 @@ import Category from "@/models/Category";
 import { connection } from "@/utils/connection";
 import mongoose from "mongoose";
 
+
+
+
 // Function to fetch category attributes and values
 export async function findCategoryAttributesAndValues(categoryId: string) {
   await connection();

@@ -297,3 +297,13 @@ export type MonetbilPaymentRequest = {
   notifyUrl?: string;
   logo?: string;
 };
+
+// app/types/tag.ts
+export interface Tag {
+  _id: string;
+  name: string;
+  slug: string;
+  description: string;
+  status: 'active' | 'inactive';
+}
+

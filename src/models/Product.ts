@@ -36,6 +36,7 @@ const ProductSchema = new Schema(
       type: [String],
       required: [true, "At least one image URL is required"],
     },
+    tags: [{ type: Schema.Types.ObjectId, ref: 'Tag' }],
     attributes: [
       {
         groupName: {

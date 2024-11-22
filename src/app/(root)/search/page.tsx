@@ -1,160 +1,142 @@
 "use client";
 
-import React, { useEffect } from "react";
-import { useState } from "react";
-import _ from "lodash";
+import React, { useEffect, useState, useMemo } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import { FilterList } from "@mui/icons-material";
-import { useSearchParams } from "next/navigation";
-import { Product } from "@/constant/types";
-import { useScreenSize } from "@/components/Hooks";
+import { Brand, Category, Product } from "@/constant/types";
 import ListFilter from "@/components/ListFilter";
 import Link from "next/link";
 import ImageRenderer from "@/components/ImageRenderer";
 import Spinner from "@/components/Spinner";
-import BottomSheet from "@/components/BottomSheet";
 import { getSearch } from "@/app/actions/search";
+
+type SearchProductType = {
+  products: Product[];
+  filters: {
+    categories: { id: string; name: string; count: number }[];
+    brands: { id: string; name: string; count: number }[];
+    priceRange: { min: number; max: number };
+  };
+};
 
 const Search = () => {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const query = searchParams.get("query")?.toLowerCase();
+  const category = searchParams.get("category");
+  const brand = searchParams.get("brand");
+  const priceMin = searchParams.get("priceMin");
+  const priceMax = searchParams.get("priceMax");
 
-  const [products, setProducts] = useState<Product[]>([]);
-  const [isloading, setIsloading] = useState(false);
+  const [products, setProducts] = useState<SearchProductType | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const [openClose, setOpenClose] = useState(false);
   const [screenSize, setScreenSize] = useState(0);
 
-  useScreenSize(() => {
-    if (typeof window !== "undefined") {
-      // Safe to use window
-      setScreenSize(window.innerWidth);
-    }
-  });
+  console.log(products);
 
   useEffect(() => {
-    async function search() {
+    if (typeof window !== "undefined") {
+      setScreenSize(window.innerWidth);
+    }
+  }, []);
+
+  useEffect(() => {
+    async function fetchSearchResults() {
       if (query) {
-        setIsloading(true);
-        const response = await getSearch(query);
-        setProducts(response);
-        setIsloading(false);
+        setIsLoading(true);
+        const response = await getSearch(
+          query,
+          category as string,
+          brand as string,
+          priceMin as string,
+          priceMax as string
+        );
+        setProducts(response as unknown as SearchProductType);
+        setIsLoading(false);
       }
     }
-    search();
-  }, [query]);
+    fetchSearchResults();
+  }, [query, category, brand, priceMin, priceMax]);
+
+  // Memoize filters to avoid unnecessary recalculations
+  const filters = useMemo(() => products?.filters, [products]);
+
+  const handleFilterClick = (key: string, value: string) => {
+    const queryParams = new URLSearchParams(window.location.search);
+    queryParams.set(key, value);
+
+    // Use window.location.href to update the URL and manually reload the page
+    window.location.href = `/search?${queryParams.toString()}`;
+    setOpenClose(false);
+  };
 
   return (
-    <>
-      <div className="relative flex w-full min-h-0 overflow-hidden">
-        <ListFilter openClose={openClose} setOpenClose={setOpenClose} />
-        {/* <BottomSheet open={openClose} setOpen={setOpenClose} /> */}
-        <div className="flex-1 lg:px-10">
-          <div className="flex justify-between items-center p-2">
-            <h2 className={``}>Search for: &quot;{query}&quot;</h2>
-            {screenSize <= 1024 ? (
-              <FilterList
-                onClick={() => setOpenClose((openClose) => !openClose)}
-              />
+    <div className="relative flex w-full min-h-0 overflow-hidden">
+      <ListFilter
+        openClose={openClose}
+        setOpenClose={setOpenClose}
+        filters={
+          (filters as unknown as any) || {
+            categories: [],
+            brands: [],
+            priceRange: {},
+          }
+        }
+        handleFilterClick={handleFilterClick}
+      />
+      <div className="flex-1 lg:px-10">
+        <div className="flex justify-between items-center p-2">
+          <h2>Search for: &quot;{query}&quot;</h2>
+          {screenSize <= 1024 && (
+            <FilterList onClick={() => setOpenClose((prev) => !prev)} />
+          )}
+        </div>
+        <div className="flex items-center bg-[#fafafa]">
+          <div className="w-full overflow-hidden bg-[#eee]">
+            {isLoading ? (
+              <Spinner />
             ) : (
-              ""
-            )}
-          </div>
-          <div className="flex items-center bg-[#fafafa]">
-            <div className=" w-full overflow-hidden bg-[#eee]">
-              {isloading ? (
-                <Spinner />
-              ) : (
-                <div>
-                  {!products ? (
-                    <div
-                      className="flex justify-center items-center h-80 
-                    text-xl font-semibold text-gray-600"
-                    >
-                      Not Found...
-                    </div>
-                  ) : (
-                    products.map((product) => (
-                      <div key={product._id} className="">
-                        <Link
-                          href={`/${product.url_slug}/details/${product.dsin}`}
-                        >
-                          <div className="flex gap-4 bg-white p-2 my-1 ">
-                            <div>
-                              <div className=" lg:h-60 h-44 lg:w-44 w-36 overflow-hidden bg-[#eee]">
-                                {product.imageUrls && (
-                                  <ImageRenderer image={product.imageUrls[0]} />
-                                )}
-                              </div>
-                            </div>
-                            <div>
-                              <p className=" line-clamp-3 lg:text-xl text-lg font-medium ">
-                                {product.productName}
-                              </p>
-                              <div className=" py-1">
-                                <div>
-                                  <span className=" text-sm pr-1">cfa</span>
-                                  <span className=" font-bold pr-2">
-                                    {product.price}
-                                  </span>
-                                  <span className=" text-sm pr-1">cfa</span>
-                                </div>
-                              </div>
-                              {/* <div className=" ">
-                              <AddToCart
-                                id={product.product_id}
-                                name={product.product_name}
-                                price={product.price}
-                                image={product.imageUrl}
-                                width="60"
-                                height="8"
-                              />
-                            </div> */}
+              <div>
+                {!products ? (
+                  <div className="flex justify-center items-center h-80 text-xl font-semibold text-gray-600">
+                    Not Found...
+                  </div>
+                ) : (
+                  products.products.map((product) => (
+                    <div key={product._id} className="">
+                      <Link
+                        href={`/${product.url_slug}/details/${product.dsin}`}
+                      >
+                        <div className="flex gap-4 bg-white p-2 my-1">
+                          <div className="lg:h-60 h-44 lg:w-44 w-36 overflow-hidden bg-[#eee]">
+                            {product.imageUrls && (
+                              <ImageRenderer image={product.imageUrls[0]} />
+                            )}
+                          </div>
+                          <div>
+                            <p className="line-clamp-3 lg:text-xl text-lg font-medium">
+                              {product.productName}
+                            </p>
+                            <div className="py-1">
+                              <span className="text-sm pr-1">CFA</span>
+                              <span className="font-bold pr-2">
+                                {product.price}
+                              </span>
                             </div>
                           </div>
-                        </Link>
-                      </div>
-                    ))
-                  )}
-                </div>
-              )}
-            </div>
+                        </div>
+                      </Link>
+                    </div>
+                  ))
+                )}
+              </div>
+            )}
           </div>
-          <SearchPagination />
         </div>
       </div>
-    </>
-  );
-};
-
-function SearchPagination() {
-  return (
-    <div className="flex justify-center items-center my-5">
-      <img
-        src="/271220.png"
-        alt=""
-        className=" w-10 h-10 mx-3 hover:bg-[#efefef] p-2 border"
-      />
-
-      <ul className="flex font-medium w-64 overflow-hidden">
-        <li className="p-2 rounded-full border m-2 hover:bg-[#efefef]">1</li>
-        <li className="p-2 rounded-full border m-2 hover:bg-[#efefef]">2</li>
-        <li className="p-2 rounded-full border m-2 hover:bg-[#efefef]">3</li>
-        <li className="p-2 rounded-full border m-2 hover:bg-[#efefef]">4</li>
-        <li className="p-2 rounded-full border m-2 hover:bg-[#efefef]">5</li>
-        <li className="p-2 rounded-full border m-2 hover:bg-[#efefef]">6</li>
-        <li className="p-2 rounded-full border m-2 hover:bg-[#efefef]">7</li>
-        <li className="p-2 rounded-full border m-2 hover:bg-[#efefef]">8</li>
-        <li className="p-2 rounded-full border m-2 hover:bg-[#efefef]">9</li>
-        <li className="p-2 rounded-full border m-2 hover:bg-[#efefef]">10</li>
-      </ul>
-      <p>
-        <img
-          src="/271228.png"
-          alt=""
-          className=" w-10 h-10 mx-3 p-2 hover:bg-[#efefef] border"
-        />
-      </p>
     </div>
   );
-}
+};
 
 export default Search;

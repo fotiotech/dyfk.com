@@ -35,6 +35,8 @@ interface PageProps {
   };
 }
 
+type TagsProps = { _id: string; name: string };
+
 const EditDeleteProduct: React.FC<PageProps> = ({ params }) => {
   const router = useRouter();
   const { id } = params;
@@ -55,6 +57,7 @@ const EditDeleteProduct: React.FC<PageProps> = ({ params }) => {
   const [brands, setBrands] = useState<Brand[]>([]);
   const [files, setFiles] = useState<string[]>([]);
   const [categoryId, setCategoryId] = useState<string>("");
+  const [tags, setTags] = useState<TagsProps[]>([]);
 
   const images = files?.length! > 1 ? files : files?.[0];
 
@@ -262,6 +265,7 @@ const EditDeleteProduct: React.FC<PageProps> = ({ params }) => {
           </button>
         </div>
       </form>
+      {/* <TagManager productId={params.id} initialTags={tags} /> */}
       <div className="mt-4 flex gap-4">
         {productId && (
           <button

@@ -134,7 +134,7 @@ const AdminSideBar = ({
                     : "inactiveLink"
                 }
               >
-                <li>Attributes</li>
+                <li>Attributes & Tags</li>
               </Link>
             </ul>
           </li>
