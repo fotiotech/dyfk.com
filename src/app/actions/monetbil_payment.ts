@@ -41,9 +41,9 @@ export async function generatePaymentLink(
   }
 }
 
-async function updateOrderStatus(
+export async function updateOrderStatus(
   transaction_id: string,
-  status: "paid" | "failed"
+  status: string
 ) {
   try {
     const order = await Order.findOneAndUpdate(

@@ -3,7 +3,7 @@ import { findOrders } from "@/app/actions/order";
 import { Orders } from "@/constant/types";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
-import BillingAddress from '../../../(root)/checkout/billing_addresses/page';
+import BillingAddress from "../../../(root)/checkout/billing_addresses/page";
 
 const AllOrderPage = () => {
   const [allOrder, setAllOrder] = useState<Orders[]>([]);
@@ -32,7 +32,8 @@ const AllOrderPage = () => {
           allOrder.map((order) => (
             <li key={order._id} className="border rounded-lg p-2">
               <p>Order Number: {order.orderNumber}</p>
-              {/* <p>Customer: {}</p> */}
+              <p>transaction Id: {order.transactionId}</p>
+              <p>Order status: {order.paymentStatus}</p>
               <ul className="flex flex-col gap-3">
                 {order?.products?.map((item) => (
                   <li className="flex gap-3">

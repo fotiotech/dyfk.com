@@ -33,7 +33,7 @@ function MonetbilPayment() {
 
   const paymentData: MonetbilPaymentRequest = {
     serviceKey: process.env.NEXT_PUBLIC_MONETBIL_KEY as string,
-    amount: 100,
+    amount: calculateTotal(cart),
     phone: customer?.billingAddress.phone,
     user: user?.username,
     firstName: customer?.billingAddress.firstName,
