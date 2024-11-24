@@ -12,6 +12,8 @@ const AllOrderPage = () => {
     async function getAllOrder() {
       try {
         const response = await findOrders();
+        console.log("response", response);
+
         if (response) {
           console.log("response", response);
           setAllOrder(response);
@@ -34,6 +36,10 @@ const AllOrderPage = () => {
               <p>Order Number: {order.orderNumber}</p>
               <p>transaction Id: {order.transactionId}</p>
               <p>Order status: {order.paymentStatus}</p>
+              {/* <div>
+                <p> {order.customerDetails.billingAddress.firstName}</p>
+                <p> {order.customerDetails.billingAddress.lastName}</p>
+              </div> */}
               <ul className="flex flex-col gap-3">
                 {order?.products?.map((item) => (
                   <li className="flex gap-3">

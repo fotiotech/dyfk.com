@@ -144,31 +144,7 @@ export type Shipping = {
   PackagingType: string;
 };
 
-export type Offer = {
-  starDate: string;
-  endDate: string;
-  OfferName: string;
-  Description: string;
-  DiscountType: string;
-  DiscountValue: string;
-  MinimumPurchaseAmount: number;
-  MaximumDiscountAmount: number;
-  ApplicableProducts: string;
-  ApplicableCategories: string;
-  UsageLimitPerCustomer: string;
-  TotalUsageLimit: number;
-  CouponCode: string;
-  CustomerEligibility: string;
-  Status: string;
-  CreatedBy: string;
-  TermsAndConditions: string;
-  Exclusions: string;
-  Priority: string;
-  PromoBanner: string;
-  RedemptionCount: string;
-  Created_at: string;
-  Updated_at: string;
-};
+
 
 export type Inventory = {
   id_product: number;
@@ -206,6 +182,19 @@ export type Orders = {
   paymentStatus: string;
   paymentMethod: string;
   transactionId: string;
+  customerDetails: {
+    billingAddress: {
+      firstName: string;
+      lastName: string;
+      email: string;
+      phone?: string;
+      address?: string;
+      city?: string;
+      country?: string;
+      postalCode?: string;
+      preferences?: string[]; // Array to store customer preferences
+    };
+  };
   shippingAddress: {
     street: string;
     city: string;
@@ -304,6 +293,21 @@ export interface Tag {
   name: string;
   slug: string;
   description: string;
-  status: 'active' | 'inactive';
+  status: "active" | "inactive";
 }
 
+
+export type Offer = {
+  _id?: string;
+  name: string;
+  description?: string;
+  type: 'percentage' | 'fixed' | 'bogo' | 'free_shipping' | 'bundle';
+  discountValue?: number;
+  conditions?: {
+    minPurchaseAmount?: number;
+    eligibleProducts?: string[];
+    startDate: string;
+    endDate: string;
+  };
+  isActive: boolean;
+};

@@ -1,13 +1,14 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Brand } from "@/constant/types"; // Assume AttributeType exists
+import { Brand, Offer } from "@/constant/types"; // Assume AttributeType exists
 import Category from "@/app/(dashboard)/components/category/Category";
 import FilesUploader from "@/components/FilesUploader";
 import { Attribute as ProdAttributes } from "@/app/(dashboard)/components";
 import { createProduct } from "@/app/actions/products";
 import { getBrands } from "@/app/actions/brand";
 import { findCategoryAttributesAndValues } from "@/app/actions/attributes";
+import { readOffers } from "@/app/actions/offers";
 
 type AttributeType = {
   groupName: string;
@@ -38,6 +39,7 @@ const AddProduct = () => {
   const [brands, setBrands] = useState<Brand[]>([]);
   const [formData, setFormData] = useState<typeof initialState>(initialState);
   const [files, setFiles] = useState<string[]>([]);
+  const [offers, setOffers] = useState<Offer[]>([]); // Replace with fetch call to backend
 
   const images = files?.length! > 1 ? files : files?.[0];
 
@@ -48,7 +50,12 @@ const AddProduct = () => {
     images as string[]
   );
 
-  console.log(attributes);
+  useEffect(() => {
+    async function getOffer() {
+      setOffers(await readOffers());
+    }
+    getOffer();
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {

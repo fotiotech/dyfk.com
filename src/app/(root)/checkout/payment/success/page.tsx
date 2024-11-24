@@ -13,7 +13,9 @@ export default function PaymentSuccess() {
 
   useEffect(() => {
     async function updatePaymentInfos() {
-      await updateOrderStatus(transaction_id as string, status as string);
+      if (transaction_id && status) {
+        await updateOrderStatus(transaction_id as string, status as string);
+      }
     }
     updatePaymentInfos();
   }, [transaction_id, status]);

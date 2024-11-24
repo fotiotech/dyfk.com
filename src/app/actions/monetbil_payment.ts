@@ -45,19 +45,20 @@ export async function updateOrderStatus(
   transaction_id: string,
   status: string
 ) {
-  try {
-    const order = await Order.findOneAndUpdate(
-      { transaction_id },
-      { status },
-      { new: true }
-    );
-    if (!order) {
-      throw new Error("Order not found");
+  if (!transaction_id || !status)
+    try {
+      const order = await Order.findOneAndUpdate(
+        { transaction_id },
+        { transaction_id, paymentStatus: status },
+        { new: true }
+      );
+      if (!order) {
+        throw new Error("Order not found");
+      }
+      console.log(`Order status updated: ${transaction_id} -> ${status}`);
+    } catch (error) {
+      console.error("Error updating order status:", error);
     }
-    console.log(`Order status updated: ${transaction_id} -> ${status}`);
-  } catch (error) {
-    console.error("Error updating order status:", error);
-  }
 }
 
 // Payment Notification Handler
