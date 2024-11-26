@@ -35,7 +35,7 @@ const BasicInformation = () => {
     imageUrls,
   } = useSelector((state: RootState) => state.product);
 
-  const [files, setFiles] = useState<string[]>([]); // Store URLs of uploaded images
+  const [files, setFiles] = useState<string[]>(imageUrls); // Store URLs of uploaded images
   const [brands, setBrands] = useState<Brand[]>([]);
   const [selectedBrand, setSelectedBrand] = useState<{
     value: string;

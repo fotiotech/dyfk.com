@@ -9,10 +9,10 @@ import slugify from "slugify";
 export async function getBrands() {
   await connection();
 
-  const brands = await Brand.find({}).lean();
+  const brands = await Brand.find().sort({ created_at: -1 });
   return brands.map((brand) => ({
-    ...brand.toObject(),
-    _id: brand._id?.toString(),
+    ...brand?.toObject(),
+    _id: brand?._id?.toString(),
   }));
 }
 

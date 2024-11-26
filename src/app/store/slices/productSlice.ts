@@ -10,7 +10,7 @@ interface ProductState {
   imageUrls: string[];
   categoryId: string;
   attributes: { [key: string]: { [key: string]: string[] } };
-  step?: number;
+  step: number;
 }
 
 const initialState: ProductState = {
@@ -66,14 +66,14 @@ const productSlice = createSlice({
     },
     nextStep(state) {
       if (state) {
-        state.step! += 1;
+        state.step += 1;
       }
     },
     prevStep(state) {
-      state.step! -= 1;
+      state.step -= 1;
     },
-    resetProduct() {
-      return initialState;
+    resetProduct(state) {
+      state = initialState;
     },
   },
 });

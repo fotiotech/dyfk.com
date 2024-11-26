@@ -28,7 +28,7 @@ const Details: React.FC<DetailsProps> = ({ handleSubmit }) => {
     const fetchAttributes = async () => {
       if (categoryId !== "") {
         const response = await findCategoryAttributesAndValues(categoryId);
-
+        console.log(response);
         if (response?.length > 0) {
           const formattedAttributes = response[0].groupedAttributes.map(
             (group: any) => ({

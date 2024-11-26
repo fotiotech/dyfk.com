@@ -7,7 +7,7 @@ import {
   deleteProduct,
   updateProduct,
 } from "@/app/actions/products";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
 import { setProductData, resetProduct } from "@/app/store/slices/productSlice";
 import { useSelector } from "react-redux";
@@ -16,8 +16,8 @@ import { RootState } from "@/app/store/store";
 import Category from "@/app/(dashboard)/components/category/Category";
 import Details from "@/app/(dashboard)/components/products/Details";
 
-const EditDeleteProduct = ({ params }: { params: { id: string } }) => {
-  const { id: productId } = params;
+const EditDeleteProduct = () => {
+  const productId = useSearchParams().get("id")?.toLowerCase();
   const router = useRouter();
   const dispatch = useAppDispatch();
   const {
@@ -34,7 +34,7 @@ const EditDeleteProduct = ({ params }: { params: { id: string } }) => {
   } = useAppSelector((state) => state.product);
 
   useEffect(() => {
-    const fetchData = async () => {
+    async function fetchData() {
       if (productId) {
         const productData = await findProducts(productId);
         if (productData) {
@@ -52,19 +52,20 @@ const EditDeleteProduct = ({ params }: { params: { id: string } }) => {
                 values: attr.values || [],
               })),
               imageUrls: productData.imageUrls || [],
+              step: 1,
             })
           );
         }
       }
-    };
+    }
 
     fetchData();
 
-    // Reset the state when unmounting the component
+    // Cleanup function when unmounting or when productId changes
     return () => {
-      dispatch(resetProduct());
+      dispatch(resetProduct()); // Directly dispatch resetProduct
     };
-  }, [productId, dispatch]);
+  }, [productId, dispatch]); // Add dispatch as a dependency
 
   const handleDeleteProduct = async () => {
     if (productId) {
@@ -78,7 +79,7 @@ const EditDeleteProduct = ({ params }: { params: { id: string } }) => {
   const handleSubmit = async () => {
     // if (validateForm()) {
     try {
-      await updateProduct(productId, categoryId, attributes, files, {
+      await updateProduct(productId as string, categoryId, attributes, files, {
         sku,
         productName: product_name,
         brand_id: brandId,
@@ -95,6 +96,10 @@ const EditDeleteProduct = ({ params }: { params: { id: string } }) => {
     //   alert("Please fill all required fields!");
     // }
   };
+
+  if (!step) {
+    console.warn("Step is not set!");
+  }
 
   return (
     <div>
