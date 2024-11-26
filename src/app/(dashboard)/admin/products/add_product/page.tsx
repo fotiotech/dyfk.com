@@ -3,9 +3,8 @@ import Category from "@/app/(dashboard)/components/category/Category";
 import Details from "@/app/(dashboard)/components/products/Details";
 import BasicInformation from "@/app/(dashboard)/components/products/Information";
 import { createProduct } from "@/app/actions/products";
-import { RootState } from "@/app/store/store";
+import { useAppSelector } from "@/app/hooks";
 import React from "react";
-import { useSelector } from "react-redux";
 
 const AddProduct = () => {
   const {
@@ -19,9 +18,7 @@ const AddProduct = () => {
     imageUrls,
     categoryId,
     attributes,
-  } = useSelector((state: RootState) => state.product);
-
-  console.log('images urls:',{imageUrls}, categoryId, attributes);
+  } = useAppSelector((state) => state.product);
 
   const validateForm = () => {
     return (
@@ -41,20 +38,20 @@ const AddProduct = () => {
 
   const handleSubmit = async () => {
     // if (validateForm()) {
-      try {
-        await createProduct(categoryId, attributes, files, {
-          sku,
-          productName: product_name,
-          brand_id: brandId,
-          department,
-          description,
-          price,
-        });
-        alert("Product submitted successfully!");
-      } catch (error) {
-        console.error("Error submitting product:", error);
-        alert("Failed to submit the product. Please try again.");
-      }
+    try {
+      await createProduct(categoryId, attributes, files, {
+        sku,
+        productName: product_name,
+        brand_id: brandId,
+        department,
+        description,
+        price,
+      });
+      alert("Product submitted successfully!");
+    } catch (error) {
+      console.error("Error submitting product:", error);
+      alert("Failed to submit the product. Please try again.");
+    }
     // } else {
     //   alert("Please fill all required fields!");
     // }

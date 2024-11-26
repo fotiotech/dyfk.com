@@ -10,7 +10,7 @@ interface ProductState {
   imageUrls: string[];
   categoryId: string;
   attributes: { [key: string]: { [key: string]: string[] } };
-  step: number;
+  step?: number;
 }
 
 const initialState: ProductState = {
@@ -30,6 +30,9 @@ const productSlice = createSlice({
   name: "product",
   initialState,
   reducers: {
+    setProductData(state, action: PayloadAction<ProductState>) {
+      return action.payload;
+    },
     updateProduct: (
       state,
       action: PayloadAction<{
@@ -62,10 +65,12 @@ const productSlice = createSlice({
       state.attributes[groupName][attrName] = selectedValues;
     },
     nextStep(state) {
-      state.step += 1;
+      if (state) {
+        state.step! += 1;
+      }
     },
     prevStep(state) {
-      state.step -= 1;
+      state.step! -= 1;
     },
     resetProduct() {
       return initialState;
@@ -74,6 +79,7 @@ const productSlice = createSlice({
 });
 
 export const {
+  setProductData,
   updateProduct,
   updateCategoryId,
   updateAttributes,

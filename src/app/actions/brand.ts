@@ -8,7 +8,12 @@ import slugify from "slugify";
 // Fetch all brands
 export async function getBrands() {
   await connection();
-  return await Brand.find({}).lean();
+
+  const brands = await Brand.find({}).lean();
+  return brands.map((brand) => ({
+    ...brand.toObject(),
+    _id: brand._id?.toString(),
+  }));
 }
 
 // Create a new brand
@@ -19,20 +24,23 @@ function generateSlug(name: string, logoUrl: string) {
   });
 }
 
-export async function createBrand(data: { name: string; logoUrl?: string; status?: "active" | "inactive" }) {
+export async function createBrand(data: {
+  name: string;
+  logoUrl?: string;
+  status?: "active" | "inactive";
+}) {
   await connection();
 
   // Exclude `_id` from the data to let MongoDB generate it automatically
-  if(data){
+  if (data) {
     const { name, logoUrl, status } = data;
-  const url_slug = generateSlug(name, logoUrl as string);
+    const url_slug = generateSlug(name, logoUrl as string);
 
-  const newBrand = new Brand({url_slug, name, logoUrl, status });
-  
-  await newBrand.save();
+    const newBrand = new Brand({ url_slug, name, logoUrl, status });
+
+    await newBrand.save();
   }
 }
-
 
 // Update an existing brand
 export async function updateBrand(

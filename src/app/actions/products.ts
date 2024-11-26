@@ -47,16 +47,18 @@ export async function findProducts(id?: string) {
   await connection();
 
   if (id) {
-    const products = await Product.find({ _id: id }).sort({ created_at: -1 });
-    if (products) {
-      return products.map((product) => ({
+    const product = await Product.findOne({ _id: id });
+    if (product) {
+      return {
         ...product.toObject(),
         _id: product._id?.toString(),
         category_id: product.category_id?.toString(),
         brand_id: product.brand_id?.toString(),
-        created_at: product.created_at?.toString(),
-        updated_at: product.updated_at?.toString(),
-      }));
+        attributes: product.attributes?.map((attr: any) => ({
+          ...attr.toObject(),
+          _id: attr._id?.toString(),
+        })),
+      };
     } else {
       console.log("Error");
     }
@@ -169,18 +171,20 @@ export async function updateProduct(
   categoryId: string,
   attributes: { [groupName: string]: { [attrName: string]: string[] } }, // Original structure
   files: string[],
-  formData: FormData
+  formData: Prod
 ) {
   await connection();
 
   if (id && formData) {
-    const sku = formData.get("sku") as string | null;
-    const product_name = formData.get("product_name") as string | null;
-    const brandId = formData.get("brandId") as string;
-    const department = formData.get("department") as string | null;
-    const description = formData.get("description") as string | null;
-    const price = formData.get("price") as string | null;
-    const status = formData.get("status") as string | null;
+    const {
+      sku,
+      productName,
+      brand_id,
+      department,
+      description,
+      price,
+      status,
+    } = formData;
 
     // Reformat and clean up the attributes to remove unwanted keys
     const cleanedAttributes = Object.keys(attributes)
@@ -204,9 +208,9 @@ export async function updateProduct(
       {
         $set: {
           sku: sku,
-          productName: product_name,
+          productName,
           category_id: new mongoose.Types.ObjectId(categoryId) || null,
-          brand_id: new mongoose.Types.ObjectId(brandId) || null,
+          brand_id: new mongoose.Types.ObjectId(brand_id) || null,
           department: department,
           description: description,
           price: price,

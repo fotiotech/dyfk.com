@@ -1,20 +1,23 @@
 import { getCategory } from "@/app/actions/category";
-import { updateCategoryId } from "@/app/store/slices/productSlice";
+import { updateCategoryId, nextStep } from "@/app/store/slices/productSlice";
 import { Category as Cat } from "@/constant/types";
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { nextStep } from "@/app/store/slices/productSlice"; // Import nextStep if not already imported
+import { useAppSelector, useAppDispatch } from "@/app/hooks";
 
 const Category = () => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [category, setCategory] = useState<Cat[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<string>("");
+  const { categoryId } = useAppSelector((state) => state.product);
 
   // Fetch categories on mount
   useEffect(() => {
     const fetchData = async () => {
-      const res = await getCategory();
-      setCategory(res);
+      try {
+        const res = await getCategory();
+        setCategory(res || []);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
     };
 
     fetchData();
@@ -23,13 +26,12 @@ const Category = () => {
   // Handle category selection
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedCategoryId = event.target.value;
-    setSelectedCategory(selectedCategoryId);
     dispatch(updateCategoryId(selectedCategoryId)); // Update Redux store with selected category ID
   };
 
   // Handle next step
   const handleNext = () => {
-    if (selectedCategory) {
+    if (categoryId) {
       dispatch(nextStep()); // Navigate to next step if category is selected
     }
   };
@@ -39,20 +41,19 @@ const Category = () => {
       <div>
         <select
           title="categories"
-          name="category_id"
+          name="categoryId"
           onChange={handleChange}
-          value={selectedCategory}
+          value={categoryId}
           className="w-[90%] bg-[#eee] dark:bg-sec-dark"
         >
           <option value="" className="text-gray-700">
             Select Category
           </option>
-          {category &&
-            category.map((item, index) => (
-              <option key={index} value={item._id} className="">
-                {item.categoryName}
-              </option>
-            ))}
+          {category.map((item) => (
+            <option key={item._id} value={item._id}>
+              {item.categoryName}
+            </option>
+          ))}
         </select>
       </div>
 
@@ -60,7 +61,7 @@ const Category = () => {
       <div className="text-end mt-4">
         <button
           onClick={handleNext}
-          disabled={!selectedCategory} // Disable if no category is selected
+          disabled={!categoryId} // Disable if no category is selected
           className="bg-blue-500 text-white p-2 rounded"
         >
           Next
