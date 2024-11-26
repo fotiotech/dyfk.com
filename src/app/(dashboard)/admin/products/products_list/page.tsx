@@ -46,7 +46,7 @@ const ProductList = () => {
             </div>
             <div className="relative">
               <span
-                onClick={() => showMenu(product._id)}
+                onClick={() => showMenu(product?._id as string)}
                 className="border p-2 rounded-lg border-gray-800"
               >
                 <MoreHorizSharp />

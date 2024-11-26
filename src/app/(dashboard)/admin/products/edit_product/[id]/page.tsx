@@ -152,14 +152,14 @@ const EditDeleteProduct: React.FC<PageProps> = ({ params }) => {
       <div className="p-2 bg-pri dark:bg-pri-dark rounded-xl mb-2">
         <h2 className="font-semibold text-xl m-2 mt-5">Category</h2>
         <Category
-          setCategoryId={setCategoryId}
-          selectedCategoryId={formData.category_id}
+        // setCategoryId={setCategoryId}
+        // selectedCategoryId={formData.category_id}
         />
       </div>
       <ProdAttributes
         attributes={attributes && attributes}
         handleAttributeChange={handleAttributeChange}
-        formData={formData}
+        // formData={formData}
       />
       <form
         action={toupdateProduct}

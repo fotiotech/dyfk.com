@@ -111,21 +111,19 @@ export async function createProduct(
   categoryId: string,
   attributes: { [groupName: string]: { [attrName: string]: string[] } }, // Original structure
   files: string[],
-  formData: FormData
+  formData: Prod
 ) {
-  const sku = formData.get("sku") as string | null;
-  const product_name = formData.get("product_name") as string | null;
-  const brandId = formData.get("brandId") as string;
-  const department = formData.get("department") as string | null;
-  const description = formData.get("description") as string | null;
-  const price = formData.get("price") as string | null;
-  const status = formData.get("status") as string | null;
+  const { sku, productName, brand_id, department, description, price, status } =
+    formData;
 
-  if (product_name === "" || categoryId === "") {
+  if (productName === "" || categoryId === "") {
     return { error: "Product name is required." };
   }
+  if (files) {
+    console.log(categoryId, attributes, files, formData);
+  }
 
-  const urlSlug = generateSlug(product_name as string, department);
+  const urlSlug = generateSlug(productName as string, department);
   const dsin = generateDsin();
 
   // Reformat and clean up the attributes to remove unwanted keys
@@ -150,9 +148,9 @@ export async function createProduct(
     url_slug: urlSlug,
     dsin: dsin,
     sku: sku,
-    productName: product_name,
+    productName: productName,
     category_id: new mongoose.Types.ObjectId(categoryId),
-    brand_id: new mongoose.Types.ObjectId(brandId),
+    brand_id: new mongoose.Types.ObjectId(brand_id),
     department: department,
     description: description,
     price: price,

@@ -5,7 +5,7 @@ import React from "react";
 
 const BillingAddress = () => {
   return (
-    <div>
+    <div className="p-2">
       <BillingAddresses />
     </div>
   );

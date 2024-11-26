@@ -6,7 +6,7 @@ const ShippingInfos = () => {
   const [shippingAddressCheck, setShippingAddressCheck] =
     useState<boolean>(true);
   return (
-    <div>
+    <div className="p-2">
       <h2 >Shipping Infos</h2>
       <ShippingForm shippingAddressCheck={shippingAddressCheck} />
     </div>

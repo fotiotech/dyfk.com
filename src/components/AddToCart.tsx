@@ -11,7 +11,7 @@ const AddToCart = ({ product }: { product: Product }) => {
     dispatch({
       type: "ADD_ITEM",
       payload: {
-        id: product._id,
+        id: product._id || "",
         name: product.productName,
         imageUrl: product.imageUrls?.[0],
         price: product.price,

@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 type AttributeType = {
   groupName: string;
@@ -8,13 +8,8 @@ type AttributeType = {
   }[];
 };
 
-type FormDataType = {
-  attributes: { [key: string]: { [key: string]: string[] } }; // Grouped attributes
-};
-
 interface AttributeProps {
-  attributes: AttributeType[]; // Grouped attributes
-  formData: FormDataType;
+  attributes: AttributeType[];
   handleAttributeChange: (
     groupName: string,
     attrName: string,
@@ -22,24 +17,15 @@ interface AttributeProps {
   ) => void;
 }
 
-const Attribute: React.FC<AttributeProps> = ({
-  attributes,
-  formData,
-  handleAttributeChange,
-}) => {
-  // Helper to handle multiple selections
+const Attribute: React.FC<AttributeProps> = ({ attributes, handleAttributeChange }) => {
   const onAttributeChange = (
     event: React.ChangeEvent<HTMLSelectElement>,
     groupName: string,
     attrName: string
   ) => {
-    const selectedValues = Array.from(
-      event.target.selectedOptions,
-      (option) => option.value
-    );
-    handleAttributeChange(groupName, attrName, selectedValues); // Pass selected values to handler
+    const selectedValues = Array.from(event.target.selectedOptions, (option) => option.value);
+    handleAttributeChange(groupName, attrName, selectedValues);
   };
-
 
   return (
     <div className="flex-1">
@@ -48,10 +34,8 @@ const Attribute: React.FC<AttributeProps> = ({
         <div className="flex flex-col lg:grid-cols-3 gap-2 p-2">
           {attributes?.length > 0 &&
             attributes.map((group) => {
-              // Check if groupName is undefined and provide a fallback
               const groupTitle = group.groupName
-                ? group.groupName[0].toUpperCase() +
-                  group.groupName.substring(1)
+                ? group.groupName[0].toUpperCase() + group.groupName.substring(1)
                 : "Unknown Group";
 
               return (
@@ -60,22 +44,14 @@ const Attribute: React.FC<AttributeProps> = ({
                   {group.attributes.map((attr) => (
                     <div key={attr.attrName}>
                       <label>
-                        {attr.attrName[0].toUpperCase() +
-                          attr.attrName.substring(1)}
+                        {attr.attrName[0].toUpperCase() + attr.attrName.substring(1)}
                       </label>
                       <div>
                         <select
                           title={`Select ${attr.attrName}`}
                           multiple
                           name={attr.attrName}
-                          value={
-                            formData.attributes[group.groupName]?.[
-                              attr.attrName
-                            ] || []
-                          } // Ensure value is an array
-                          onChange={(e) =>
-                            onAttributeChange(e, group.groupName, attr.attrName)
-                          } // Pass group and attrName
+                          onChange={(e) => onAttributeChange(e, group.groupName, attr.attrName)}
                           className="w-3/4 p-2 rounded-lg bg-[#eee] dark:bg-sec-dark scrollbar-none"
                         >
                           <option value="">Select {attr.attrName}</option>

@@ -42,7 +42,7 @@ export type Brand = {
 };
 
 export type Product = {
-  _id: string;
+  _id?: string;
   category_id?: string;
   department: string;
   dsin?: string;
