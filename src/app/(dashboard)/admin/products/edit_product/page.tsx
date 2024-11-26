@@ -47,7 +47,7 @@ const EditDeleteProduct = () => {
               department: productData.department || "",
               description: productData.description || "",
               price: productData.price || 0.0,
-              attributes: productData.attributes.map((attr: any) => ({
+              attributes: productData.attributes?.map((attr: any) => ({
                 groupName: attr.groupName || "",
                 values: attr.values || [],
               })),
