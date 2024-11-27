@@ -2,8 +2,9 @@
 
 import { Product as Prod } from "@/constant/types";
 import Product from "@/models/Product";
+import "@/models/Brand";
 import { connection } from "@/utils/connection";
-import mongoose, { ObjectId } from "mongoose";
+import mongoose from "mongoose";
 import { revalidatePath } from "next/cache";
 import slugify from "slugify";
 
@@ -81,18 +82,26 @@ export async function findProducts(id?: string) {
   }
 }
 
-export async function findProductDetails(dsin?: string): Promise<Prod | null> {
+export async function findProductDetails(dsin?: string) {
   try {
     await connection();
-
+    console.log(mongoose.modelNames());
     if (dsin) {
-      const product = await Product.findOne({ dsin });
+      const product = await Product.findOne({ dsin }).populate(
+        "brand_id",
+        "name"
+      );
       if (product) {
         return {
           ...product.toObject(),
           _id: product._id?.toString(),
           category_id: product.category_id?.toString() ?? null,
-          brand_id: product.brand_id?.toString() ?? null,
+          brand_id: product.brand_id?._id
+            ? {
+                _id: product.brand_id._id.toString(),
+                name: product.brand_id.name,
+              }
+            : null,
           attributes: product.attributes?.map((attr: any) => ({
             ...attr.toObject(),
             _id: attr._id?.toString(),
@@ -105,7 +114,7 @@ export async function findProductDetails(dsin?: string): Promise<Prod | null> {
   } catch (error) {
     console.error("Error fetching product details:", error);
     // Throw an error or return null to ensure consistent return type
-    throw new Error("Failed to fetch product details");
+    // throw new Error("Failed to fetch product details");
   }
 }
 
@@ -152,7 +161,7 @@ export async function createProduct(
     sku: sku,
     productName: productName,
     category_id: new mongoose.Types.ObjectId(categoryId),
-    brand_id: new mongoose.Types.ObjectId(brand_id),
+    brand_id: new mongoose.Types.ObjectId(brand_id as string),
     department: department,
     description: description,
     price: price,
@@ -210,7 +219,7 @@ export async function updateProduct(
           sku: sku,
           productName,
           category_id: new mongoose.Types.ObjectId(categoryId) || null,
-          brand_id: new mongoose.Types.ObjectId(brand_id) || null,
+          brand_id: new mongoose.Types.ObjectId(brand_id as string) || null,
           department: department,
           description: description,
           price: price,

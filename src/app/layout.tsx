@@ -2,6 +2,12 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Providers from "./providers";
 import Script from "next/script";
+import { Inter } from "next/font/google";
+
+const inter = Inter({
+  subsets: ["latin"], // Choose the subsets you need
+  weight: ["400", "700"], // Specify font weights
+});
 
 export const metadata: Metadata = {
   title: "dyfk.com",
@@ -45,7 +51,9 @@ export default function RootLayout({
             style={{ display: "none", visibility: "hidden" }}
           ></iframe>
         </noscript>
-        <Providers>{children}</Providers>
+        <div className={inter.className}>
+          <Providers>{children}</Providers>
+        </div>
       </body>
     </html>
   );

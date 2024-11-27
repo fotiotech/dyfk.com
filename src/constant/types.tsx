@@ -41,6 +41,8 @@ export type Brand = {
   status?: "active" | "inactive";
 };
 
+
+
 export type Product = {
   _id?: string;
   category_id?: string;
@@ -49,7 +51,7 @@ export type Product = {
   sku?: string;
   Barcode?: string;
   url_slug?: string;
-  brand_id?: string;
+  brand_id?: string | { _id: string; name: string };
   imageUrls?: string[];
   productName: string;
   attributes?: Record<string, string | string[]>[];
@@ -143,8 +145,6 @@ export type Shipping = {
   ReturnStatus: string;
   PackagingType: string;
 };
-
-
 
 export type Inventory = {
   id_product: number;
@@ -296,12 +296,11 @@ export interface Tag {
   status: "active" | "inactive";
 }
 
-
 export type Offer = {
   _id?: string;
   name: string;
   description?: string;
-  type: 'percentage' | 'fixed' | 'bogo' | 'free_shipping' | 'bundle';
+  type: "percentage" | "fixed" | "bogo" | "free_shipping" | "bundle";
   discountValue?: number;
   conditions?: {
     minPurchaseAmount?: number;

@@ -7,6 +7,7 @@ import { logout } from "@/app/lib/actions";
 const Profile = () => {
   const { user } = useUser();
 
+
   return (
     <>
       <div className="p-2 font-semibold text-lg">Profile</div>

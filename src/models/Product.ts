@@ -61,7 +61,6 @@ const ProductSchema = new Schema(
     brand_id: {
       type: Schema.Types.ObjectId,
       ref: "Brand",
-      required: false,
     },
     offerId: { type: Schema.Types.ObjectId, ref: "Offer", required: false },
     status: {

@@ -43,7 +43,10 @@ const DetailsPage = ({
     getDetails();
   }, [params.dsin]);
 
-  // console.log(details);
+  const brand =
+    typeof details?.brand_id === "object"
+      ? { _id: details?.brand_id?._id, name: details?.brand_id?.name }
+      : null;
 
   return (
     <div className="relative w-full overflow-hidden bg-[#efefef]">
@@ -60,6 +63,12 @@ const DetailsPage = ({
                 <p className="lg:m-3 m-1 font-medium font-sans">
                   {details?.productName}
                 </p>
+                <Link
+                  href={`/brandStore?brandId=${brand?._id}`}
+                  className={"text-blue-500 text-sm"}
+                >
+                  Visit {brand?.name} Store
+                </Link>
               </div>
               <DetailImages file={details?.imageUrls} />
             </div>

@@ -30,14 +30,14 @@ const Details: React.FC<DetailsProps> = ({ handleSubmit }) => {
         const response = await findCategoryAttributesAndValues(categoryId);
         console.log(response);
         if (response?.length > 0) {
-          const formattedAttributes = response[0].groupedAttributes.map(
+          const formattedAttributes = response[0].groupedAttributes?.map(
             (group: any) => ({
               groupName: group.groupName
                 ? group.groupName.toLowerCase()
                 : "additional details",
-              attributes: group.attributes.map((attr: any) => ({
+              attributes: group.attributes?.map((attr: any) => ({
                 attrName: attr.attributeName,
-                attrValue: attr.attributeValues.map((val: any) => val.value),
+                attrValue: attr.attributeValues?.map((val: any) => val.value),
               })),
             })
           );
