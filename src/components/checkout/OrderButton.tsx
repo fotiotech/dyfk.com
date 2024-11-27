@@ -4,19 +4,19 @@ import Link from "next/link";
 import React from "react";
 
 interface OrderButtonProps {
-  transactionId: number;
+  orderNumber: string;
   handleOrderData: (e: any) => void;
 }
 
 const OrderButton: React.FC<OrderButtonProps> = ({
-  transactionId,
+  orderNumber,
   handleOrderData,
 }) => {
   const { user } = useUser();
 
   return (
     <div className="text-center">
-      {transactionId && (
+      {orderNumber && (
         <div
           onClick={(e) => {
             handleOrderData(e);
@@ -26,10 +26,7 @@ const OrderButton: React.FC<OrderButtonProps> = ({
             );
           }}
         >
-          <Link
-            href={`/checkout/payment?transactionId=${transactionId}`}
-            passHref
-          >
+          <Link href={`/checkout/payment?orderNumber=${orderNumber}`} passHref>
             <button
               title="Place Order"
               type="button"

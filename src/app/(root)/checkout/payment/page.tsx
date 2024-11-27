@@ -1,27 +1,25 @@
 "use client";
 
 import { findOrders } from "@/app/actions/order";
-import { useUser } from "@/app/context/UserContext";
 import MonetBilPayment from "@/components/payments/MonetBilPayment";
 import PaypalPayment from "@/components/payments/PaypalPayment";
-import { Customer, Orders } from "@/constant/types";
+import { Orders } from "@/constant/types";
 import { useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
 const PaymentPage: React.FC = () => {
-  const transactionId = useSearchParams().get("transactionId");
+  const orderNumber = useSearchParams().get("orderNumber")?.toLocaleLowerCase();
   const [order, setOrder] = useState<Orders | null>(null);
 
   useEffect(() => {
     async function getOrder() {
-      if (transactionId) {
-        const response = await findOrders(transactionId, null);
-
-        setOrder(response);
+      if (orderNumber) {
+        const response = await findOrders(orderNumber, null);
+        setOrder(response as any);
       }
     }
     getOrder();
-  }, [transactionId]);
+  }, [orderNumber]);
 
   let content;
 

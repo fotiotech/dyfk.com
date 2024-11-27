@@ -7,18 +7,19 @@ import { useEffect } from "react";
 export default function PaymentSuccess() {
   const params = useSearchParams();
   const transaction_id = params.get("transaction_id");
+  const email = params.get("email");
   const firstName = params.get("first_name");
   const LastName = params.get("last_name");
   const status = params.get("status");
 
   useEffect(() => {
     async function updatePaymentInfos() {
-      if (transaction_id && status) {
-        await updateOrderStatus(transaction_id as string, status as string);
+      if (email && transaction_id && status) {
+        await updateOrderStatus(email,  transaction_id as string, status as string);
       }
     }
     updatePaymentInfos();
-  }, [transaction_id, status]);
+  }, [email, transaction_id, status]);
 
   return (
     <div>

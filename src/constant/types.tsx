@@ -41,8 +41,6 @@ export type Brand = {
   status?: "active" | "inactive";
 };
 
-
-
 export type Product = {
   _id?: string;
   category_id?: string;
@@ -174,6 +172,9 @@ export type Orders = {
   _id?: string;
   orderNumber: string;
   userId: string;
+  email: string;
+  firstName: string;
+  lastName: string;
   products: CartItem[];
   subtotal: number;
   tax: number;
@@ -202,8 +203,8 @@ export type Orders = {
     postalCode: string;
     country: string;
   };
-  shippingStatus: string;
-  shippingDate: string;
+  shippingStatus: Date;
+  shippingDate: Date;
   deliveryDate: string;
   orderStatus: string;
   notes: string;

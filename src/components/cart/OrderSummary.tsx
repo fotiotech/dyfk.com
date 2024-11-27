@@ -13,7 +13,7 @@ const OrderSummary = ({
   const generateOrderNumber = (): string => {
     const timestamp = Date.now().toString(); // Current timestamp in milliseconds
     const randomStr = Math.random().toString(36).substring(2, 8).toUpperCase(); // Random alphanumeric string
-    return `ORD-${timestamp}-${randomStr}`;
+    return `ORD${timestamp}${randomStr}`;
   };
 
   useEffect(() => {

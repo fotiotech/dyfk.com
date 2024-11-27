@@ -16,22 +16,22 @@ import OrderButton from "@/components/checkout/OrderButton";
 const CheckoutPage = () => {
   const { user, customerInfos } = useUser();
   const { cart } = useCart();
-  const [customer, setCustomer] = useState<Customer>();
-  const transactionId = Math.floor(Math.random() * 1000000);
   const [orderNumber, setOrderNumber] = useState("");
+  const [customer, setCustomer] = useState<Customer>();
   const [shippingAddressCheck, setShippingAddressCheck] =
     useState<boolean>(true);
   const [selectedPaymentMethod, setSelectedPaymentMethod] =
     useState<string>("");
 
   useEffect(() => {
-    async function getCustomer() {
-      if (user?._id) {
-        const response = await findCustomer(user._id);
-        setCustomer(response);
+    async function customerData() {
+      const customer = await findCustomer(user?._id as string);
+      if (customer) {
+        setCustomer(customer);
       }
     }
-    getCustomer();
+
+    customerData();
   }, [user?._id]);
 
   async function handleOrderData(e: React.SyntheticEvent) {
@@ -52,33 +52,38 @@ const CheckoutPage = () => {
       estimatedShippingDate.getDate() + transitDays
     );
 
-    await createOrder(transactionId, {
+    console.log(customerInfos);
+    if (!customer || !orderNumber) {
+      return null;
+    }
+    await createOrder(orderNumber, {
       orderNumber,
-      userId: user?._id,
+      userId: user?._id || "",
+      email: customer?.billingAddress?.email || "",
       products: cart?.map((item) => ({
-        productId: item.id,
-        name: item.name,
-        imageUrl: item.imageUrl,
-        quantity: item.quantity,
-        price: item.price,
+        productId: item?.id,
+        name: item?.name,
+        imageUrl: item?.imageUrl,
+        quantity: item?.quantity,
+        price: item?.price,
       })),
       subtotal: calculateTotal(cart),
       tax: 0,
       shippingCost: 0,
       total: calculateTotal(cart),
       paymentStatus: "pending",
+      transactionId: Math.random().toString(36).substring(2, 8).toUpperCase(),
       paymentMethod: selectedPaymentMethod,
-      transactionId: transactionId,
       shippingAddress: {
-        street: customer?.shippingAddress?.street || "",
-        city: customer?.shippingAddress?.city || "",
-        state: customer?.shippingAddress?.state || "",
-        postalCode: customer?.shippingAddress?.postalCode || "",
-        country: customer?.shippingAddress?.country || "",
+        street: customerInfos?.shippingAddress?.street || "",
+        city: customerInfos?.shippingAddress?.city || "",
+        state: customerInfos?.shippingAddress?.state || "",
+        postalCode: customerInfos?.shippingAddress?.postalCode || "",
+        country: customerInfos?.shippingAddress?.country || "",
       },
       shippingStatus: "pending",
       shippingDate: estimatedShippingDate,
-      deliveryDate: estimatedDeliveryDate,
+      deliveryDate: estimatedDeliveryDate || "",
       orderStatus: "processing",
       notes: "",
       couponCode: "",
@@ -105,17 +110,19 @@ const CheckoutPage = () => {
       <div className="flex flex-col gap-3 my-2">
         <div>
           <p className="font-bold">Billing Address</p>
-          {customer ? (
-            <Link href={`/checkout/edit_billing_addresses/${customer._id}`}>
+          {customerInfos ? (
+            <Link
+              href={`/checkout/edit_billing_addresses/${customerInfos?._id}`}
+            >
               <div className="border rounded-lg p-2 cursor-pointer">
                 <p>
-                  {customer.billingAddress.lastName}{" "}
-                  {customer.billingAddress.firstName}
+                  {customerInfos?.billingAddress.lastName}{" "}
+                  {customerInfos?.billingAddress.firstName}
                 </p>
                 <p>
-                  {customer.billingAddress.email},{" "}
-                  {customer.billingAddress.address},{" "}
-                  {customer.billingAddress.city}
+                  {customerInfos?.billingAddress.email},{" "}
+                  {customerInfos?.billingAddress.address},{" "}
+                  {customerInfos?.billingAddress.city}
                 </p>
               </div>
             </Link>
@@ -190,7 +197,10 @@ const CheckoutPage = () => {
       </div>
 
       <div>
-        <OrderButton transactionId={transactionId} handleOrderData={handleOrderData} />
+        <OrderButton
+          orderNumber={orderNumber}
+          handleOrderData={handleOrderData}
+        />
       </div>
     </div>
   );

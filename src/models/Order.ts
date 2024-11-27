@@ -1,4 +1,4 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema, Document, Model } from "mongoose";
 
 interface Product {
   productId: mongoose.Types.ObjectId;
@@ -7,17 +7,19 @@ interface Product {
   price: number;
 }
 
-interface OrderDocument extends Document {
+export interface OrderDocument extends Document {
+  _id?: string;
   orderNumber: string;
   userId: mongoose.Types.ObjectId;
+  email: string;
   products: Product[];
   subtotal: number;
   tax: number;
   shippingCost: number;
   total: number;
-  paymentStatus: "pending" | "paid" | "failed";
+  paymentStatus: "pending" | "paid" | "failed" | "cancelled";
   paymentMethod: string;
-  transactionId?: string | number;
+  transactionId?: string;
   shippingAddress: {
     street: string;
     city: string;
@@ -29,21 +31,22 @@ interface OrderDocument extends Document {
   shippingDate?: Date;
   deliveryDate?: Date;
   orderStatus: "processing" | "completed" | "cancelled";
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
   notes?: string;
   couponCode?: string;
   discount: number;
 }
 
-const orderSchema = new Schema<OrderDocument>(
+const OrderSchema = new mongoose.Schema<OrderDocument>(
   {
-    orderNumber: { type: String, unique: true, required: true },
+    orderNumber: { type: String, required: true, unique: true },
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
+    email: { type: String, required: true },
     products: [
       {
         productId: {
@@ -62,11 +65,10 @@ const orderSchema = new Schema<OrderDocument>(
     total: { type: Number, required: true },
     paymentStatus: {
       type: String,
-      enum: ["pending", "paid", "failed"],
+      enum: ["pending", "paid", "failed", "cancelled"],
       default: "pending",
     },
     paymentMethod: { type: String, required: true },
-    transactionId: { type: String, unique: true, sparse: true },
     shippingAddress: {
       street: { type: String, required: true },
       city: { type: String, required: true },
@@ -90,9 +92,10 @@ const orderSchema = new Schema<OrderDocument>(
     couponCode: { type: String },
     discount: { type: Number, default: 0 },
   },
-  { timestamps: { createdAt: "createdAt", updatedAt: "updatedAt" } }
+  { timestamps: true }
 );
 
-const Order =
-  mongoose.models?.Order || mongoose.model<OrderDocument>("Order", orderSchema);
+const Order: Model<OrderDocument> =
+  mongoose.models.Order || mongoose.model<OrderDocument>("Order", OrderSchema);
+
 export default Order;

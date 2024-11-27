@@ -1,7 +1,9 @@
+"use server";
 import { MonetbilPaymentRequest } from "@/constant/types";
 import axios from "axios";
-import Order from "@/models/Order"; // Adjust the path based on your project structure
 import { NextResponse } from "next/server";
+import User from "@/models/users";
+import Order from "@/models/Order"; // Adjust the path based on your project structure
 
 export async function generatePaymentLink(
   paymentData: MonetbilPaymentRequest
@@ -39,26 +41,6 @@ export async function generatePaymentLink(
     console.error("Error generating payment link:", error);
     return null;
   }
-}
-
-export async function updateOrderStatus(
-  transaction_id: string,
-  status: string
-) {
-  if (!transaction_id || !status)
-    try {
-      const order = await Order.findOneAndUpdate(
-        { transaction_id },
-        { transaction_id, paymentStatus: status },
-        { new: true }
-      );
-      if (!order) {
-        throw new Error("Order not found");
-      }
-      console.log(`Order status updated: ${transaction_id} -> ${status}`);
-    } catch (error) {
-      console.error("Error updating order status:", error);
-    }
 }
 
 // Payment Notification Handler
@@ -126,5 +108,25 @@ export async function getPaymentNotification(request: Request) {
       { error: "Internal Server Error" },
       { status: 500 }
     );
+  }
+}
+
+export async function updateOrderStatus(
+  email: string,
+  transaction_id: string,
+  status: string
+) {
+  if (!email || !transaction_id || !status) return null;
+  try {
+    const order = await Order.findOneAndUpdate(
+      { email },
+      { transaction_id, paymentStatus: status },
+      { new: true }
+    );
+    if (!order) {
+      throw new Error("Order not found");
+    }
+  } catch (error) {
+    console.error("Error updating order status:", error);
   }
 }
