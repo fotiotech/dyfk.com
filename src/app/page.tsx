@@ -5,19 +5,36 @@ import ImageRenderer from "@/components/ImageRenderer";
 import Layout from "@/components/Layout";
 import { Category, Product } from "@/constant/types";
 import Link from "next/link";
+import { useTranslation } from "react-i18next";
 import Spinner from "@/components/Spinner";
-import { findProducts } from "./actions/products";
 import { useEffect, useState } from "react";
-import { getCategory } from "./actions/category";
 import { Prices } from "@/components/cart/Prices";
-import axios from "axios";
+import { getCategory } from "./actions/category";
 import { triggerNotification } from "./actions/notifications";
+import { findProducts } from "./actions/products";
 import { useUser } from "./context/UserContext";
+import SEO from "@/components/meta/Seo";
 
 export default function Home() {
+  const { t } = useTranslation("common");
   const { user } = useUser();
   const [newArrival, setNewArrival] = useState<Product[]>([]);
   const [electronics, setElectronics] = useState<Category[]>([]);
+
+  // const translations = {
+  //   en: {
+  //     title: "Welcome to dyfks.com",
+  //     description: "Your Powerful e-commerce platform in cameroon ",
+  //   },
+  //   fr: {
+  //     title: "Bienvenue sur dyfks.com",
+  //     description: "Votre puissante plateforme de e-commerce au cameroun",
+  //   },
+  //   de: { title: "Willkommen", description: "Ihr Warenkorb" },
+  // };
+
+  // const locale = "en"; // Replace with dynamic locale detection logic
+  // const { title, description } = translations[locale];
 
   useEffect(() => {
     async function findProd() {
@@ -42,11 +59,12 @@ export default function Home() {
 
   return (
     <Layout>
+      {/* <SEO title={title} description={description} /> */}
       <main className="">
         <Hero />
         <div className={`w-full p-2 lg:px-10 lg:mt-1 mb-1 bg-pri border-y `}>
           <h2 className=" lg:mb-4 mb-2 font-bold  text-xl lg:text-3xl">
-            New Arrivals
+            {t("arrival")}
           </h2>
           <div className="grid grid-cols-2 lg:grid-cols-4 mx-auto gap-3 lg:gap-5 ">
             {newArrival?.length! > 0 ? (

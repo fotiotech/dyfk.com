@@ -210,6 +210,7 @@ export type Orders = {
   notes: string;
   couponCode: string;
   discount: number;
+  createdAt: string;
 };
 
 export type ProductsFiles = {

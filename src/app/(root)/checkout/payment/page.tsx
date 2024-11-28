@@ -8,7 +8,7 @@ import { useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
 const PaymentPage: React.FC = () => {
-  const orderNumber = useSearchParams().get("orderNumber")?.toLocaleLowerCase();
+  const orderNumber = useSearchParams().get("orderNumber");
   const [order, setOrder] = useState<Orders | null>(null);
 
   useEffect(() => {

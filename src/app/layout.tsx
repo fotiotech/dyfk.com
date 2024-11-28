@@ -51,7 +51,7 @@ export default function RootLayout({
             style={{ display: "none", visibility: "hidden" }}
           ></iframe>
         </noscript>
-        <div className={inter.className}>
+        <div className={`${inter.className}  `}>
           <Providers>{children}</Providers>
         </div>
       </body>

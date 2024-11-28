@@ -16,7 +16,7 @@ const AllOrderPage = () => {
 
         if (response) {
           console.log("response", response);
-          setAllOrder(response);
+          setAllOrder(response as any);
         }
       } catch (error) {
         console.error("Error fetching orders:", error);
@@ -36,10 +36,10 @@ const AllOrderPage = () => {
               <p>Order Number: {order.orderNumber}</p>
               <p>transaction Id: {order.transactionId}</p>
               <p>Order status: {order.paymentStatus}</p>
-              {/* <div>
-                <p> {order.customerDetails.billingAddress.firstName}</p>
-                <p> {order.customerDetails.billingAddress.lastName}</p>
-              </div> */}
+              <div>
+                <p> {order.email}</p>
+                {/* <p> {order.createdAt}</p> */}
+              </div>
               <ul className="flex flex-col gap-3">
                 {order?.products?.map((item) => (
                   <li className="flex gap-3">

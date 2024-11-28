@@ -12,7 +12,9 @@ export async function findOrders(
   try {
     if (orderNumber !== undefined && orderNumber !== null) {
       // Explicitly check for non-null and non-undefined values
-      const order = await Order.findOne({ orderNumber });
+      const order = await Order.findOne({
+        orderNumber,
+      });
       if (order) {
         return {
           ...order.toObject(),
@@ -79,7 +81,6 @@ export async function createOrder(orderNumber: string, data: any) {
     const existingOrder = await Order.findOne({ orderNumber });
 
     if (existingOrder) {
-      console.log("Updating existing order...");
       // Update the existing order
       const updatedOrder = await Order.findByIdAndUpdate(
         existingOrder._id,
@@ -109,10 +110,8 @@ export async function createOrder(orderNumber: string, data: any) {
           runValidators: true, // Validate fields based on schema
         }
       );
-      console.log("Updated Order:", updatedOrder);
       return updatedOrder;
     } else {
-      console.log("Creating a new order...");
       // Create a new order
       const newOrder = new Order({
         orderNumber,
@@ -136,7 +135,6 @@ export async function createOrder(orderNumber: string, data: any) {
         discount,
       });
       const savedOrder = await newOrder.save();
-      console.log("Saved Order:", savedOrder);
       return savedOrder;
     }
 

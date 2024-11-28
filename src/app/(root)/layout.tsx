@@ -9,14 +9,14 @@ export default function Layout({
   children: React.ReactNode;
 }>) {
   return (
-    
-        <div className=" flex flex-col">
-          <Header />
-          <Suspense fallback={<Loading />}>
-            <div className="flex-1">{children}</div>
-          </Suspense>
-          <Footer />
-        </div>
-      
+    <div className="flex flex-col ">
+      <div className="flex flex-col min-h-screen">
+        <Header />
+        <Suspense fallback={<Loading />}>
+          <div className="flex-1">{children}</div>
+        </Suspense>
+      </div>
+      <Footer />
+    </div>
   );
 }

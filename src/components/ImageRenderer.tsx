@@ -15,6 +15,7 @@ const ImageRenderer = ({ image }: imageRendererProps) => {
           width={500}
           height={500}
           alt="image"
+          loading="lazy"
           className="w-full h-full object-contain p-2 "
         />
       );
