@@ -42,7 +42,7 @@ const AdminLayout = ({ children }: adminLayoutProps) => {
         />
 
         <div
-          className="flex-1 overflow-y-auto  p-2
+          className="flex-1 overflow-auto  p-2
          text-sec dark:text-pri "
         >
           {children}

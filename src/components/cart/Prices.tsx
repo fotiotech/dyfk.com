@@ -3,7 +3,7 @@ import { CartItem } from "@/app/reducer/cartReducer";
 export function Prices({ amount }: { amount: number }) {
   return new Intl.NumberFormat("fr-CM", {
     style: "currency",
-    currency: "XAF",
+    currency: "CFA",
   }).format(amount);
 }
 
