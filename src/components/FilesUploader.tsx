@@ -81,7 +81,7 @@ const FilesUploader: React.FC<FilesUploaderProps> = ({
   };
 
   return (
-    <div className="whitespace-nowrap w-full overflow-x-auto scrollbar-none my-4 space-x-3">
+    <div className="whitespace-nowrap w-full overflow-clip overflow-x-auto scrollbar-none my-4 space-x-3">
       {/* Thumbnails of uploaded images */}
       {files?.length! > 0 &&
         files?.map((file, index) => (
@@ -102,10 +102,10 @@ const FilesUploader: React.FC<FilesUploaderProps> = ({
             )}
 
             <button
-              title="button"
               type="button"
               onClick={() => removeImage(index)}
-              className="absolute top-0 right-0 text-white rounded-full p-1 text-xs"
+              className="absolute top-2 right-2 bg-black bg-opacity-50 text-white rounded-full p-1 hover:bg-opacity-70"
+              title="Remove Image"
             >
               ✕
             </button>
