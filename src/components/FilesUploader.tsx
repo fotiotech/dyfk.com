@@ -12,7 +12,7 @@ interface FilesUploaderProps {
 }
 
 const FilesUploader: React.FC<FilesUploaderProps> = ({
-  files = [],  // Default to an empty array if files is undefined
+  files = [], // Default to an empty array if files is undefined
   setFiles,
 }) => {
   const [imgFiles, setImgFiles] = useState<File[]>([]);
@@ -22,16 +22,16 @@ const FilesUploader: React.FC<FilesUploaderProps> = ({
   // Function to handle image upload to Firebase
   const upload = useCallback(async () => {
     if (imgFiles.length === 0) return;
-  
+
     setLoading(true);
     const urls: string[] = [];
-  
+
     for (const file of imgFiles) {
       if (!file || !file.name) {
         console.error("Invalid file detected:", file);
         continue;
       }
-  
+
       try {
         const storageRef = ref(storage, `uploads/${file.name}`);
         await uploadBytes(storageRef, file);
@@ -41,8 +41,8 @@ const FilesUploader: React.FC<FilesUploaderProps> = ({
         console.error("Upload error:", error);
       }
     }
-  
-    setFiles([...files  as [], ...urls]);
+
+    setFiles([...(files as []), ...urls]);
     setImgFiles([]);
     setLoading(false);
   }, [imgFiles, setFiles, files]);
@@ -55,12 +55,9 @@ const FilesUploader: React.FC<FilesUploaderProps> = ({
   }, [upload]);
 
   // Handler when files are dropped or selected
-  const onDrop = useCallback(
-    (acceptedFiles: File[]) => {
-      setImgFiles((prevFiles) => [...prevFiles, ...acceptedFiles]);
-    },
-    []
-  );
+  const onDrop = useCallback((acceptedFiles: File[]) => {
+    setImgFiles((prevFiles) => [...prevFiles, ...acceptedFiles]);
+  }, []);
 
   // Setting up dropzone
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -78,41 +75,42 @@ const FilesUploader: React.FC<FilesUploaderProps> = ({
 
   // Handler to remove an image
   const removeImage = (index: number) => {
-    const updatedFiles = [...files as []]; // Spread files to ensure it's a new array
-    updatedFiles.splice(index, 1);    // Remove the image by index
+    const updatedFiles = [...(files as [])]; // Spread files to ensure it's a new array
+    updatedFiles.splice(index, 1); // Remove the image by index
     setFiles(updatedFiles);
   };
 
   return (
-    <div className="whitespace-nowrap w-screen overflow-x-auto scrollbar-none my-4 space-x-3">
+    <div className="whitespace-nowrap w-full overflow-x-auto scrollbar-none my-4 space-x-3">
       {/* Thumbnails of uploaded images */}
-      { files?.length! > 0 && files?.map((file, index) => (
-        <div
-          key={index}
-          className="relative inline-block border-2 border-gray-600 w-44 h-56 rounded-md overflow-hidden"
-        >
-          {loading ? (
-            <Spinner />
-          ) : (
-            <Image
-              src={file}
-              alt={`Uploaded file ${index + 1}`}
-              width={500}
-              height={500}
-              className="h-full w-full object-cover"
-            />
-          )}
-
-          <button
-            title="button"
-            type="button"
-            onClick={() => removeImage(index)}
-            className="absolute top-0 right-0 text-white rounded-full p-1 text-xs"
+      {files?.length! > 0 &&
+        files?.map((file, index) => (
+          <div
+            key={index}
+            className="relative inline-block border-2 border-gray-600 w-44 h-56 rounded-md overflow-hidden"
           >
-            ✕
-          </button>
-        </div>
-      ))}
+            {loading ? (
+              <Spinner />
+            ) : (
+              <Image
+                src={file}
+                alt={`Uploaded file ${index + 1}`}
+                width={500}
+                height={500}
+                className="h-full w-full object-cover"
+              />
+            )}
+
+            <button
+              title="button"
+              type="button"
+              onClick={() => removeImage(index)}
+              className="absolute top-0 right-0 text-white rounded-full p-1 text-xs"
+            >
+              ✕
+            </button>
+          </div>
+        ))}
       <div
         className={`${
           files?.length! > 0 ? "w-60 border-thiR" : "w-full border-gray-600"
@@ -121,7 +119,9 @@ const FilesUploader: React.FC<FilesUploaderProps> = ({
         {/* Drag-and-drop area */}
         <div
           {...getRootProps()}
-          className={`p-6 ${isDragActive ? "border-blue-500" : "border-gray-400"}`}
+          className={`p-6 ${
+            isDragActive ? "border-blue-500" : "border-gray-400"
+          }`}
         >
           <input {...getInputProps()} ref={inputRef} />
           {isDragActive ? (
@@ -149,4 +149,3 @@ const FilesUploader: React.FC<FilesUploaderProps> = ({
 };
 
 export default FilesUploader;
-
