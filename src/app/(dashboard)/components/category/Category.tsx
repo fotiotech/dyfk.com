@@ -44,37 +44,37 @@ const Category = () => {
 
   return (
     <div className="p-2 mt-4">
-      <div>
-        <ul className="w-[90%] bg-[#eee] dark:bg-sec-dark">
-          {category.map((item) => (
-            <li
-              key={item._id}
-              className={`flex justify-between items-center  ${
-                parentId === item._id ? "bg-blue-200" : ""
-              }`}
+      <ul
+        className="flex flex-col gap-2 bg-[#eee]
+        h-[500px] scrollbar-none overflow-clip 
+        overflow-y-auto dark:bg-sec-dark"
+      >
+        {category.map((item) => (
+          <li
+            key={item._id}
+            className={`flex justify-between items-center
+            rounded-lg bg-slate-600 p-2`}
+          >
+            <p
+              onClick={() => handleSelect(item?._id as string)} // Ensure handleSelect is called
+              className={`flex-1 cursor-pointer`}
             >
-              <p
-                onClick={() => handleSelect(item?._id as string)} // Ensure handleSelect is called
-                className={`cursor-pointer  ${
-                  parentId === item._id ? "bg-blue-200" : ""
-                }`}
-              >
-                {item.categoryName}
-              </p>
-              <button
-                type="button"
-                title="select this"
-                onClick={(e) => {
-                  e.stopPropagation(); // Prevent event propagation to parent <li> on button click
-                  handleSelect(item?._id as string); // Ensure the category is selected
-                }}
-              >
-                Select This
-              </button>
-            </li>
-          ))}
-        </ul>
-      </div>
+              {item.categoryName}
+            </p>
+            <span
+              onClick={(e) => {
+                e.stopPropagation(); // Prevent event propagation to parent <li> on button click
+                handleSelect(item?._id as string); // Ensure the category is selected
+              }}
+              className={`${
+                parentId === item._id ? "bg-blue-400" : ""
+              } px-2 rounded-lg border `}
+            >
+              Select This
+            </span>
+          </li>
+        ))}
+      </ul>
 
       {/* Next button */}
       <div className="text-end mt-4">

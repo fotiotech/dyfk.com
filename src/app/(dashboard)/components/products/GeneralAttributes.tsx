@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import Attribute from "./Attribute";
 import { findCategoryAttributesAndValues } from "@/app/actions/attributes";
 import { RootState } from "@/app/store/store";
-import { updateAttributes } from "@/app/store/slices/productSlice";
+import { nextStep, updateAttributes } from "@/app/store/slices/productSlice";
 import { prevStep } from "@/app/store/slices/productSlice";
 
 type AttributeType = {
@@ -31,7 +31,7 @@ const Details: React.FC<DetailsProps> = ({ handleSubmit }) => {
         console.log(response);
         if (response?.length > 0) {
           const formattedAttributes = response[0].groupedAttributes
-            ?.filter((group: any) => group.groupName !== "General")
+            ?.filter((group: any) => group.groupName === "General")
             ?.map((group: any) => ({
               groupName: group.groupName
                 ? group.groupName.toLowerCase()
@@ -61,6 +61,10 @@ const Details: React.FC<DetailsProps> = ({ handleSubmit }) => {
     dispatch(prevStep()); // Navigate back to the previous step
   };
 
+  const handleNext = () => {
+    dispatch(nextStep());
+  };
+
   return (
     <div>
       {attributes.length > 0 && (
@@ -80,10 +84,10 @@ const Details: React.FC<DetailsProps> = ({ handleSubmit }) => {
 
             {/* Submit Button */}
             <button
-              onClick={handleSubmit}
+              onClick={handleNext}
               className="bg-blue-500 text-white py-2 px-4 rounded"
             >
-              Submit Product
+              Next
             </button>
           </div>
         </>

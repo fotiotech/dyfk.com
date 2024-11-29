@@ -164,7 +164,7 @@ const BasicInformation = () => {
           className="border rounded p-2 mt-1 bg-transparent"
         />
       </div>
-      <div className="flex space-x-4 mt-6">
+      <div className="flex justify-between items-center space-x-4 mt-6">
         <button
           onClick={() => dispatch(prevStep())}
           className="bg-gray-500 text-white py-2 px-4 rounded"

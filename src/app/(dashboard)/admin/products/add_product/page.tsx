@@ -1,6 +1,7 @@
 "use client";
 import Category from "@/app/(dashboard)/components/category/Category";
 import Details from "@/app/(dashboard)/components/products/Details";
+import GeneralAttribute from "@/app/(dashboard)/components/products/GeneralAttributes";
 import BasicInformation from "@/app/(dashboard)/components/products/Information";
 import { createProduct } from "@/app/actions/products";
 import { useAppSelector } from "@/app/hooks";
@@ -62,8 +63,9 @@ const AddProduct = () => {
       <h3 className="text-lg font-bold mb-4">Add Product</h3>
       <div>
         {step === 1 && <Category />}
-        {step === 2 && <BasicInformation />}
-        {step === 3 && <Details handleSubmit={handleSubmit} />}
+        {step === 2 && <GeneralAttribute handleSubmit={handleSubmit} />}
+        {step === 3 && <BasicInformation />}
+        {step === 4 && <Details handleSubmit={handleSubmit} />}
       </div>
     </div>
   );
