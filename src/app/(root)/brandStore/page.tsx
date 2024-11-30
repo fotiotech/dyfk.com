@@ -74,12 +74,12 @@ const BrandStore = () => {
                 <div>
                   <div className="flex items-baseline gap-1">
                     <span className=" font-bold mr-1">
-                      <Prices amount={product.price} />
+                      <Prices amount={product.finalPrice} />
                     </span>
                     {product.discount && (
                       <div>
                         <span className=" text-sm line-through ">
-                          <Prices amount={product.discount} />
+                          {/* <Prices amount={product.discount} /> */}
                         </span>
                       </div>
                     )}

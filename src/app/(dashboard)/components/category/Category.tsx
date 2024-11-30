@@ -16,6 +16,7 @@ const Category = () => {
       try {
         if (parentId) {
           const res = await getCategory(undefined, parentId, undefined);
+          if (res.length == 0) return null;
           setCategory(res || []);
         } else {
           const res = await getCategory();

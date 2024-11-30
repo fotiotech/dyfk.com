@@ -11,11 +11,12 @@ import {
 import FilesUploader from "@/components/FilesUploader";
 import { getBrands } from "@/app/actions/brand";
 import { Brand } from "@/constant/types";
+import { useAppDispatch, useAppSelector } from "@/app/hooks";
 
 const BasicInformation = () => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const { sku, product_name, brandId, department, description, imageUrls } =
-    useSelector((state: RootState) => state.product);
+  useAppSelector((state: RootState) => state.product);
 
   const [files, setFiles] = useState<string[]>(imageUrls); // Store URLs of uploaded images
   const [brands, setBrands] = useState<Brand[]>([]);

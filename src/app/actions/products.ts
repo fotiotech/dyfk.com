@@ -124,8 +124,23 @@ export async function createProduct(
   files: string[],
   formData: Prod
 ) {
-  const { sku, productName, brand_id, department, description, price, status } =
-    formData;
+  const {
+    sku,
+    productName,
+    brand_id,
+    department,
+    description,
+    basePrice,
+    finalPrice,
+    taxRate,
+    discount,
+    currency,
+    upc,
+    ean,
+    gtin,
+    stockQuantity,
+    status,
+  } = formData;
 
   if (productName === "" || categoryId === "") {
     return { error: "Product name is required." };
@@ -164,7 +179,15 @@ export async function createProduct(
     brand_id: new mongoose.Types.ObjectId(brand_id as string),
     department: department,
     description: description,
-    price: price,
+    basePrice,
+    finalPrice,
+    taxRate,
+    discount,
+    currency,
+    upc,
+    ean,
+    gtin,
+    stockQuantity,
     attributes: cleanedAttributes.length > 0 ? cleanedAttributes : null, // Set formatted attributes
     imageUrls: files,
     status: status,
@@ -191,7 +214,15 @@ export async function updateProduct(
       brand_id,
       department,
       description,
-      price,
+      basePrice,
+      finalPrice,
+      taxRate,
+      discount,
+      currency,
+      upc,
+      ean,
+      gtin,
+      stockQuantity,
       status,
     } = formData;
 
@@ -222,9 +253,17 @@ export async function updateProduct(
           brand_id: new mongoose.Types.ObjectId(brand_id as string) || null,
           department: department,
           description: description,
-          price: price,
+          basePrice,
+          finalPrice,
           attributes: cleanedAttributes.length > 0 ? cleanedAttributes : null, // Set cleaned attributes
           imageUrls: files || null,
+          taxRate,
+          discount,
+          currency,
+          upc,
+          ean,
+          gtin,
+          stockQuantity,
           status: status,
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),

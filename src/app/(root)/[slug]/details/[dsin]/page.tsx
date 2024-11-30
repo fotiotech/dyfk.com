@@ -76,7 +76,7 @@ const DetailsPage = ({
             <div className="flex flex-col gap-3 p-2 lg:p-0">
               <div className="flex items-baseline gap-2">
                 <div className="font-bold text-xl">
-                  <Prices amount={details?.price as number} />
+                  <Prices amount={details?.finalPrice as number} />
                 </div>
               </div>
               {details?.attributes && details.attributes.length > 0 && (
@@ -91,7 +91,7 @@ const DetailsPage = ({
                           {attributeGroup.groupName}
                         </h4> */}
 
-                        {Array.from(attributeGroup.attributes)
+                        {Array.from(attributeGroup.attributes as any)
                           .filter(
                             ([attributeName]: any) =>
                               attributeName !== "_id" && attributeName !== "0"
@@ -140,7 +140,7 @@ const DetailsPage = ({
                         {/* <h4 className="font-semibold capitalize">
                           {attributeGroup.groupName}
                         </h4> */}
-                        {Array.from(attributeGroup.attributes)
+                        {Array.from(attributeGroup.attributes as any)
                           .filter(
                             ([attributeName]: any) =>
                               attributeName !== "_id" && attributeName !== "0"

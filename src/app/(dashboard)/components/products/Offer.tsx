@@ -7,12 +7,13 @@ import {
 } from "@/app/store/slices/productSlice"; // Assuming correct path to redux actions
 import React, { useState, useEffect } from "react";
 import { RootState } from "@/app/store/store";
+import { useAppDispatch, useAppSelector } from "@/app/hooks";
 
 const Offer: React.FC = () => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   // Select the current product state from the Redux store
-  const { basePrice, taxRate, stockQuantity, discount, currency } = useSelector(
+  const { basePrice, taxRate, stockQuantity, discount, currency } = useAppSelector(
     (state: RootState) => state.product
   );
 

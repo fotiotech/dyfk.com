@@ -9,6 +9,7 @@ import {
   updateAttributes,
   prevStep,
 } from "@/app/store/slices/productSlice";
+import { useAppDispatch, useAppSelector } from "@/app/hooks";
 
 type AttributeType = {
   groupName: string;
@@ -23,8 +24,8 @@ type DetailsProps = {
 };
 
 const Details: React.FC<DetailsProps> = ({ handleSubmit }) => {
-  const dispatch = useDispatch();
-  const { categoryId } = useSelector((state: RootState) => state.product);
+  const dispatch = useAppDispatch();
+  const { categoryId } = useAppSelector((state: RootState) => state.product);
   const [attributes, setAttributes] = useState<AttributeType[]>([]);
 
   useEffect(() => {
@@ -97,7 +98,7 @@ const Details: React.FC<DetailsProps> = ({ handleSubmit }) => {
           {attributes.map((group) => (
             <div key={group.groupName} className="mb-6">
               <h3 className="text-lg font-semibold text-pri capitalize mb-4">
-                {group.groupName}
+                Details
               </h3>
               {group.attributes.map((attribute) => (
                 <div key={attribute.attrName} className="mb-4">

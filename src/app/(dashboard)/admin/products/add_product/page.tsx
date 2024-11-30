@@ -8,6 +8,7 @@ import { createProduct } from "@/app/actions/products";
 import { useAppSelector } from "@/app/hooks";
 import React from "react";
 import Information from "@/app/(dashboard)/components/products/Information";
+import { Product } from "@/constant/types";
 
 const AddProduct = () => {
   const {
@@ -21,6 +22,15 @@ const AddProduct = () => {
     imageUrls,
     categoryId,
     attributes,
+    basePrice,
+    taxRate,
+    discount,
+    currency,
+    upc,
+    ean,
+    gtin,
+    stockQuantity,
+    status,
   } = useAppSelector((state) => state.product);
 
   const validateForm = () => {
@@ -48,8 +58,17 @@ const AddProduct = () => {
         brand_id: brandId,
         department,
         description,
-        price: finalPrice,
-      });
+        basePrice,
+        finalPrice,
+        taxRate,
+        discount,
+        currency,
+        upc,
+        ean,
+        gtin,
+        stockQuantity,
+        status,
+      } as Product);
       alert("Product submitted successfully!");
     } catch (error) {
       console.error("Error submitting product:", error);

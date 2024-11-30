@@ -18,6 +18,7 @@ export interface ProductState {
   imageUrls: string[];
   categoryId: string;
   attributes: { [key: string]: { [key: string]: string[] } };
+  status: "active" | "inactive";
   step: number;
 }
 
@@ -39,6 +40,7 @@ export const initialState: ProductState = {
   imageUrls: [],
   categoryId: "",
   attributes: {},
+  status: "active",
   step: 1,
 };
 

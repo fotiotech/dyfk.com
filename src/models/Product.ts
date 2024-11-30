@@ -21,13 +21,27 @@ const ProductSchema = new Schema(
     productName: {
       type: String,
       trim: true,
+      required: [true, "Product name is required"],
     },
     category_id: {
       type: Schema.Types.ObjectId,
       ref: "Category",
       required: [true, "Category ID is required"],
     },
-    // Price Fields
+    brand_id: {
+      type: Schema.Types.ObjectId,
+      ref: "Brand",
+      required: [true, "Brand ID is required"],
+    },
+    department: {
+      type: String,
+      trim: true,
+      required: [true, "Department is required"],
+    },
+    description: {
+      type: String,
+      trim: true,
+    },
     basePrice: {
       type: Number,
       required: [true, "Base price is required"],
@@ -43,40 +57,44 @@ const ProductSchema = new Schema(
       min: [0, "Final price must be a positive number"],
     },
     discount: {
-      type: Map,
-      of: Schema.Types.Mixed, // Discount details
-      default: {}, // Example structure: { type: "percentage", value: 10 }
+      type: {
+        type: String,
+        enum: ["percentage", "fixed"],
+        required: false,
+      },
+      value: {
+        type: Number,
+        min: [0, "Discount value cannot be negative"],
+        required: false,
+      },
     },
     currency: {
       type: String,
       default: "XAF", // Default currency (Central African CFA Franc)
     },
-    // Product Identification Codes
     upc: {
       type: String,
       unique: true,
-      sparse: true, // This allows the field to be optional but still unique if present
+      sparse: true, // Optional but unique if present
       trim: true,
     },
     ean: {
       type: String,
       unique: true,
-      sparse: true, // This allows the field to be optional but still unique if present
+      sparse: true, // Optional but unique if present
       trim: true,
     },
     gtin: {
       type: String,
       unique: true,
-      sparse: true, // This allows the field to be optional but still unique if present
+      sparse: true, // Optional but unique if present
       trim: true,
     },
-    // Inventory Fields
     stockQuantity: {
       type: Number,
       required: [true, "Stock quantity is required"],
       min: [0, "Stock quantity cannot be negative"],
     },
-    // Product Images
     imageUrls: {
       type: [String],
       required: [true, "At least one image URL is required"],
@@ -90,23 +108,11 @@ const ProductSchema = new Schema(
         },
         attributes: {
           type: Map,
-          of: [String], // Each attribute name maps to an array of string values
+          of: [String], // Each attribute maps to an array of string values
           required: true,
         },
       },
     ],
-    department: {
-      type: String,
-      trim: true,
-    },
-    description: {
-      type: String,
-      trim: true,
-    },
-    brand_id: {
-      type: Schema.Types.ObjectId,
-      ref: "Brand",
-    },
     offerId: {
       type: Schema.Types.ObjectId,
       ref: "Offer",
@@ -116,6 +122,10 @@ const ProductSchema = new Schema(
       type: String,
       enum: ["active", "inactive"],
       default: "active",
+    },
+    step: {
+      type: Number,
+      default: 1, // Step tracking for wizard-like forms
     },
   },
   {

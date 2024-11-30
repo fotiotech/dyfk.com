@@ -43,24 +43,35 @@ export type Brand = {
 
 export type Product = {
   _id?: string;
-  category_id?: string;
-  department: string;
-  dsin?: string;
-  sku?: string;
-  Barcode?: string;
-  url_slug?: string;
-  brand_id?: string | { _id: string; name: string };
-  imageUrls?: string[];
-  productName: string;
-  attributes?: Record<string, string | string[]>[];
-  price: number;
-  color?: string;
-  discount?: number;
-  created_at?: string;
-  updated_at?: string;
-  description: string;
-  status?: string;
+  url_slug: string; // Unique slug for the product URL
+  dsin: string; // Unique identifier for the product
+  sku?: string; // Stock Keeping Unit
+  productName: string; // Name of the product
+  category_id: string; // ID of the category the product belongs to
+  brand_id: string | { _id: string; name: string }; // ID or populated brand object
+  department: string; // Department the product belongs to
+  description?: string; // Description of the product
+  basePrice: number; // Base price of the product
+  taxRate?: number; // Tax rate (optional, defaults to 0)
+  finalPrice: number; // Final price of the product after taxes and discounts
+  discount?: { type: "percentage" | "fixed"; value: number } | null; // Discount details (optional)
+  currency?: string; // Currency for the price (defaults to "XAF")
+  upc?: string; // Unique Product Code
+  ean?: string; // European Article Number
+  gtin?: string; // Global Trade Item Number
+  stockQuantity: number; // Quantity in stock
+  imageUrls: string[]; // Array of image URLs for the product
+  attributes?: {
+    groupName: string; // Name of the attribute group
+    attributes: Record<string, string[]>; // Map of attribute names to string arrays
+  }[]; // List of attribute groups
+  offerId?: string; // Optional ID of an associated offer
+  status?: "active" | "inactive"; // Status of the product
+  step?: number; // Current step in a wizard-like form (optional)
+  created_at?: string; // Timestamp when the product was created
+  updated_at?: string; // Timestamp when the product was last updated
 };
+
 
 export type Smartphones = {
   ModelName: string;

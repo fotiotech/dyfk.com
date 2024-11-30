@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 
 import {
   findProducts,
@@ -10,11 +10,13 @@ import {
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
 import { setProductData, resetProduct } from "@/app/store/slices/productSlice";
-import { useSelector } from "react-redux";
 import BasicInformation from "@/app/(dashboard)/components/products/BasicInfos";
-import { RootState } from "@/app/store/store";
 import Category from "@/app/(dashboard)/components/category/Category";
 import Details from "@/app/(dashboard)/components/products/Details";
+import { Product } from "@/constant/types";
+import Information from "@/app/(dashboard)/components/products/Information";
+import GeneralAttribute from "@/app/(dashboard)/components/products/GeneralAttributes";
+import Offer from "@/app/(dashboard)/components/products/Offer";
 
 const EditDeleteProduct = () => {
   const productId = useSearchParams().get("id")?.toLowerCase();
@@ -31,6 +33,15 @@ const EditDeleteProduct = () => {
     imageUrls,
     categoryId,
     attributes,
+    basePrice,
+    taxRate,
+    discount,
+    currency,
+    upc,
+    ean,
+    gtin,
+    stockQuantity,
+    status,
   } = useAppSelector((state) => state.product);
 
   useEffect(() => {
@@ -42,17 +53,23 @@ const EditDeleteProduct = () => {
             setProductData({
               sku: productData.sku || "",
               product_name: productData.productName || "",
-              categoryId: productData.category_id || "",
               brandId: productData.brand_id || "",
               department: productData.department || "",
               description: productData.description || "",
+              basePrice: productData.basePrice || 0.0,
               finalPrice: productData.price || 0.0,
-              attributes: productData.attributes?.map((attr: any) => ({
-                groupName: attr.groupName || "",
-                values: attr.values || [],
-              })),
+              taxRate: productData.taxRate || 0,
+              discount: productData.discount || null,
+              currency: productData.currency || "XAF",
+              upc: productData.upc || "",
+              ean: productData.ean || "",
+              gtin: productData.gtin || "",
+              status: productData.status || "",
+              stockQuantity: productData.stockQuantity || 0,
               imageUrls: productData.imageUrls || [],
-              step: 1,
+              categoryId: productData.category_id || "",
+              attributes: productData.attributes || {},
+              step: 1, // Reset to the first step
             })
           );
         }
@@ -63,9 +80,10 @@ const EditDeleteProduct = () => {
 
     // Cleanup function when unmounting or when productId changes
     return () => {
-      dispatch(resetProduct()); // Directly dispatch resetProduct
+      dispatch(resetProduct());
     };
-  }, [productId, dispatch]); // Add dispatch as a dependency
+  }, [productId, dispatch]);
+  // Add dispatch as a dependency
 
   const handleDeleteProduct = async () => {
     if (productId) {
@@ -77,7 +95,6 @@ const EditDeleteProduct = () => {
   const files = imageUrls;
 
   const handleSubmit = async () => {
-    // if (validateForm()) {
     try {
       await updateProduct(productId as string, categoryId, attributes, files, {
         sku,
@@ -85,16 +102,21 @@ const EditDeleteProduct = () => {
         brand_id: brandId,
         department,
         description,
-        price: finalPrice,
-      });
-      alert("Product submitted successfully!");
+        basePrice,
+        finalPrice,
+        taxRate,
+        discount,
+        currency,
+        upc,
+        ean,
+        gtin,
+        stockQuantity,
+      } as Product);
+      alert("Product updated successfully!");
     } catch (error) {
-      console.error("Error submitting product:", error);
-      alert("Failed to submit the product. Please try again.");
+      console.error("Error updating product:", error);
+      alert("Failed to update the product. Please try again.");
     }
-    // } else {
-    //   alert("Please fill all required fields!");
-    // }
   };
 
   if (!step) {
@@ -106,8 +128,11 @@ const EditDeleteProduct = () => {
       <h3 className="text-lg font-bold mb-4">Edit Product</h3>
       <div>
         {step === 1 && <Category />}
-        {step === 2 && <BasicInformation />}
-        {step === 3 && <Details handleSubmit={handleSubmit} />}
+        {step === 2 && <Information />}
+        {step === 3 && <GeneralAttribute handleSubmit={handleSubmit} />}
+        {step === 4 && <BasicInformation />}
+        {step === 5 && <Offer />}
+        {step === 6 && <Details handleSubmit={handleSubmit} />}
       </div>
     </div>
   );

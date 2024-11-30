@@ -8,12 +8,13 @@ import {
   updateProduct,
 } from "@/app/store/slices/productSlice"; // Assuming correct path to redux actions
 import { RootState } from "@/app/store/store";
+import { useAppDispatch, useAppSelector } from "@/app/hooks";
 
 const Information: React.FC = () => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   // Select the current product state from the Redux store
-  const { sku, upc, ean, gtin } = useSelector(
+  const { sku, upc, ean, gtin } = useAppSelector(
     (state: RootState) => state.product
   );
 

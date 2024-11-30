@@ -121,7 +121,7 @@ const Search = () => {
                             <div className="py-1">
                               <span className="text-sm pr-1">CFA</span>
                               <span className="font-bold pr-2">
-                                {product.price}
+                                {product.finalPrice}
                               </span>
                             </div>
                           </div>
