@@ -11,7 +11,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
 import { setProductData, resetProduct } from "@/app/store/slices/productSlice";
 import { useSelector } from "react-redux";
-import BasicInformation from "@/app/(dashboard)/components/products/Information";
+import BasicInformation from "@/app/(dashboard)/components/products/BasicInfos";
 import { RootState } from "@/app/store/store";
 import Category from "@/app/(dashboard)/components/category/Category";
 import Details from "@/app/(dashboard)/components/products/Details";
@@ -27,7 +27,7 @@ const EditDeleteProduct = () => {
     brandId,
     department,
     description,
-    price,
+    finalPrice,
     imageUrls,
     categoryId,
     attributes,
@@ -46,7 +46,7 @@ const EditDeleteProduct = () => {
               brandId: productData.brand_id || "",
               department: productData.department || "",
               description: productData.description || "",
-              price: productData.price || 0.0,
+              finalPrice: productData.price || 0.0,
               attributes: productData.attributes?.map((attr: any) => ({
                 groupName: attr.groupName || "",
                 values: attr.values || [],
@@ -85,7 +85,7 @@ const EditDeleteProduct = () => {
         brand_id: brandId,
         department,
         description,
-        price,
+        price: finalPrice,
       });
       alert("Product submitted successfully!");
     } catch (error) {

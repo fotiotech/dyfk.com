@@ -1,25 +1,41 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-interface ProductState {
+export interface ProductState {
   sku: string;
   product_name: string;
   brandId: string;
   department: string;
   description: string;
-  price: number;
+  basePrice?: number;
+  finalPrice: number;
+  taxRate?: number;
+  discount?: { type: string; value: number } | null;
+  currency?: string;
+  upc?: string;
+  ean?: string;
+  gtin?: string;
+  stockQuantity?: number;
   imageUrls: string[];
   categoryId: string;
   attributes: { [key: string]: { [key: string]: string[] } };
   step: number;
 }
 
-const initialState: ProductState = {
+export const initialState: ProductState = {
   sku: "",
   product_name: "",
   brandId: "",
   department: "",
   description: "",
-  price: 0.0,
+  basePrice: 0.0,
+  finalPrice: 0.0,
+  taxRate: 0,
+  discount: null,
+  currency: "XAF",
+  upc: "",
+  ean: "",
+  gtin: "",
+  stockQuantity: 0,
   imageUrls: [],
   categoryId: "",
   attributes: {},
@@ -37,7 +53,7 @@ const productSlice = createSlice({
       state,
       action: PayloadAction<{
         field: keyof ProductState;
-        value: string | string[] | number;
+        value: string | string[] | number | null;
       }>
     ) => {
       const { field, value } = action.payload;
@@ -65,15 +81,45 @@ const productSlice = createSlice({
       state.attributes[groupName][attrName] = selectedValues;
     },
     nextStep(state) {
-      if (state) {
-        state.step += 1;
-      }
+      state.step += 1;
     },
     prevStep(state) {
       state.step -= 1;
     },
     resetProduct(state) {
-      state = initialState;
+      return initialState;
+    },
+    updateDiscount: (
+      state,
+      action: PayloadAction<{ type: string; value: number }>
+    ) => {
+      state.discount = action.payload;
+    },
+    setProductPrice: (
+      state,
+      action: PayloadAction<{
+        basePrice: number;
+        taxRate: number;
+        discount?: number;
+      }>
+    ) => {
+      const { basePrice, taxRate, discount = 0 } = action.payload;
+      state.basePrice = basePrice;
+      state.taxRate = taxRate;
+
+      // Calculate discount amount
+      const discountAmount = (basePrice * discount) / 100;
+
+      // Calculate final price
+      state.finalPrice =
+        basePrice + (basePrice * taxRate) / 100 - discountAmount;
+    },
+
+    updateStockQuantity(state, action: PayloadAction<number>) {
+      state.stockQuantity = action.payload;
+    },
+    updateCurrency(state, action: PayloadAction<string>) {
+      state.currency = action.payload;
     },
   },
 });
@@ -86,6 +132,10 @@ export const {
   nextStep,
   prevStep,
   resetProduct,
+  updateDiscount,
+  setProductPrice,
+  updateStockQuantity,
+  updateCurrency,
 } = productSlice.actions;
 
 export default productSlice.reducer;

@@ -27,11 +27,56 @@ const ProductSchema = new Schema(
       ref: "Category",
       required: [true, "Category ID is required"],
     },
-    price: {
+    // Price Fields
+    basePrice: {
       type: Number,
-      required: [true, "Price is required"],
-      min: [0, "Price must be a positive number"],
+      required: [true, "Base price is required"],
+      min: [0, "Base price must be a positive number"],
     },
+    taxRate: {
+      type: Number,
+      default: 0, // Optional: Default tax rate (percentage)
+    },
+    finalPrice: {
+      type: Number,
+      required: [true, "Final price is required"],
+      min: [0, "Final price must be a positive number"],
+    },
+    discount: {
+      type: Map,
+      of: Schema.Types.Mixed, // Discount details
+      default: {}, // Example structure: { type: "percentage", value: 10 }
+    },
+    currency: {
+      type: String,
+      default: "XAF", // Default currency (Central African CFA Franc)
+    },
+    // Product Identification Codes
+    upc: {
+      type: String,
+      unique: true,
+      sparse: true, // This allows the field to be optional but still unique if present
+      trim: true,
+    },
+    ean: {
+      type: String,
+      unique: true,
+      sparse: true, // This allows the field to be optional but still unique if present
+      trim: true,
+    },
+    gtin: {
+      type: String,
+      unique: true,
+      sparse: true, // This allows the field to be optional but still unique if present
+      trim: true,
+    },
+    // Inventory Fields
+    stockQuantity: {
+      type: Number,
+      required: [true, "Stock quantity is required"],
+      min: [0, "Stock quantity cannot be negative"],
+    },
+    // Product Images
     imageUrls: {
       type: [String],
       required: [true, "At least one image URL is required"],
@@ -62,7 +107,11 @@ const ProductSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "Brand",
     },
-    offerId: { type: Schema.Types.ObjectId, ref: "Offer", required: false },
+    offerId: {
+      type: Schema.Types.ObjectId,
+      ref: "Offer",
+      required: false, // Nullable, in case the product has no active offer
+    },
     status: {
       type: String,
       enum: ["active", "inactive"],

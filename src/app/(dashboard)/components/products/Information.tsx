@@ -1,169 +1,109 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Select from "react-select";
-import { RootState } from "@/app/store/store";
 import {
-  updateProduct,
   nextStep,
   prevStep,
-} from "@/app/store/slices/productSlice";
-import FilesUploader from "@/components/FilesUploader";
-import { getBrands } from "@/app/actions/brand";
-import { Brand } from "@/constant/types";
+  ProductState,
+  updateProduct,
+} from "@/app/store/slices/productSlice"; // Assuming correct path to redux actions
+import { RootState } from "@/app/store/store";
 
-const BasicInformation = () => {
-  const initialState = {
-    sku: "",
-    product_name: "",
-    brandId: "",
-    department: "",
-    description: "",
-    price: 0.0,
-    imageUrls: [],
-    categoryId: "",
-    attributes: {},
-    step: 1,
-  };
+const Information: React.FC = () => {
   const dispatch = useDispatch();
-  const {
-    sku,
-    product_name,
-    brandId,
-    department,
-    description,
-    price,
-    imageUrls,
-  } = useSelector((state: RootState) => state.product);
 
-  const [files, setFiles] = useState<string[]>(imageUrls); // Store URLs of uploaded images
-  const [brands, setBrands] = useState<Brand[]>([]);
-  const [selectedBrand, setSelectedBrand] = useState<{
-    value: string;
-    label: string;
-  } | null>(null);
+  // Select the current product state from the Redux store
+  const { sku, upc, ean, gtin } = useSelector(
+    (state: RootState) => state.product
+  );
 
-  useEffect(() => {
-    const fetchBrands = async () => {
-      const res = await getBrands();
-      setBrands(res);
-    };
-    fetchBrands();
-  }, []);
+  // Local component state for product code type and value
+  const [codeType, setCodeType] = useState("sku");
+  const [codeValue, setCodeValue] = useState<string>(sku || "");
 
-  // Handle file changes (i.e., image URLs)
-  const handleFilesChange = (newFiles: string[]) => {
-    setFiles(newFiles);
-    dispatch(updateProduct({ field: "imageUrls", value: newFiles })); // Update the Redux state with the new image URLs
+  // Handle product code type change with react-select
+  const handleCodeTypeChange = (selectedOption: any) => {
+    const newCodeType = selectedOption.value;
+    setCodeType(newCodeType);
+    // Reset the code value when the type changes
+    setCodeValue("");
   };
 
-  // Handle input changes (for text fields like sku, product_name, etc.)
-  const handleChange =
-    (field: keyof typeof initialState) =>
-    (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      const value = event.target.value;
-      if (field === "price") {
-        dispatch(updateProduct({ field, value: parseFloat(value) }));
-      } else {
-        dispatch(updateProduct({ field, value }));
-      }
-    };
-
-  const handleBrandChange = (selectedOption: any) => {
-    setSelectedBrand(selectedOption);
-    dispatch(updateProduct({ field: "brandId", value: selectedOption.value }));
+  // Handle product code value change
+  const handleCodeValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCodeValue(e.target.value);
+    dispatch(
+      updateProduct({
+        field: codeType as keyof ProductState,
+        value: e.target.value,
+      })
+    );
   };
 
   const handleNext = () => {
     dispatch(nextStep());
   };
 
-  const brandOptions = brands.map((brand) => ({
-    value: brand._id,
-    label: brand.name,
-  }));
+  // Options for react-select
+  const codeTypeOptions = [
+    { value: "sku", label: "SKU" },
+    { value: "upc", label: "UPC" },
+    { value: "ean", label: "EAN" },
+    { value: "gtin", label: "GTIN" },
+  ];
+
+  const customStyles = {
+    control: (provided: any) => ({
+      ...provided,
+      backgroundColor: "transparent", // Change the input background
+    }),
+    menu: (provided: any) => ({
+      ...provided,
+      backgroundColor: "#f0f9ff", // Change the dropdown menu background
+    }),
+    option: (provided: any, state: any) => ({
+      ...provided,
+      backgroundColor: state.isFocused
+        ? "#e0f2fe" // Background when option is focused
+        : "#f0f9ff", // Default background
+    }),
+  };
 
   return (
-    <div className="space-y-6">
-      <FilesUploader files={files} setFiles={handleFilesChange} />{" "}
-      {/* Pass handleFilesChange to update image URLs */}
-      <h2 className="text-2xl font-semibold">Basic Information</h2>
-      <div className="flex flex-col">
-        <label htmlFor="sku" className="text-sm font-medium">
-          SKU
-        </label>
-        <input
-          id="sku"
-          type="text"
-          value={sku}
-          placeholder="Enter SKU"
-          onChange={handleChange("sku")}
-          className="border rounded p-2 mt-1 bg-transparent"
-        />
-      </div>
-      <div className="flex flex-col">
-        <label htmlFor="product_name" className="text-sm font-medium">
-          Product Name
-        </label>
-        <input
-          id="product_name"
-          type="text"
-          value={product_name}
-          placeholder="Enter Product Name"
-          onChange={handleChange("product_name")}
-          className="border rounded p-2 mt-1 bg-transparent"
-        />
-      </div>
-      <div className="flex flex-col">
-        <label htmlFor="brand" className="text-sm font-medium">
-          Brand
+    <div className="p-4 shadow-md rounded">
+      <h2 className="text-lg font-semibold mb-4">Product Details</h2>
+
+      {/* Select Product Code Type (SKU, UPC, EAN, GTIN) with react-select */}
+      <div className="mb-4">
+        <label className="block text-sm font-medium">
+          Select Product Code Type
         </label>
         <Select
-          id="brand"
-          value={selectedBrand}
-          options={brandOptions as any}
-          onChange={handleBrandChange}
-          isClearable
-          className="mt-1 bg-transparent text-sec"
+          options={codeTypeOptions}
+          styles={customStyles}
+          value={codeTypeOptions.find((option) => option.value === codeType)}
+          onChange={handleCodeTypeChange}
+          className="mt-1 bg-none text-sec border-gray-100"
+          placeholder="Select code type"
         />
       </div>
-      <div className="flex flex-col">
-        <label htmlFor="department" className="text-sm font-medium">
-          Department
+
+      {/* Product Code Value (Text Input) */}
+      <div className="mb-4">
+        <label className="block text-sm font-medium">
+          Enter {codeType.toUpperCase()} Code
         </label>
         <input
-          id="department"
           type="text"
-          value={department}
-          placeholder="Enter Department"
-          onChange={handleChange("department")}
-          className="border rounded p-2 mt-1 bg-transparent"
+          value={codeValue}
+          onChange={handleCodeValueChange}
+          className="mt-1 block w-full border-gray-300 
+          bg-transparent rounded-md shadow-sm"
+          placeholder={`Enter ${codeType.toUpperCase()} code`}
         />
       </div>
-      <div className="flex flex-col">
-        <label htmlFor="description" className="text-sm font-medium">
-          Product Description
-        </label>
-        <textarea
-          id="description"
-          value={description}
-          placeholder="Enter product description"
-          onChange={handleChange("description")}
-          className="border rounded p-2 mt-1 bg-transparent"
-        />
-      </div>
-      <div className="flex flex-col">
-        <label htmlFor="price" className="text-sm font-medium">
-          Price
-        </label>
-        <input
-          id="price"
-          type="number"
-          value={price}
-          placeholder="Enter Price"
-          onChange={handleChange("price")}
-          className="border rounded p-2 mt-1 bg-transparent"
-        />
-      </div>
+
+      {/* Save Button */}
       <div className="flex justify-between items-center space-x-4 mt-6">
         <button
           onClick={() => dispatch(prevStep())}
@@ -182,4 +122,4 @@ const BasicInformation = () => {
   );
 };
 
-export default BasicInformation;
+export default Information;
