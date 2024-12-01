@@ -168,7 +168,7 @@ const OrderDetailsPage = () => {
               <span className="font-bold">Discount:</span>
               -<Prices amount={order?.discount!} />
             </p>
-            <p className="text-xl font-bold text-gray-800">
+            <p className="text-xl font-bold text-gray-300">
               Total: <Prices amount={order?.total!} />
             </p>
           </section>

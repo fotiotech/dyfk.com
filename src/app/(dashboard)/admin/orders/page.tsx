@@ -46,7 +46,7 @@ const AllOrderPage = () => {
   }
 
   return (
-    <div className="p-6">
+    <div className="">
       <h2 className="text-2xl font-bold mb-6">All Orders</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {allOrders.map((order) => (
@@ -127,7 +127,7 @@ const AllOrderPage = () => {
 
               <div className="border-t pt-4">
                 <p className="text-sm font-semibold">Total:</p>
-                <p className="text-lg font-bold text-gray-800">
+                <p className="text-lg font-bold text-gray-300">
                   <Prices amount={order.total} />
                 </p>
               </div>
