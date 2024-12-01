@@ -13,8 +13,7 @@ import { getCategory } from "./actions/category";
 import { triggerNotification } from "./actions/notifications";
 import { findProducts } from "./actions/products";
 import { useUser } from "./context/UserContext";
-import { NextSeo } from "next-seo";
-
+import Head from "next/head";
 export default function Home() {
   const { t } = useTranslation("common");
   const { user } = useUser();
@@ -44,29 +43,35 @@ export default function Home() {
 
   return (
     <Layout>
-      {/* <NextSeo
-        title="dyfkCameroun.com | Your One-Stop E-Commerce Store in Cameroun"
-        description="Discover the best deals on a wide range of products including electronics, fashion, home essentials, and more. Shop now at dyfk.com!"
-        canonical="https://dyfk-com.vercel.app"
-        openGraph={{
-          title:
-            "dyfkCameroun.com | Your One-Stop E-Commerce Store in Cameroun",
-          description:
-            "Discover the best deals on a wide range of products including electronics, fashion, home essentials, and more. Shop now at dyfkCameroun.com!",
-          images: [
-            {
-              url: "https://dyfk-com.vercel.app/logo.png", // Replace with a relevant banner or promotional image URL
-              width: 1200,
-              height: 630,
-              alt: "dyfkCameroun.com - Your One-Stop E-Commerce Store in Cameroun",
-            },
-          ],
-          url: "https://dyfk-com.vercel.app",
-        }}
-        twitter={{
-          cardType: "summary_large_image",
-        }}
-      /> */}
+      <Head>
+        <title>
+          dyfkCameroun.com | Your One-Stop E-Commerce Store in Cameroun
+        </title>
+        <meta
+          name="description"
+          content="Discover the best deals on a wide range of products including electronics, fashion, home essentials, and more. Shop now at dyfkCameroun.com!"
+        />
+        <meta name="canonical" content="https://dyfk-com.vercel.app" />
+        <meta
+          property="og:title"
+          content="dyfkCameroun.com | Your One-Stop E-Commerce Store in Cameroun"
+        />
+        <meta
+          property="og:description"
+          content="Discover the best deals on a wide range of products including electronics, fashion, home essentials, and more. Shop now at dyfkCameroun.com!"
+        />
+        <meta property="og:url" content="https://dyfk-com.vercel.app" />
+        <meta
+          property="og:image"
+          content="https://dyfk-com.vercel.app/logo.png"
+        />
+        <meta
+          property="og:image:alt"
+          content="dyfkCameroun.com - Your One-Stop E-Commerce Store in Cameroun"
+        />
+        <meta property="og:type" content="website" />
+        <meta property="twitter:card" content="summary_large_image" />
+      </Head>
       <main className="">
         <Hero />
         <div className={`w-full p-2 lg:px-10 lg:mt-1 mb-1 bg-pri border-y `}>
