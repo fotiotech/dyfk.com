@@ -19,11 +19,7 @@ type AttributeType = {
   }[];
 };
 
-type DetailsProps = {
-  handleSubmit: () => void; // Function to handle submission
-};
-
-const Details: React.FC<DetailsProps> = ({ handleSubmit }) => {
+const Details = () => {
   const dispatch = useAppDispatch();
   const { categoryId } = useAppSelector((state: RootState) => state.product);
   const [attributes, setAttributes] = useState<AttributeType[]>([]);

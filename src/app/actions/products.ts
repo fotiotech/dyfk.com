@@ -50,6 +50,7 @@ export async function findProducts(id?: string) {
   if (id) {
     const product = await Product.findOne({ _id: id });
     if (product) {
+      console.log(product);
       return {
         ...product.toObject(),
         _id: product._id?.toString(),
@@ -185,8 +186,8 @@ export async function createProduct(
     discount,
     currency,
     upc: upc || null,
-          ean: ean || null,
-          gtin: gtin || null,
+    ean: ean || null,
+    gtin: gtin || null,
     stockQuantity,
     attributes: cleanedAttributes.length > 0 ? cleanedAttributes : null, // Set formatted attributes
     imageUrls: files,

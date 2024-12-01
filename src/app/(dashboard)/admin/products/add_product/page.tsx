@@ -85,7 +85,7 @@ const AddProduct = () => {
       <div>
         {step === 1 && <Category />}
         {step === 2 && <Information />}
-        {step === 3 && <GeneralAttribute handleSubmit={handleSubmit} />}
+        {step === 3 && <GeneralAttribute />}
         {step === 4 && <BasicInformation />}
         {step === 5 && <Offer />}
         {step === 6 && <Details handleSubmit={handleSubmit} />}

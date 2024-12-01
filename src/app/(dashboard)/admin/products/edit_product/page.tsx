@@ -48,7 +48,31 @@ const EditDeleteProduct = () => {
     async function fetchData() {
       if (productId) {
         const productData = await findProducts(productId);
+
+        // Format the attributes according to the new structure
+        const formattedAttributes =
+          productData.attributes?.map(
+            (group: {
+              groupName: string;
+              attributes: Map<string, string[]>;
+            }) => {
+              // Convert the Map to an array of { attrName, attrValue }
+              const formattedAttributesArray = Array.from(
+                group.attributes.entries()
+              ).map(([key, value]) => ({
+                attrName: key,
+                attrValue: value, // No casting needed as Map's value is already string[]
+              }));
+
+              return {
+                groupName: group.groupName,
+                attributes: formattedAttributesArray, // Matches AttributeType
+              };
+            }
+          ) || [];
+
         if (productData) {
+          console.log(productData);
           dispatch(
             setProductData({
               sku: productData.sku || "",
@@ -68,7 +92,7 @@ const EditDeleteProduct = () => {
               stockQuantity: productData.stockQuantity || 0,
               imageUrls: productData.imageUrls || [],
               categoryId: productData.category_id || "",
-              attributes: productData.attributes || {},
+              attributes: formattedAttributes,
               step: 1, // Reset to the first step
             })
           );
@@ -83,6 +107,7 @@ const EditDeleteProduct = () => {
       dispatch(resetProduct());
     };
   }, [productId, dispatch]);
+
   // Add dispatch as a dependency
 
   const handleDeleteProduct = async () => {
@@ -129,7 +154,7 @@ const EditDeleteProduct = () => {
       <div>
         {step === 1 && <Category />}
         {step === 2 && <Information />}
-        {step === 3 && <GeneralAttribute handleSubmit={handleSubmit} />}
+        {step === 3 && <GeneralAttribute />}
         {step === 4 && <BasicInformation />}
         {step === 5 && <Offer />}
         {step === 6 && <Details handleSubmit={handleSubmit} />}

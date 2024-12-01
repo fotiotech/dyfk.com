@@ -10,6 +10,13 @@ const Category = () => {
   const { categoryId } = useAppSelector((state) => state.product);
   const [parentId, setParentId] = useState<string>(categoryId);
 
+  useEffect(() => {
+    // Update parentId whenever categoryId changes
+    setParentId(categoryId);
+  }, [categoryId]); // Trigger whenever categoryId changes in the Redux store
+
+  console.log(parentId);
+
   // Fetch categories on mount or when parentId changes
   useEffect(() => {
     const fetchData = async () => {
@@ -31,9 +38,9 @@ const Category = () => {
   }, [parentId]); // Ensure it re-fetches whenever parentId changes
 
   // Handle category selection
-  const handleSelect = (categoryId: string) => {
-    setParentId(categoryId); // Update local state with the selected category ID
-    dispatch(updateCategoryId(categoryId)); // Update Redux store with selected category ID
+  const handleSelect = (catId: string) => {
+    setParentId(catId); // Update local state with the selected category ID
+    dispatch(updateCategoryId(catId)); // Update Redux store with selected category ID
   };
 
   // Handle next step
@@ -53,12 +60,11 @@ const Category = () => {
         {category.map((item) => (
           <li
             key={item._id}
-            className={`flex justify-between items-center
-            rounded-lg bg-slate-600 p-2`}
+            className="flex justify-between items-center rounded-lg bg-slate-600 p-2"
           >
             <p
               onClick={() => handleSelect(item?._id as string)} // Ensure handleSelect is called
-              className={`flex-1 cursor-pointer`}
+              className="flex-1 cursor-pointer"
             >
               {item.categoryName}
             </p>
@@ -69,7 +75,7 @@ const Category = () => {
               }}
               className={`${
                 parentId === item._id ? "bg-blue-400" : ""
-              } px-2 rounded-lg border `}
+              } px-2 rounded-lg border`}
             >
               Select This
             </span>
