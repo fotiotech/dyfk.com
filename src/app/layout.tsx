@@ -11,7 +11,8 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: "dyfkcameroun.com | Your One-Stop E-Commerce Store in Cameroun",
-  description: "Created by dyfk",
+  description:
+    "Discover the best products at unbeatable prices on dyfkCameroun.com. Shop now for a seamless online shopping experience.",
 };
 
 export default function RootLayout({
