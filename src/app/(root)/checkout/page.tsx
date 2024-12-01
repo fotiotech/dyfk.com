@@ -22,6 +22,7 @@ const CheckoutPage = () => {
     useState<boolean>(true);
   const [selectedPaymentMethod, setSelectedPaymentMethod] =
     useState<string>("");
+  const [orderCreated, setOrderCreated] = useState<boolean>(false);
 
   useEffect(() => {
     async function customerData() {
@@ -55,7 +56,7 @@ const CheckoutPage = () => {
     if (!customer || !orderNumber) {
       return null;
     }
-    await createOrder(orderNumber, {
+    const res = await createOrder(orderNumber, {
       orderNumber,
       userId: user?._id || "",
       email: customer?.billingAddress?.email || "",
@@ -90,6 +91,8 @@ const CheckoutPage = () => {
       couponCode: "",
       discount: 0,
     });
+
+    if (res) return setOrderCreated(true);
   }
 
   const calculateTotal = (cartItems: any) => {
@@ -199,6 +202,7 @@ const CheckoutPage = () => {
 
       <div>
         <OrderButton
+        orderCreated={orderCreated}
           orderNumber={orderNumber}
           handleOrderData={handleOrderData}
         />

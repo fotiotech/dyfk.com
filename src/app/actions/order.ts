@@ -3,17 +3,15 @@ import { connection } from "@/utils/connection";
 import Order from "@/models/Order";
 import { revalidatePath } from "next/cache";
 
-export async function findOrders(
-  orderNumber?: number | string,
-  userId?: string | null
-) {
+export async function findOrders(orderNumber?: string, userId?: string | null) {
   await connection();
 
   try {
     if (orderNumber !== undefined && orderNumber !== null) {
       // Explicitly check for non-null and non-undefined values
+      const regex = new RegExp(orderNumber, "i"); // Case-insensitive regex
       const order = await Order.findOne({
-        orderNumber,
+        orderNumber: { $regex: regex },
       });
       if (order) {
         return {
@@ -22,7 +20,7 @@ export async function findOrders(
           userId: order.userId.toString(),
         };
       }
-      return null; // Explicitly return null if no order is found
+      // Explicitly return null if no order is found
     } else if (userId) {
       // Find all orders for a specific user by user ID
       const orders = await Order.find({ userId });
@@ -48,7 +46,6 @@ export async function findOrders(
 
 export async function createOrder(orderNumber: string, data: any) {
   await connection();
-  console.log("Data received:", data);
 
   if (!orderNumber || !data) {
     console.error("Missing order number or data");
@@ -58,6 +55,8 @@ export async function createOrder(orderNumber: string, data: any) {
   const {
     userId,
     email,
+    firstName,
+    lastName,
     products,
     subtotal,
     tax = 0,
@@ -88,6 +87,8 @@ export async function createOrder(orderNumber: string, data: any) {
           orderNumber,
           userId,
           email,
+          firstName,
+          lastName,
           products,
           subtotal,
           tax,
@@ -110,13 +111,16 @@ export async function createOrder(orderNumber: string, data: any) {
           runValidators: true, // Validate fields based on schema
         }
       );
-      revalidatePath("/admin/orders");
+      if (updatedOrder) return true;
+      return null;
     } else {
       // Create a new order
       const newOrder = new Order({
         orderNumber,
         userId,
         email,
+        firstName,
+        lastName,
         products,
         subtotal,
         tax,
@@ -134,13 +138,10 @@ export async function createOrder(orderNumber: string, data: any) {
         couponCode,
         discount,
       });
-      await newOrder.save();
-      revalidatePath("/admin/orders");
+      const savedOrder = await newOrder.save();
+      if (savedOrder) return true;
+      return null;
     }
-
-    // Revalidate path if using server-side caching
-    // Only call this if necessary in your framework
-    // revalidatePath("/checkout");
   } catch (error: any) {
     console.error;
   }

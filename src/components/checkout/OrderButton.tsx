@@ -4,11 +4,13 @@ import Link from "next/link";
 import React from "react";
 
 interface OrderButtonProps {
+  orderCreated: boolean;
   orderNumber: string;
   handleOrderData: (e: any) => void;
 }
 
 const OrderButton: React.FC<OrderButtonProps> = ({
+  orderCreated,
   orderNumber,
   handleOrderData,
 }) => {
@@ -26,7 +28,12 @@ const OrderButton: React.FC<OrderButtonProps> = ({
             );
           }}
         >
-          <Link href={`/checkout/payment?orderNumber=${orderNumber}`} passHref>
+          <Link
+            href={
+              orderCreated ? `/checkout/payment?orderNumber=${orderNumber}` : ""
+            }
+            passHref
+          >
             <button
               title="Place Order"
               type="button"
