@@ -12,6 +12,8 @@ export interface OrderDocument extends Document {
   orderNumber: string;
   userId: mongoose.Types.ObjectId;
   email: string;
+  firstName: string;
+  lastName: string;
   products: Product[];
   subtotal: number;
   tax: number;
@@ -47,6 +49,8 @@ const OrderSchema = new mongoose.Schema<OrderDocument>(
       required: true,
     },
     email: { type: String, required: true },
+    firstName: { type: String, required: true },
+    lastName: { type: String, required: true },
     products: [
       {
         productId: {

@@ -1,6 +1,7 @@
 // context/cartReducer.ts
 
 export interface CartItem {
+    productId?: string;
     id: string;
     name: string;
     imageUrl?: string;

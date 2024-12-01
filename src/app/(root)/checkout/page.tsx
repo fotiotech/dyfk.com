@@ -60,6 +60,8 @@ const CheckoutPage = () => {
       orderNumber,
       userId: user?._id || "",
       email: customer?.billingAddress?.email || "",
+      firstName: customer?.billingAddress?.firstName || "",
+      lastName: customer?.billingAddress?.lastName || "",
       products: cart?.map((item) => ({
         productId: item?.id,
         name: item?.name,

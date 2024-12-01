@@ -131,6 +131,14 @@ const DetailsPage = ({
                 {details && <AddToCart product={details} />}
               </div>
 
+              <div>
+                {details?.stockQuantity! > 0 ? (
+                  <p>In Stock</p>
+                ) : (
+                  <p>Order this Item</p>
+                )}
+              </div>
+
               <div className="mt-2 border-t">
                 <h3 className="font-bold text-lg mt-2">Details</h3>
                 {details?.attributes && details.attributes.length > 0 && (

@@ -46,6 +46,7 @@ export async function findOrders(
   }
 }
 
+
 export async function createOrder(orderNumber: string, data: any) {
   await connection();
   console.log("Data received:", data);
@@ -143,5 +144,30 @@ export async function createOrder(orderNumber: string, data: any) {
     // revalidatePath("/checkout");
   } catch (error: any) {
     console.error;
+  }
+}
+
+export async function deleteOrder(orderNumber: string) {
+  await connection();
+
+  if (!orderNumber) {
+    console.error("Missing order number");
+    return null;
+  }
+
+  try {
+    // Find and delete the order by its orderNumber
+    const deletedOrder = await Order.findOneAndDelete({ orderNumber });
+
+    if (!deletedOrder) {
+      console.error(`Order with order number ${orderNumber} not found`);
+      return null;
+    }
+
+    console.log(`Order with order number ${orderNumber} deleted successfully`);
+    revalidatePath('/admin/orders')
+  } catch (error: any) {
+    console.error("Error deleting order:", error.message);
+    return null;
   }
 }
