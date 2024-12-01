@@ -51,6 +51,30 @@ const DetailsPage = ({
 
   return (
     <div className="relative w-full overflow-hidden bg-[#efefef]">
+      <NextSeo
+        title={`${details?.productName} | dyfkCameroun.com E-Commerce Store  in Cameroun`}
+        description={
+          details?.description ??
+          "Find the best products at dyfk.com. Shop now for quality and value."
+        }
+        canonical={`https://dyfk-com.vercel.app/${details?.url_slug}/details/${params.dsin}`}
+        openGraph={{
+          title: details?.productName,
+          description:
+            details?.description ??
+            "Explore high-quality products and unbeatable prices.",
+          url: `https://dyfk-com.vercel.app/${details?.url_slug}/details/${params.dsin}`,
+          images: details?.imageUrls?.map((imageUrl) => ({
+            url: imageUrl,
+            width: 800,
+            height: 600,
+            alt: details?.productName ?? "Product image",
+          })),
+        }}
+        twitter={{
+          cardType: "summary_large_image",
+        }}
+      />
       <div className="xl:flex w-full bg-white lg:px-10">
         {isLoading ? (
           <Loading loading={isLoading} />
