@@ -13,28 +13,13 @@ import { getCategory } from "./actions/category";
 import { triggerNotification } from "./actions/notifications";
 import { findProducts } from "./actions/products";
 import { useUser } from "./context/UserContext";
-import SEO from "@/components/meta/Seo";
+import { NextSeo } from "next-seo";
 
 export default function Home() {
   const { t } = useTranslation("common");
   const { user } = useUser();
   const [newArrival, setNewArrival] = useState<Product[]>([]);
   const [electronics, setElectronics] = useState<Category[]>([]);
-
-  // const translations = {
-  //   en: {
-  //     title: "Welcome to dyfks.com",
-  //     description: "Your Powerful e-commerce platform in cameroon ",
-  //   },
-  //   fr: {
-  //     title: "Bienvenue sur dyfks.com",
-  //     description: "Votre puissante plateforme de e-commerce au cameroun",
-  //   },
-  //   de: { title: "Willkommen", description: "Ihr Warenkorb" },
-  // };
-
-  // const locale = "en"; // Replace with dynamic locale detection logic
-  // const { title, description } = translations[locale];
 
   useEffect(() => {
     async function findProd() {
@@ -59,7 +44,29 @@ export default function Home() {
 
   return (
     <Layout>
-      {/* <SEO title={title} description={description} /> */}
+      <NextSeo
+        title="dyfkCameroun.com | Your One-Stop E-Commerce Store in Cameroun"
+        description="Discover the best deals on a wide range of products including electronics, fashion, home essentials, and more. Shop now at dyfk.com!"
+        canonical="https://dyfk-com.vercel.app"
+        openGraph={{
+          title:
+            "dyfkCameroun.com | Your One-Stop E-Commerce Store in Cameroun",
+          description:
+            "Discover the best deals on a wide range of products including electronics, fashion, home essentials, and more. Shop now at dyfkCameroun.com!",
+          images: [
+            {
+              url: "https://dyfk-com.vercel.app/logo.png", // Replace with a relevant banner or promotional image URL
+              width: 1200,
+              height: 630,
+              alt: "dyfkCameroun.com - Your One-Stop E-Commerce Store in Cameroun",
+            },
+          ],
+          url: "https://dyfk-com.vercel.app",
+        }}
+        twitter={{
+          cardType: "summary_large_image",
+        }}
+      />
       <main className="">
         <Hero />
         <div className={`w-full p-2 lg:px-10 lg:mt-1 mb-1 bg-pri border-y `}>

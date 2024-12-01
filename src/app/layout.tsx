@@ -10,7 +10,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "dyfk.com",
+  title: "dyfkcameroun.com | Your One-Stop E-Commerce Store in Cameroun",
   description: "Created by dyfk",
 };
 
