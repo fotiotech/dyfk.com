@@ -46,7 +46,6 @@ export async function findOrders(
   }
 }
 
-
 export async function createOrder(orderNumber: string, data: any) {
   await connection();
   console.log("Data received:", data);
@@ -111,7 +110,7 @@ export async function createOrder(orderNumber: string, data: any) {
           runValidators: true, // Validate fields based on schema
         }
       );
-      return updatedOrder;
+      revalidatePath("/admin/orders");
     } else {
       // Create a new order
       const newOrder = new Order({
@@ -135,8 +134,8 @@ export async function createOrder(orderNumber: string, data: any) {
         couponCode,
         discount,
       });
-      const savedOrder = await newOrder.save();
-      return savedOrder;
+      await newOrder.save();
+      revalidatePath("/admin/orders");
     }
 
     // Revalidate path if using server-side caching
@@ -165,7 +164,7 @@ export async function deleteOrder(orderNumber: string) {
     }
 
     console.log(`Order with order number ${orderNumber} deleted successfully`);
-    revalidatePath('/admin/orders')
+    revalidatePath("/admin/orders");
   } catch (error: any) {
     console.error("Error deleting order:", error.message);
     return null;

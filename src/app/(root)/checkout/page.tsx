@@ -52,7 +52,6 @@ const CheckoutPage = () => {
       estimatedShippingDate.getDate() + transitDays
     );
 
-    console.log(customerInfos);
     if (!customer || !orderNumber) {
       return null;
     }
