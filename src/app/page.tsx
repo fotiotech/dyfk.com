@@ -44,7 +44,7 @@ export default function Home() {
 
   return (
     <Layout>
-      <NextSeo
+      {/* <NextSeo
         title="dyfkCameroun.com | Your One-Stop E-Commerce Store in Cameroun"
         description="Discover the best deals on a wide range of products including electronics, fashion, home essentials, and more. Shop now at dyfk.com!"
         canonical="https://dyfk-com.vercel.app"
@@ -66,7 +66,7 @@ export default function Home() {
         twitter={{
           cardType: "summary_large_image",
         }}
-      />
+      /> */}
       <main className="">
         <Hero />
         <div className={`w-full p-2 lg:px-10 lg:mt-1 mb-1 bg-pri border-y `}>

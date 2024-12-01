@@ -11,7 +11,7 @@ export default function Layout({
 }>) {
   return (
     <div className="flex flex-col ">
-      <DefaultSeo
+      {/* <DefaultSeo
         titleTemplate="%s | dyfkCameroun.com"
         defaultTitle="dyfkCameroun.com - Your Trusted E-Commerce Platform in Cameroun"
         description="Discover the best products at unbeatable prices on dyfkCameroun.com. Shop now for a seamless online shopping experience."
@@ -35,7 +35,7 @@ export default function Layout({
           site: "@dyfkCameroun",
           cardType: "summary_large_image",
         }}
-      />
+      /> */}
       <div className="flex flex-col min-h-screen">
         <Header />
         <Suspense fallback={<Loading />}>
