@@ -1,50 +1,41 @@
 import Image from "next/image";
 import React from "react";
 
-interface imageRendererProps {
+interface ImageRendererProps {
   image?: string;
 }
 
-const ImageRenderer = ({ image }: imageRendererProps) => {
-  const renderImage = () => {
+const ImageRenderer = ({ image }: ImageRendererProps) => {
+  const defaultImage = "/placeholder.png"; // Fallback image path
+
+  // Determine class and rendering style based on file type
+  const getImageStyle = (image: string | undefined) => {
     if (image?.includes(".png")) {
-      return (
-        <Image
-          title="image"
-          src={image}
-          width={500}
-          height={500}
-          alt="image"
-          loading="lazy"
-          className="w-full h-full object-contain p-2 "
-        />
-      );
-    } else if (image?.includes(".jpg") || image?.includes(".jpeg")) {
-      return (
-        <Image
-          title="image"
-          src={image}
-          width={500}
-          height={500}
-          alt="image"
-          className="w-full h-full object-cover "
-        />
-      );
-    } else if (image?.includes(".webp") || image?.includes(".avif")) {
-      return (
-        <Image
-          title="image"
-          src={image}
-          width={500}
-          height={500}
-          alt="image"
-          className="w-full h-full object-cover "
-        />
-      );
+      return { className: "object-contain p-2", layout: "intrinsic" };
+    } else if (
+      image?.includes(".jpg") ||
+      image?.includes(".jpeg") ||
+      image?.includes(".webp") ||
+      image?.includes(".avif")
+    ) {
+      return { className: "object-cover", layout: "responsive" };
     }
-    return undefined;
+    return { className: "object-contain p-2", layout: "intrinsic" }; // Default style
   };
-  return renderImage();
+
+  const { className, layout } = getImageStyle(image);
+
+  return (
+    <Image
+      src={image || defaultImage} // Use fallback if image is unavailable
+      width={500}
+      height={500}
+      alt={image ? `Rendered image: ${image}` : "Default placeholder image"}
+      loading="lazy"
+      className={`w-full h-full ${className}`}
+      layout={layout}
+    />
+  );
 };
 
 export default ImageRenderer;
