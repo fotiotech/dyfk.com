@@ -139,8 +139,8 @@ const DetailsPage = ({
                   <div className="flex items-center gap-2 text-sm text-gray-700">
                     <LocationOn />
                     <span>
-                      Shipping to {customerInfos?.billingAddress.lastName},{" "}
-                      {customerInfos?.shippingAddress.city}
+                      Shipping to {customerInfos?.billingAddress?.lastName},{" "}
+                      {customerInfos?.shippingAddress?.city}
                     </span>
                   </div>
                 </Link>
