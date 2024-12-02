@@ -2,12 +2,12 @@ import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import { Suspense } from "react";
 import Loading from "../loading";
+import Head from "next/head";
 
 export const metadata = {
   title: "dyfkCameroun.com - Your Trusted E-Commerce Platform in Cameroun",
   description:
     "Discover the best products at unbeatable prices on dyfkCameroun.com. Shop now for a seamless online shopping experience.",
-  viewport: "width=device-width, initial-scale=1",
   canonical: "https://dyfk-com.vercel.app",
 
   // Open Graph Metadata
@@ -41,6 +41,8 @@ export const metadata = {
   },
 };
 
+export const viewport = "width=device-width, initial-scale=1";
+
 export default function Layout({
   children,
 }: Readonly<{
@@ -48,6 +50,12 @@ export default function Layout({
 }>) {
   return (
     <div className="flex flex-col">
+      <Head>
+        <meta
+          name="google-site-verification"
+          content="jGAR6wmWVPQe_fzOwoL1MqqKWSdN-Ty2dFf60Zu"
+        />
+      </Head>
       <div className="flex flex-col min-h-screen">
         <Header />
         <Suspense fallback={<Loading />}>
