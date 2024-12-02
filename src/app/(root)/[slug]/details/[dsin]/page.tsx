@@ -50,9 +50,9 @@ const DetailsPage = ({
       : null;
 
   return (
-    <div className="relative w-full overflow-hidden bg-[#efefef]">
+    <div className="relative w-full bg-gray-100 overflow-hidden">
       <NextSeo
-        title={`${details?.productName} | dyfkCameroun.com E-Commerce Store  in Cameroun`}
+        title={`${details?.productName} | dyfkCameroun.com E-Commerce Store in Cameroun`}
         description={
           details?.description ??
           "Find the best products at dyfk.com. Shop now for quality and value."
@@ -75,22 +75,23 @@ const DetailsPage = ({
           cardType: "summary_large_image",
         }}
       />
-      <div className="xl:flex w-full bg-white lg:px-10">
+      <div className="flex flex-col xl:flex-row bg-white">
         {isLoading ? (
           <Loading loading={isLoading} />
         ) : (
           <div
             key={details?._id?.toString()}
-            className="xl:flex-1 lg:grid grid-cols-2 gap-6 relative"
+            className="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-8 p-3"
           >
+            {/* Product Images */}
             <div>
-              <div className="p-2 lg:hidden">
-                <p className="lg:m-3 m-1 font-medium font-sans">
+              <div className="lg:hidden mb-4">
+                <h1 className="text-xl font-semibold">
                   {details?.productName}
-                </p>
+                </h1>
                 <Link
                   href={`/brandStore?brandId=${brand?._id}`}
-                  className={"text-blue-500 text-sm"}
+                  className="text-blue-600 text-sm underline"
                 >
                   Visit {brand?.name} Store
                 </Link>
@@ -98,24 +99,19 @@ const DetailsPage = ({
               <DetailImages file={details?.imageUrls} />
             </div>
 
-            <div className="flex flex-col gap-3 p-2 lg:p-0">
-              <div className="flex items-baseline gap-2">
-                <div className="font-bold text-xl">
-                  <Prices amount={details?.finalPrice as number} />
-                </div>
+            {/* Product Details */}
+            <div className="flex flex-col gap-6">
+              <div className="text-2xl font-bold text-gray-800">
+                <Prices amount={details?.finalPrice as number} />
               </div>
-              {details?.attributes && details.attributes.length > 0 && (
-                <div className="">
-                  {details
-                    ?.attributes!.filter(
+              {details?.attributes?.length! > 0 && (
+                <div>
+                  {details?.attributes
+                    ?.filter(
                       (attributeGroup) => attributeGroup.groupName === "general"
                     )
-                    ?.map((attributeGroup, groupIndex) => (
-                      <div key={groupIndex} className="mb-3">
-                        {/* <h4 className="font-semibold capitalize">
-                          {attributeGroup.groupName}
-                        </h4> */}
-
+                    .map((attributeGroup, groupIndex) => (
+                      <div key={groupIndex} className="mb-4">
                         {Array.from(attributeGroup.attributes as any)
                           .filter(
                             ([attributeName]: any) =>
@@ -124,10 +120,10 @@ const DetailsPage = ({
                           .map(([attributeName, attributeValues]: any, idx) => (
                             <div
                               key={`${attributeName}-${idx}`}
-                              className="border-b my-2"
+                              className="flex gap-10 border-b pb-2 text-sm"
                             >
                               <strong>{attributeName}</strong>
-                              <span className="ml-10">
+                              <span>
                                 {Array.isArray(attributeValues)
                                   ? attributeValues.join(", ")
                                   : attributeValues}
@@ -139,88 +135,90 @@ const DetailsPage = ({
                 </div>
               )}
               {customerInfos && (
-                <Link href={"/checkout/billing_address"}>
-                  <div className="flex gap-2">
+                <Link href="/checkout/billing_address">
+                  <div className="flex items-center gap-2 text-sm text-gray-700">
                     <LocationOn />
-                    <p>
+                    <span>
                       Shipping to {customerInfos?.billingAddress.lastName},{" "}
                       {customerInfos?.shippingAddress.city}
-                    </p>
+                    </span>
                   </div>
                 </Link>
               )}
-              <div className="flex justify-between items-center gap-3 w-full py-2">
-                <CheckoutButton width="1/2" height="10">
+              <div className="flex gap-4">
+                <CheckoutButton width="full" height="12">
                   Check Out
                 </CheckoutButton>
                 {details && <AddToCart product={details} />}
               </div>
-
               <div>
                 {details?.stockQuantity! > 0 ? (
-                  <p>In Stock</p>
+                  <p className="text-green-600">In Stock</p>
                 ) : (
-                  <p>Order this Item</p>
+                  <p className="text-red-500">Order this Item</p>
                 )}
-              </div>
-
-              <div className="mt-2 border-t">
-                <h3 className="font-bold text-lg mt-2">Details</h3>
-                {details?.attributes && details.attributes.length > 0 && (
-                  <div className="">
-                    {details?.attributes?.map((attributeGroup, groupIndex) => (
-                      <div key={groupIndex} className="mb-3">
-                        {/* <h4 className="font-semibold capitalize">
-                          {attributeGroup.groupName}
-                        </h4> */}
-                        {Array.from(attributeGroup.attributes as any)
-                          .filter(
-                            ([attributeName]: any) =>
-                              attributeName !== "_id" && attributeName !== "0"
-                          ) // Exclude _id and 0
-                          .map(([attributeName, attributeValues]: any, idx) => (
-                            <div
-                              key={`${attributeName}-${idx}`}
-                              className="grid grid-cols-2 w-3/4"
-                            >
-                              <strong className="my-1">{attributeName}</strong>
-                              <span className="ml-10">
-                                {Array.isArray(attributeValues)
-                                  ? attributeValues.join(", ")
-                                  : attributeValues}
-                              </span>
-                            </div>
-                          ))}
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              <div className="border-t">
-                <p className="m-2 text-lg font-medium">Description</p>
-                <p className="lg:w-[600px] w-full py-2 p-2">
-                  {details?.description}
-                </p>
               </div>
             </div>
           </div>
         )}
-        <div className="xl:w-72">
-          <h2 className="font-bold text-lg xl:text-2xl p-2">
+
+        <div className="p-3">
+          {details?.attributes?.length! > 0 && (
+            <div>
+              {details?.attributes?.map((attributeGroup, groupIndex) => (
+                <div key={groupIndex} className="mb-4">
+                  {Array.from(attributeGroup.attributes as any)
+                    .filter(
+                      ([attributeName]: any) =>
+                        attributeName !== "_id" && attributeName !== "0"
+                    )
+                    .map(([attributeName, attributeValues]: any, idx) => (
+                      <div
+                        key={`${attributeName}-${idx}`}
+                        className="grid grid-cols-2 pb-2 text-sm"
+                      >
+                        <strong>{attributeName}</strong>
+                        <span>
+                          {Array.isArray(attributeValues)
+                            ? attributeValues.join(", ")
+                            : attributeValues}
+                        </span>
+                      </div>
+                    ))}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Cart Section */}
+        <div className="xl:w-1/4 bg-gray-50 p-6">
+          <h2 className="font-bold text-lg xl:text-2xl mb-4">
             Items in Your Cart
           </h2>
+          {/* Cart items could go here */}
         </div>
       </div>
-      <div className="flex flex-col">
-        <h2 className="text-lg font-semibold">Product Gallery</h2>
-        <div className="">
-          {details?.imageUrls?.map((image) => (
-            <Image src={image} alt="product images" width={500} height={500} />
+
+      {/* Product Gallery */}
+      <div className="py-8 px-6">
+        <h2 className="text-lg font-semibold mb-4">Product Gallery</h2>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+          {details?.imageUrls?.map((image, idx) => (
+            <Image
+              key={idx}
+              src={image}
+              alt="Product image"
+              width={500}
+              height={500}
+              className="rounded-md shadow-md"
+            />
           ))}
         </div>
       </div>
-      <div>
+
+      {/* Reviews Section */}
+      <div className="p-6 border-t">
         <ReviewForm productId={details?._id as string} />
         <ProductReviews productId={details?._id as string} />
       </div>

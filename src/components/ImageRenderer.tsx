@@ -11,16 +11,16 @@ const ImageRenderer = ({ image }: ImageRendererProps) => {
   // Determine class and rendering style based on file type
   const getImageStyle = (image: string | undefined) => {
     if (image?.includes(".png")) {
-      return { className: "object-contain p-2", layout: "intrinsic" };
+      return { className: "object-contain w-full h-full p-2", layout: "intrinsic" };
     } else if (
       image?.includes(".jpg") ||
       image?.includes(".jpeg") ||
       image?.includes(".webp") ||
       image?.includes(".avif")
     ) {
-      return { className: "object-cover", layout: "responsive" };
+      return { className: "object-cover w-full h-full", layout: "responsive" };
     }
-    return { className: "object-contain p-2", layout: "intrinsic" }; // Default style
+    return { className: "object-contain w-full h-full p-2", layout: "intrinsic" }; // Default style
   };
 
   const { className, layout } = getImageStyle(image);
