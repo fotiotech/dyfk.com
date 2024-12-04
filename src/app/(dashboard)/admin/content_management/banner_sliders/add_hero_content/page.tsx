@@ -2,21 +2,39 @@
 
 import { createHeroContent } from "@/app/actions/content_management";
 import FilesUploader from "@/components/FilesUploader";
+import { useFileUploader } from "@/hooks/useFileUploader ";
 import React, { useState } from "react";
 
 const AddHeroContent = () => {
-  const [imageFile, setImageFile] = useState<string[]>([]);
+  const { files, loading, addFiles, removeFile } = useFileUploader();
 
-  const files = imageFile?.length! > 1 ? imageFile : imageFile?.[0];
+  const file = files?.length! > 1 ? files : files?.[0];
 
-  const toCreateHeroContent = createHeroContent.bind(null, files as string[]);
+  const toCreateHeroContent = createHeroContent.bind(null, file as string[]);
 
   return (
     <>
       <div>
         <h2>Add Hero Content</h2>
       </div>
-      <FilesUploader files={imageFile} setFiles={setImageFile} />
+      <div>
+        {files.length > 0 && (
+          <div className="flex flex-wrap">
+            <h4>Uploaded Images</h4>
+            {files.map((file, index) => (
+              <div key={index}>
+                <img
+                  src={file}
+                  alt={`Uploaded file ${index + 1}`}
+                  width={100}
+                />
+                <button onClick={() => removeFile(index)}>Remove</button>
+              </div>
+            ))}
+          </div>
+        )}
+        <FilesUploader />
+      </div>
       <form action={toCreateHeroContent}>
         <div>
           <label htmlFor="title">Title:</label>

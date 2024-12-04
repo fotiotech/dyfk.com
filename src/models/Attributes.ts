@@ -1,9 +1,9 @@
 import mongoose, { Schema, model, models, Document } from "mongoose";
-import AttributeGroup from "@/models/AttributesGroup";
 
 // Attribute Interface
 interface IAttribute extends Document {
   group: string;
+  getVariant?: boolean;
   name: string;
   category_id: mongoose.Types.ObjectId;
 }
@@ -16,6 +16,10 @@ const AttributeSchema = new Schema<IAttribute>({
   name: {
     type: String,
     required: [true, "Attribute name is required"],
+  },
+  getVariant: {
+    type: Boolean,
+    default: false,
   },
   category_id: {
     type: Schema.Types.ObjectId,

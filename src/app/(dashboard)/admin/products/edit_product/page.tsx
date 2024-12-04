@@ -10,28 +10,22 @@ import {
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
 import { setProductData, resetProduct } from "@/app/store/slices/productSlice";
-import BasicInformation from "@/app/(dashboard)/components/products/BasicInfos";
 import Category from "@/app/(dashboard)/components/category/Category";
-import Details from "@/app/(dashboard)/components/products/Details";
 import { Product } from "@/constant/types";
-import Information from "@/app/(dashboard)/components/products/Information";
-import GeneralAttribute from "@/app/(dashboard)/components/products/GeneralAttributes";
-import Offer from "@/app/(dashboard)/components/products/Offer";
 
 const EditDeleteProduct = () => {
   const productId = useSearchParams().get("id")?.toLowerCase();
   const router = useRouter();
   const dispatch = useAppDispatch();
   const {
-    step,
     sku,
     product_name,
-    brandId,
+    brand_id,
     department,
     description,
     finalPrice,
     imageUrls,
-    categoryId,
+    category_id,
     attributes,
     basePrice,
     taxRate,
@@ -42,6 +36,7 @@ const EditDeleteProduct = () => {
     gtin,
     stockQuantity,
     status,
+    variants,
   } = useAppSelector((state) => state.product);
 
   useEffect(() => {
@@ -77,7 +72,7 @@ const EditDeleteProduct = () => {
             setProductData({
               sku: productData.sku || "",
               product_name: productData.productName || "",
-              brandId: productData.brand_id || "",
+              brand_id: productData.brand_id || "",
               department: productData.department || "",
               description: productData.description || "",
               basePrice: productData.basePrice || 0.0,
@@ -91,9 +86,9 @@ const EditDeleteProduct = () => {
               status: productData.status || "",
               stockQuantity: productData.stockQuantity || 0,
               imageUrls: productData.imageUrls || [],
-              categoryId: productData.category_id || "",
+              category_id: productData.category_id || "",
               attributes: formattedAttributes,
-              step: 1, // Reset to the first step
+              variants: variants,
             })
           );
         }
@@ -121,10 +116,10 @@ const EditDeleteProduct = () => {
 
   const handleSubmit = async () => {
     try {
-      await updateProduct(productId as string, categoryId, attributes, files, {
+      await updateProduct(productId as string, category_id, attributes, files, {
         sku,
         productName: product_name,
-        brand_id: brandId,
+        brand_id,
         department,
         description,
         basePrice,
@@ -144,20 +139,11 @@ const EditDeleteProduct = () => {
     }
   };
 
-  if (!step) {
-    console.warn("Step is not set!");
-  }
-
   return (
     <div>
       <h3 className="text-lg font-bold mb-4">Edit Product</h3>
       <div>
-        {step === 1 && <Category />}
-        {step === 2 && <Information />}
-        {step === 3 && <GeneralAttribute />}
-        {step === 4 && <BasicInformation />}
-        {step === 5 && <Offer />}
-        {step === 6 && <Details handleSubmit={handleSubmit} />}
+        <Category />
       </div>
     </div>
   );

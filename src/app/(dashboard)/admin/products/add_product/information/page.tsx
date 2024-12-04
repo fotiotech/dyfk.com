@@ -1,14 +1,16 @@
+"use client";
+
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Select from "react-select";
 import {
-  nextStep,
-  prevStep,
+
   ProductState,
   updateProduct,
 } from "@/app/store/slices/productSlice"; // Assuming correct path to redux actions
 import { RootState } from "@/app/store/store";
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
+import Link from "next/link";
 
 const Information: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -39,10 +41,6 @@ const Information: React.FC = () => {
         value: e.target.value,
       })
     );
-  };
-
-  const handleNext = () => {
-    dispatch(nextStep());
   };
 
   // Options for react-select
@@ -106,18 +104,18 @@ const Information: React.FC = () => {
 
       {/* Save Button */}
       <div className="flex justify-between items-center space-x-4 mt-6">
-        <button
-          onClick={() => dispatch(prevStep())}
-          className="bg-gray-500 text-white py-2 px-4 rounded"
+        <Link
+          href={codeValue ? "/admin/products/add_product/basic_infos" : ""}
+          className="bg-blue-500 text-white p-2 rounded"
         >
           Back
-        </button>
-        <button
-          onClick={handleNext}
-          className="bg-blue-500 text-white py-2 px-4 rounded"
+        </Link>
+        <Link
+          href={codeValue ? "/admin/products/add_product/offer" : ""}
+          className="bg-blue-500 text-white p-2 rounded"
         >
           Next
-        </button>
+        </Link>
       </div>
     </div>
   );

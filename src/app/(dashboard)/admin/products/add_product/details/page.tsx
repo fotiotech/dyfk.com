@@ -1,10 +1,15 @@
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import Select from "react-select"; // Import react-select
+"use client";
 
+import React, { useEffect, useState } from "react";
+import Select from "react-select"; // Import react-select
 import { findCategoryAttributesAndValues } from "@/app/actions/attributes";
 import { RootState } from "@/app/store/store";
-import { updateAttributes, prevStep } from "@/app/store/slices/productSlice";
+import {
+  updateGetVariant,
+  updateAttributes,
+} from "@/app/store/slices/productSlice";
+import { useAppDispatch, useAppSelector } from "@/app/hooks";
+import Link from "next/link";
 
 type AttributeType = {
   groupName: string;
@@ -14,22 +19,21 @@ type AttributeType = {
   }[];
 };
 
-type DetailsProps = {
-  handleSubmit: () => void; // Function to handle submission
-};
-
-const Details: React.FC<DetailsProps> = ({ handleSubmit }) => {
-  const dispatch = useDispatch();
-  const { categoryId } = useSelector((state: RootState) => state.product);
+const Details = () => {
+  const dispatch = useAppDispatch();
+  const { category_id, getVariant } = useAppSelector(
+    (state: RootState) => state.product
+  );
   const [attributes, setAttributes] = useState<AttributeType[]>([]);
+  const [isVariant, setIsVariant] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchAttributes = async () => {
-      if (categoryId !== "") {
-        const response = await findCategoryAttributesAndValues(categoryId);
+      if (category_id !== "") {
+        const response = await findCategoryAttributesAndValues(category_id);
         if (response?.length > 0) {
           const formattedAttributes = response[0].groupedAttributes
-            ?.filter((group: any) => group.groupName !== "General")
+            ?.filter((group: any) => group.groupName === "General")
             ?.map((group: any) => ({
               groupName: group.groupName
                 ? group.groupName.toLowerCase()
@@ -45,7 +49,7 @@ const Details: React.FC<DetailsProps> = ({ handleSubmit }) => {
     };
 
     fetchAttributes();
-  }, [categoryId]);
+  }, [category_id]);
 
   const handleAttributeChange = (
     groupName: string,
@@ -61,9 +65,6 @@ const Details: React.FC<DetailsProps> = ({ handleSubmit }) => {
     );
   };
 
-  const handleBack = () => {
-    dispatch(prevStep()); // Navigate back to the previous step
-  };
 
   const customStyles = {
     control: (provided: any) => ({
@@ -82,14 +83,26 @@ const Details: React.FC<DetailsProps> = ({ handleSubmit }) => {
     }),
   };
 
+  console.log(attributes);
+
   return (
-    <div className="p-6 rounded-lg shadow-md">
+    <div className="p-6  rounded-lg shadow-md">
+      <label className="inline-flex items-center">
+        <input
+          type="checkbox"
+          className="form-checkbox"
+          checked={getVariant}
+          onChange={(e) => dispatch(updateGetVariant(e.target.checked))}
+        />
+        <span className="ml-2">Is it get Variant?</span>
+      </label>
+
       {attributes.length > 0 && (
         <>
           {attributes.map((group) => (
             <div key={group.groupName} className="mb-6">
-              <h3 className="text-lg font-semibold capitalize mb-4">
-                {group.groupName}
+              <h3 className="text-lg font-semibold text-pri capitalize mb-4">
+                Details
               </h3>
               {group.attributes.map((attribute) => (
                 <div key={attribute.attrName} className="mb-4">
@@ -103,7 +116,7 @@ const Details: React.FC<DetailsProps> = ({ handleSubmit }) => {
                     }))}
                     isMulti
                     styles={customStyles}
-                    className="basic-multi-select bg-none text-sec border-gray-100"
+                    className="bg-none text-sec border-gray-100"
                     classNamePrefix="select"
                     onChange={(selected) =>
                       handleAttributeChange(
@@ -121,22 +134,22 @@ const Details: React.FC<DetailsProps> = ({ handleSubmit }) => {
 
           <div className="flex justify-between items-center mt-6">
             {/* Back Button */}
-            <button
-              onClick={handleBack}
-              className="bg-gray-500 text-white py-2 px-4 rounded-lg hover:bg-gray-600 transition duration-200"
-              aria-label="Go back to the previous step"
+            <Link
+              href={"/admin/products/add_product/offer"}
+              className="bg-blue-500 text-white p-2 rounded"
             >
               Back
-            </button>
-
-            {/* Submit Button */}
-            <button
-              onClick={handleSubmit}
-              className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition duration-200"
-              aria-label="Submit the product"
+            </Link>
+            <Link
+              href={
+                getVariant
+                  ? "/admin/products/add_product/variants"
+                  : "/admin/products/add_product/inventory"
+              }
+              className="bg-blue-500 text-white p-2 rounded"
             >
-              Submit Product
-            </button>
+              Next
+            </Link>
           </div>
         </>
       )}

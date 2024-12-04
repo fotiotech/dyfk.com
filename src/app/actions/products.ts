@@ -7,6 +7,8 @@ import { connection } from "@/utils/connection";
 import mongoose from "mongoose";
 import { revalidatePath } from "next/cache";
 import slugify from "slugify";
+import { VariantState } from "../store/slices/productSlice";
+import { Variant } from "@/models/Variant";
 
 // Generate a slug from the product name and department
 function generateSlug(name: string, department: string | null) {
@@ -119,9 +121,46 @@ export async function findProductDetails(dsin?: string) {
   }
 }
 
+// Utility function to generate variations
+function generateVariations(variantAttributes: {
+  [groupName: string]: { [attrName: string]: string[] };
+}): Record<string, string>[] {
+  // Flatten the attributes from all groups
+  const flattenedAttributes: { [attrName: string]: string[] } = Object.entries(
+    variantAttributes
+  ).reduce((acc, [groupName, attributes]) => {
+    Object.entries(attributes).forEach(([attrName, attrValues]) => {
+      acc[attrName] = attrValues;
+    });
+    return acc;
+  }, {} as { [attrName: string]: string[] });
+
+  const keys = Object.keys(flattenedAttributes); // Attribute keys, e.g., ['Model', 'Weight']
+  const values = Object.values(flattenedAttributes); // Attribute values, e.g., [['Galaxie S22', 'Galaxie A14'], ['1.5 kg', '250 g']]
+
+  // Helper function to compute the cartesian product
+  const cartesian = (arr: string[][]): string[][] =>
+    arr.reduce<string[][]>(
+      (acc, curr) => acc.flatMap((d) => curr.map((e) => [...d, e])),
+      [[]] // Initial value is an array of empty arrays
+    );
+
+  // Generate combinations
+  const combinations = cartesian(values);
+
+  // Convert combinations into objects
+  return combinations.map((combination) =>
+    combination.reduce((obj, value, index) => {
+      obj[keys[index]] = value;
+      return obj;
+    }, {} as Record<string, string>)
+  );
+}
+
 export async function createProduct(
   categoryId: string,
-  attributes: { [groupName: string]: { [attrName: string]: string[] } }, // Original structure
+  attributes: { [groupName: string]: { [attrName: string]: string[] } },
+  variants: VariantState[], // Original structure
   files: string[],
   formData: Prod
 ) {
@@ -144,8 +183,9 @@ export async function createProduct(
   } = formData;
 
   if (productName === "" || categoryId === "") {
-    return { error: "Product name is required." };
+    return { error: "Product name and category ID are required." };
   }
+
   if (files) {
     console.log(categoryId, attributes, files, formData);
   }
@@ -171,6 +211,8 @@ export async function createProduct(
     });
 
   await connection();
+
+  // Create the new product
   const newProduct = new Product({
     url_slug: urlSlug,
     dsin: dsin,
@@ -193,10 +235,23 @@ export async function createProduct(
     imageUrls: files,
     status: status,
     created_at: new Date().toISOString(),
-    updated_ad: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
   });
 
-  await newProduct.save();
+  const savedProduct = await newProduct.save();
+
+  // Saving variants using Promise.all to handle async correctly
+  await Promise.all(
+    variants.map(async (variant) => {
+      const newVariant = new Variant({
+        product: savedProduct._id,
+        ...variant,
+      });
+      await newVariant.save();
+    })
+  );
+
+  return savedProduct; // Optionally, return the saved product object
 }
 
 export async function updateProduct(

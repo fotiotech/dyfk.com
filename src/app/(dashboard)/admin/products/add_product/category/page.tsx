@@ -1,8 +1,11 @@
+"use client";
+
 import { getCategory } from "@/app/actions/category";
 import { updateCategoryId } from "@/app/store/slices/productSlice";
 import { Category as Cat } from "@/constant/types";
 import React, { useEffect, useState } from "react";
 import { useAppSelector, useAppDispatch } from "@/app/hooks";
+import Link from "next/link";
 
 const Category = () => {
   const dispatch = useAppDispatch();
@@ -79,7 +82,12 @@ const Category = () => {
 
       {/* Next button */}
       <div className="text-end mt-4">
-        
+        <Link
+          href={parentId ? "/admin/products/add_product/basic_infos" : ""}
+          className="bg-blue-500 text-white p-2 rounded"
+        >
+          Next
+        </Link>
       </div>
     </div>
   );

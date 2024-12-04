@@ -6,21 +6,21 @@ import {
 } from "@/app/actions/content_management";
 import FilesUploader from "@/components/FilesUploader";
 import { HeroSection } from "@/constant/types";
+import { useFileUploader } from "@/hooks/useFileUploader ";
 import { useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
 const EditHeroContent = () => {
   const searchParams = useSearchParams();
   const id = searchParams.get("id")?.toLowerCase();
-  const [imageFile, setImageFile] = useState<string[]>([]);
+  const { files, loading, addFiles, removeFile } = useFileUploader();
 
-
-  const files = imageFile?.length! > 1 ? imageFile : imageFile?.[0];
+  const imageFile = files?.length! > 1 ? files : files?.[0];
 
   const toUpdateHeroContent = updateHeroContent.bind(
     null,
     id as string,
-    files as string[]
+    imageFile as string[]
   );
 
   const [hero, setHero] = useState<HeroSection>({
@@ -42,7 +42,7 @@ const EditHeroContent = () => {
             cta_text: content.cta_text,
             cta_link: content.cta_link,
           });
-          setImageFile(hero.imageUrl as string[]);
+          addFiles(hero.imageUrl as unknown as File[]);
         }
       }
     }
@@ -54,7 +54,24 @@ const EditHeroContent = () => {
       <div>
         <h2>Add Hero Content</h2>
       </div>
-      <FilesUploader files={imageFile} setFiles={setImageFile} />
+      <div>
+        {files.length > 0 && (
+          <div className="flex flex-wrap">
+            <h4>Uploaded Images</h4>
+            {files.map((file, index) => (
+              <div key={index}>
+                <img
+                  src={file}
+                  alt={`Uploaded file ${index + 1}`}
+                  width={100}
+                />
+                <button onClick={() => removeFile(index)}>Remove</button>
+              </div>
+            ))}
+          </div>
+        )}
+        <FilesUploader />
+      </div>
       <form action={toUpdateHeroContent}>
         <div>
           <label htmlFor="title">Title:</label>

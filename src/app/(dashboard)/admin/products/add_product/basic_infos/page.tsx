@@ -1,24 +1,23 @@
+"use client";
+
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Select from "react-select";
 import { RootState } from "@/app/store/store";
-import {
-  updateProduct,
-  nextStep,
-  prevStep,
-  initialState,
-} from "@/app/store/slices/productSlice";
+import { updateProduct, initialState } from "@/app/store/slices/productSlice";
 import FilesUploader from "@/components/FilesUploader";
 import { getBrands } from "@/app/actions/brand";
 import { Brand } from "@/constant/types";
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
+import Link from "next/link";
+import { useFileUploader } from "@/hooks/useFileUploader ";
 
 const BasicInformation = () => {
+  const { files, loading, addFiles, removeFile } = useFileUploader();
   const dispatch = useAppDispatch();
-  const { sku, product_name, brandId, department, description, imageUrls } =
-  useAppSelector((state: RootState) => state.product);
+  const { sku, product_name, brand_id, department, description, imageUrls } =
+    useAppSelector((state: RootState) => state.product);
 
-  const [files, setFiles] = useState<string[]>(imageUrls); // Store URLs of uploaded images
   const [brands, setBrands] = useState<Brand[]>([]);
   const [selectedBrand, setSelectedBrand] = useState<{
     value: string;
@@ -33,12 +32,6 @@ const BasicInformation = () => {
     fetchBrands();
   }, []);
 
-  // Handle file changes (i.e., image URLs)
-  const handleFilesChange = (newFiles: string[]) => {
-    setFiles(newFiles);
-    dispatch(updateProduct({ field: "imageUrls", value: newFiles })); // Update the Redux state with the new image URLs
-  };
-
   // Handle input changes (for text fields like sku, product_name, etc.)
   const handleChange =
     (field: keyof typeof initialState) =>
@@ -50,11 +43,7 @@ const BasicInformation = () => {
 
   const handleBrandChange = (selectedOption: any) => {
     setSelectedBrand(selectedOption);
-    dispatch(updateProduct({ field: "brandId", value: selectedOption.value }));
-  };
-
-  const handleNext = () => {
-    dispatch(nextStep());
+    dispatch(updateProduct({ field: "brand_id", value: selectedOption.value }));
   };
 
   const brandOptions = brands.map((brand) => ({
@@ -81,7 +70,24 @@ const BasicInformation = () => {
 
   return (
     <div className="space-y-6 mb-10">
-      <FilesUploader files={files} setFiles={handleFilesChange} />{" "}
+      <div>
+        {files.length > 0 && (
+          <div className="flex flex-wrap">
+            <h4>Uploaded Images</h4>
+            {files.map((file, index) => (
+              <div key={index}>
+                <img
+                  src={file}
+                  alt={`Uploaded file ${index + 1}`}
+                  width={100}
+                />
+                <button onClick={() => removeFile(index)}>Remove</button>
+              </div>
+            ))}
+          </div>
+        )}
+        <FilesUploader />
+      </div>
       {/* Pass handleFilesChange to update image URLs */}
       <h2 className="text-2xl font-semibold">Basic Information</h2>
       <div className="flex flex-col">
@@ -150,18 +156,18 @@ const BasicInformation = () => {
         />
       </div>
       <div className="flex justify-between items-center space-x-4 mt-6">
-        <button
-          onClick={() => dispatch(prevStep())}
-          className="bg-gray-500 text-white py-2 px-4 rounded"
+        <Link
+          href={product_name ? "/admin/products/add_product/category" : ""}
+          className="bg-blue-500 text-white p-2 rounded"
         >
           Back
-        </button>
-        <button
-          onClick={handleNext}
-          className="bg-blue-500 text-white py-2 px-4 rounded"
+        </Link>
+        <Link
+          href={product_name ? "/admin/products/add_product/information" : ""}
+          className="bg-blue-500 text-white p-2 rounded"
         >
           Next
-        </button>
+        </Link>
       </div>
     </div>
   );

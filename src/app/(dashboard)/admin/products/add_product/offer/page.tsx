@@ -1,21 +1,21 @@
-import { useDispatch, useSelector } from "react-redux";
+"use client";
+
 import {
-  nextStep,
-  prevStep,
+
   setProductPrice,
   updateDiscount,
 } from "@/app/store/slices/productSlice"; // Assuming correct path to redux actions
 import React, { useState, useEffect } from "react";
 import { RootState } from "@/app/store/store";
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
+import Link from "next/link";
 
 const Offer: React.FC = () => {
   const dispatch = useAppDispatch();
 
   // Select the current product state from the Redux store
-  const { basePrice, taxRate, stockQuantity, discount, currency } = useAppSelector(
-    (state: RootState) => state.product
-  );
+  const { basePrice, taxRate, stockQuantity, discount, currency } =
+    useAppSelector((state: RootState) => state.product);
 
   // Local component state for inputs
   const [price, setPrice] = useState<number>(basePrice || 0);
@@ -56,10 +56,6 @@ const Offer: React.FC = () => {
   // Handle quantity change
   const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setQuantity(Number(e.target.value));
-  };
-
-  const handleNext = () => {
-    dispatch(nextStep());
   };
 
   return (
@@ -135,18 +131,18 @@ const Offer: React.FC = () => {
 
       {/* Navigation Buttons */}
       <div className="flex justify-between items-center space-x-4 mt-6">
-        <button
-          onClick={() => dispatch(prevStep())}
-          className="bg-gray-500 text-white py-2 px-4 rounded"
+        <Link
+          href={finalPrice ? "/admin/products/add_product/information" : ""}
+          className="bg-blue-500 text-white p-2 rounded"
         >
           Back
-        </button>
-        <button
-          onClick={handleNext}
-          className="bg-blue-500 text-white py-2 px-4 rounded"
+        </Link>
+        <Link
+          href={finalPrice ? "/admin/products/add_product/details" : ""}
+          className="bg-blue-500 text-white p-2 rounded"
         >
           Next
-        </button>
+        </Link>
       </div>
     </div>
   );
