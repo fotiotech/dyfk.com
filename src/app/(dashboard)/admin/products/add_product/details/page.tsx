@@ -83,7 +83,6 @@ const Details = () => {
     }),
   };
 
-  console.log(attributes);
 
   return (
     <div className="p-6  rounded-lg shadow-md">

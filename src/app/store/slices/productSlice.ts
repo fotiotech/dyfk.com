@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export interface VariantState {
+  [key: string]: any;
   product_id?: string;
   url_slug?: string;
   dsin?: string;
@@ -12,7 +13,7 @@ export interface VariantState {
   basePrice?: number;
   finalPrice?: number;
   taxRate?: number;
-  discount?: { type: string; value: number } | null;
+  discount?: number;
   currency?: string;
   upc?: string;
   ean?: string;
@@ -21,8 +22,8 @@ export interface VariantState {
   imageUrls?: string[];
   offerId?: string;
   category_id?: string;
-  attributes?: { [key: string]: { [key: string]: string[] } };
-  status?: "active" | "inactive";
+  variantAttributes?: { [key: string]: { [key: string]: string[] } };
+  status?: string;
 }
 
 export interface ProductState {
@@ -34,7 +35,7 @@ export interface ProductState {
   basePrice?: number;
   finalPrice?: number;
   taxRate?: number;
-  discount?: { type: string; value: number } | null;
+  discount?: number;
   currency?: string;
   upc?: string;
   ean?: string;
@@ -43,7 +44,6 @@ export interface ProductState {
   imageUrls: string[];
   category_id: string;
   getVariant?: boolean;
-  variantAttributes?: { [key: string]: { [key: string]: string[] } };
   attributes: { [key: string]: { [key: string]: string[] } };
   variants: VariantState[];
   status: "active" | "inactive";
@@ -58,7 +58,7 @@ export const initialState: ProductState = {
   basePrice: 0.0,
   finalPrice: 0.0,
   taxRate: 0,
-  discount: null,
+  discount: 0,
   currency: "XAF",
   upc: "",
   ean: "",
@@ -67,7 +67,6 @@ export const initialState: ProductState = {
   imageUrls: [],
   category_id: "",
   getVariant: false,
-  variantAttributes: {},
   attributes: {},
   variants: [
     {
@@ -82,7 +81,7 @@ export const initialState: ProductState = {
       basePrice: 0,
       finalPrice: 0,
       taxRate: 0,
-      discount: {} as { type: string; value: number } | null,
+      discount: 0,
       currency: "",
       upc: "",
       ean: "",
@@ -91,7 +90,7 @@ export const initialState: ProductState = {
       imageUrls: [],
       offerId: "",
       category_id: "",
-      attributes: {},
+      variantAttributes: {},
       status: "active",
     },
   ],
@@ -128,17 +127,31 @@ const productSlice = createSlice({
     updateVariantAttributes: (
       state,
       action: PayloadAction<{
+        variantIndex: number;
         groupName: string;
         attrName: string;
         selectedValues: string[];
       }>
     ) => {
-      const { groupName, attrName, selectedValues } = action.payload;
-      if (!state?.variantAttributes![groupName]) {
-        state.variantAttributes![groupName] = {};
+      const { variantIndex, groupName, attrName, selectedValues } =
+        action.payload;
+
+      if (state.variants[variantIndex]) {
+        const variant = state.variants[variantIndex];
+
+        // Ensure variantAttributes initialization if needed
+        if (!variant.variantAttributes) {
+          variant.variantAttributes = {};
+        }
+
+        if (!variant.variantAttributes[groupName]) {
+          variant.variantAttributes[groupName] = {};
+        }
+
+        variant.variantAttributes[groupName][attrName] = selectedValues;
       }
-      state.variantAttributes![groupName][attrName] = selectedValues;
     },
+
     updateAttributes: (
       state,
       action: PayloadAction<{
@@ -154,7 +167,7 @@ const productSlice = createSlice({
       state.attributes[groupName][attrName] = selectedValues;
     },
     updateVariantField: (
-      state,
+      state = initialState,
       action: PayloadAction<{
         index: number;
         field: keyof VariantState;
@@ -162,9 +175,26 @@ const productSlice = createSlice({
       }>
     ) => {
       const { index, field, value } = action.payload;
-      if (state.variants[index]) {
-        (state.variants[index][field] as typeof value) = value;
+
+      // Make a copy of the variants array
+      const updatedVariants = [...state.variants];
+
+      // Ensure the specific variant exists
+      if (!updatedVariants[index]) {
+        updatedVariants[index] = {}; // Initialize the variant if it's not defined
       }
+
+      // Update the specific field in the correct variant
+      updatedVariants[index] = {
+        ...updatedVariants[index], // Keep the existing fields
+        [field]: value, // Update the specific field with the new value
+      };
+
+      // Return the new state with updated variants
+      return {
+        ...state,
+        variants: updatedVariants, // Updated variants array
+      };
     },
 
     addVariant: (state, action: PayloadAction<VariantState>) => {
@@ -193,7 +223,7 @@ const productSlice = createSlice({
         finalPrice:
           variant.finalPrice ?? variant.basePrice ?? state.basePrice ?? 0, // Use variant's finalPrice, otherwise fall back to basePrice
         taxRate: variant.taxRate ?? state.taxRate, // Sync tax rate, default to parent's taxRate if not provided
-        discount: variant.discount ?? state.discount ?? null, // Sync discount object, fall back to parent's discount
+        discount: variant.discount ?? state.discount ?? 0, // Sync discount object, fall back to parent's discount
         upc: variant.upc || "", // Default empty if not provided
         ean: variant.ean || "", // Default empty if not provided
         gtin: variant.gtin || "", // Default empty if not provided
@@ -201,9 +231,9 @@ const productSlice = createSlice({
         imageUrls:
           variant?.imageUrls?.length! > 0 ? variant.imageUrls : state.imageUrls, // Sync images, fallback to parent's images if none in variant
         category_id: variant.category_id || state.category_id, // Sync category ID, fall back to parent's category_id
-        attributes: {
+        variantAttributes: {
           ...state.attributes,
-          ...variant.attributes, // Merge parent attributes and variant attributes
+          ...variant.variantAttributes, // Merge parent attributes and variant attributes
         },
         status: variant.status || "active", // Default to active if status is missing
       }));
@@ -218,10 +248,7 @@ const productSlice = createSlice({
     resetProduct(state) {
       return initialState;
     },
-    updateDiscount: (
-      state,
-      action: PayloadAction<{ type: string; value: number }>
-    ) => {
+    updateDiscount: (state, action: PayloadAction<number>) => {
       state.discount = action.payload;
     },
     setProductPrice: (

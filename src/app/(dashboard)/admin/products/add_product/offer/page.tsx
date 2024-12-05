@@ -1,7 +1,6 @@
 "use client";
 
 import {
-
   setProductPrice,
   updateDiscount,
 } from "@/app/store/slices/productSlice"; // Assuming correct path to redux actions
@@ -21,9 +20,7 @@ const Offer: React.FC = () => {
   const [price, setPrice] = useState<number>(basePrice || 0);
   const [tax, setTax] = useState<number>(taxRate || 0);
   const [quantity, setQuantity] = useState<number>(stockQuantity || 0);
-  const [discountValue, setDiscountValue] = useState<number>(
-    discount?.value || 0
-  );
+  const [discountValue, setDiscountValue] = useState<number>(discount || 0);
   const [finalPrice, setFinalPrice] = useState<number>(basePrice || 0); // Local state for finalPrice
 
   // Calculate final price based on price, tax, and discount
@@ -34,7 +31,7 @@ const Offer: React.FC = () => {
 
     // Dispatch updates to Redux store for price and discount
     dispatch(setProductPrice({ basePrice: price, taxRate: tax }));
-    dispatch(updateDiscount({ type: "percentage", value: discountValue }));
+    dispatch(updateDiscount(discountValue));
   }, [price, tax, discountValue, dispatch]); // Recalculate final price when these change
 
   // Handle changes to price

@@ -1,4 +1,5 @@
 import { CartItem } from "@/app/reducer/cartReducer";
+import { VariantState } from "@/app/store/slices/productSlice";
 
 export type Users = {
   _id?: string;
@@ -43,8 +44,8 @@ export type Brand = {
 
 export type Product = {
   _id?: string;
-  url_slug: string; // Unique slug for the product URL
-  dsin: string; // Unique identifier for the product
+  url_slug?: string; // Unique slug for the product URL
+  dsin?: string; // Unique identifier for the product
   sku?: string; // Stock Keeping Unit
   productName: string; // Name of the product
   category_id: string; // ID of the category the product belongs to
@@ -64,14 +65,13 @@ export type Product = {
   attributes?: {
     groupName: string; // Name of the attribute group
     attributes: Record<string, string[]>; // Map of attribute names to string arrays
-  }[]; // List of attribute groups
+  }[];
+  variants: VariantState[];
   offerId?: string; // Optional ID of an associated offer
   status?: "active" | "inactive"; // Status of the product
-  step?: number; // Current step in a wizard-like form (optional)
   created_at?: string; // Timestamp when the product was created
   updated_at?: string; // Timestamp when the product was last updated
 };
-
 
 export type Smartphones = {
   ModelName: string;

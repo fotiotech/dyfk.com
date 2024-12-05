@@ -13,7 +13,7 @@ const Inventory = () => {
           Back
         </Link>
         <Link
-          href={"/admin/products/add_product/additional"}
+          href={"/admin/products/add_product/reviews_final"}
           className="bg-blue-500 text-white p-2 rounded"
         >
           Next

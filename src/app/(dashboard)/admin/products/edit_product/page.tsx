@@ -103,42 +103,6 @@ const EditDeleteProduct = () => {
     };
   }, [productId, dispatch]);
 
-  // Add dispatch as a dependency
-
-  const handleDeleteProduct = async () => {
-    if (productId) {
-      await deleteProduct(productId);
-      router.push("/dashboard/products");
-    }
-  };
-
-  const files = imageUrls;
-
-  const handleSubmit = async () => {
-    try {
-      await updateProduct(productId as string, category_id, attributes, files, {
-        sku,
-        productName: product_name,
-        brand_id,
-        department,
-        description,
-        basePrice,
-        finalPrice,
-        taxRate,
-        discount,
-        currency,
-        upc,
-        ean,
-        gtin,
-        stockQuantity,
-      } as Product);
-      alert("Product updated successfully!");
-    } catch (error) {
-      console.error("Error updating product:", error);
-      alert("Failed to update the product. Please try again.");
-    }
-  };
-
   return (
     <div>
       <h3 className="text-lg font-bold mb-4">Edit Product</h3>

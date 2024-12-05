@@ -157,14 +157,12 @@ function generateVariations(variantAttributes: {
   );
 }
 
-export async function createProduct(
-  categoryId: string,
-  attributes: { [groupName: string]: { [attrName: string]: string[] } },
-  variants: VariantState[], // Original structure
-  files: string[],
-  formData: Prod
-) {
+export async function createProduct(formData: Prod) {
   const {
+    category_id,
+    attributes,
+    variants,
+    imageUrls,
     sku,
     productName,
     brand_id,
@@ -182,22 +180,22 @@ export async function createProduct(
     status,
   } = formData;
 
-  if (productName === "" || categoryId === "") {
+  if (productName === "" || category_id === "") {
     return { error: "Product name and category ID are required." };
   }
 
-  if (files) {
-    console.log(categoryId, attributes, files, formData);
+  if (imageUrls) {
+    console.log(category_id, attributes, imageUrls, formData);
   }
 
   const urlSlug = generateSlug(productName as string, department);
   const dsin = generateDsin();
 
   // Reformat and clean up the attributes to remove unwanted keys
-  const cleanedAttributes = Object.keys(attributes)
+  const cleanedAttributes = Object.keys(attributes as unknown as any)
     .filter((groupName) => groupName !== "0") // Remove invalid group names like '0'
     .map((groupName) => {
-      const group = attributes[groupName];
+      const group = attributes![groupName as unknown as number];
 
       // Ensure that each group only contains valid attributes
       const cleanedAttributesObj = Object.fromEntries(
@@ -218,7 +216,7 @@ export async function createProduct(
     dsin: dsin,
     sku: sku,
     productName: productName,
-    category_id: new mongoose.Types.ObjectId(categoryId),
+    category_id: new mongoose.Types.ObjectId(category_id),
     brand_id: new mongoose.Types.ObjectId(brand_id as string),
     department: department,
     description: description,
@@ -232,7 +230,7 @@ export async function createProduct(
     gtin: gtin || null,
     stockQuantity,
     attributes: cleanedAttributes.length > 0 ? cleanedAttributes : null, // Set formatted attributes
-    imageUrls: files,
+    imageUrls,
     status: status,
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
@@ -244,7 +242,7 @@ export async function createProduct(
   await Promise.all(
     variants.map(async (variant) => {
       const newVariant = new Variant({
-        product: savedProduct._id,
+        product_id: savedProduct._id,
         ...variant,
       });
       await newVariant.save();

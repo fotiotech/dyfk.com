@@ -21,7 +21,7 @@ interface IVariant extends Document {
   imageUrls: string[];
   offerId: mongoose.Types.ObjectId;
   category_id: mongoose.Types.ObjectId;
-  attributes: { [key: string]: { [key: string]: string[] } };
+  variantAttributes: { [key: string]: { [key: string]: string[] } };
   status: "active" | "inactive";
 }
 
@@ -129,7 +129,7 @@ const VariantSchema = new Schema<IVariant>({
     type: [String],
     required: [true, "At least one image URL is required"],
   },
-  attributes: [
+  variantAttributes: [
     {
       groupName: {
         type: String,

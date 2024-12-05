@@ -16,6 +16,7 @@ import {
 import Link from "next/link";
 import FilesUploader from "@/components/FilesUploader";
 import { useFileUploader } from "@/hooks/useFileUploader ";
+// import { VariantState } from "../../../../../store/slices/productSlice";
 
 type AttributeType = {
   groupName: string;
@@ -30,7 +31,6 @@ const Variant = () => {
   const dispatch = useAppDispatch();
   const {
     category_id,
-    variantAttributes,
     variants,
     basePrice,
     taxRate,
@@ -78,83 +78,111 @@ const Variant = () => {
   }, [category_id]);
 
   const handleAttributeChange = (
+    variantIndex: number, // Add variantIndex as a parameter
     groupName: string,
     attrName: string,
     selectedValues: string[] | null
   ) => {
     dispatch(
       updateVariantAttributes({
+        variantIndex, // Specify which variant to update
         groupName,
         attrName,
-        selectedValues: selectedValues || [],
+        selectedValues: selectedValues || [], // Default to an empty array if null
       })
     );
+
+    // Optionally synchronize with parent
     dispatch(syncVariantWithParent());
   };
 
-  function generateVariations(variantAttributesData: {
-    [groupName: string]: { [attrName: string]: string[] };
-  }) {
+  function generateVariations(
+    variantAttributesData: VariantState["variantAttributes"]
+  ) {
+    if (!variantAttributesData) return []; // Handle empty or undefined input gracefully
+
     // Flatten the attributes from all groups
-    if (variantAttributesData) {
-      const flattenedAttributes: { [attrName: string]: string[] } =
-        Object.entries(variantAttributesData).reduce(
-          (acc, [groupName, attributes]) => {
-            Object.entries(attributes).forEach(([attrName, attrValues]) => {
-              acc[attrName] = attrValues;
-            });
-            return acc;
-          },
-          {} as { [attrName: string]: string[] }
-        );
+    const flattenedAttributes: { [attrName: string]: string[] } =
+      Object.entries(variantAttributesData).reduce((acc, [_, attributes]) => {
+        Object.entries(attributes).forEach(([attrName, attrValues]) => {
+          acc[attrName] = attrValues;
+        });
+        return acc;
+      }, {} as { [attrName: string]: string[] });
 
-      const keys = Object.keys(flattenedAttributes); // Attribute keys, e.g., ['Model', 'Weight']
-      const values = Object.values(flattenedAttributes); // Attribute values, e.g., [['Galaxie S22', 'Galaxie A14'], ['1.5 kg', '250 g']]
+    const keys = Object.keys(flattenedAttributes); // Attribute keys, e.g., ['Color', 'Size', 'Weight']
+    const values = Object.values(flattenedAttributes); // Attribute values, e.g., [['Red', 'Blue'], ['M', 'L'], ['1kg', '2kg']]
 
-      // Helper function to compute the cartesian product
-      const cartesian = (arr: string[][]): string[][] =>
-        arr.reduce<string[][]>(
-          (acc, curr) => acc.flatMap((d) => curr.map((e) => [...d, e])),
-          [[]] // Initial value is an array of empty arrays
-        );
-
-      // Generate combinations
-      const combinations = cartesian(values);
-
-      // Convert combinations into objects
-      return combinations.map((combination) =>
-        combination.reduce((obj, value, index) => {
-          obj[keys[index]] = value;
-          return obj;
-        }, {} as Record<string, string>)
+    // Generate all combinations of attribute values
+    const combine = (arr: string[][]) =>
+      arr.reduce(
+        (acc, curr) => acc.flatMap((x) => curr.map((y) => [...x, y])),
+        [[]] as string[][]
       );
-    }
+
+    const combinations = combine(values);
+
+    // Map each combination to an object with flattened attributes
+    return combinations.map((combo) =>
+      combo.reduce(
+        (acc, val, idx) => ({
+          ...acc,
+          [keys[idx]]: val, // Map attribute keys to their respective values
+          product_id: "", // Placeholder for product ID
+          sku: "", // Placeholder for SKU
+          basePrice: 0, // Default base price
+          finalPrice: 0, // Default final price
+          taxRate: 0, // Default tax rate
+          discount: 0, // Default discount
+          currency: "", // Default currency
+          upc: "", // Default UPC
+          ean: "", // Default EAN
+          gtin: "", // Default GTIN
+          stockQuantity: 0, // Default stock quantity
+          imageUrls: [], // Default image URLs
+          offerId: "", // Placeholder for offer ID
+          category_id: "", // Placeholder for category ID
+          status: "active", // Default status
+        }),
+        {} as Omit<VariantState, "variantAttributes">
+      )
+    );
   }
 
   const AttributesVariants = useMemo(() => {
-    if (variantAttributes) {
-      return generateVariations(variantAttributes);
+    if (variants.length > 0) {
+      // Generate variations for each variant
+      return variants.flatMap((variant) =>
+        generateVariations(variant.variantAttributes || {})
+      );
     }
     return [];
-  }, [variantAttributes]);
+  }, [variants]);
 
   const handleRemoveVariant = (index: number) => {
     dispatch(removeVariant(index));
   };
 
-  const handleVariantChange =
-    (index: number, field: keyof VariantState) =>
-    (
-      value: string | React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-    ) => {
-      // Check if the value is a string (from react-select) or an event (from input)
-      const finalValue =
-        typeof value === "string"
-          ? value
-          : (value.target as HTMLInputElement).value;
+  const handleVariantChange = (
+    index: number,
+    field: keyof VariantState,
+    value: string | React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    // Determine the final value
+    const finalValue =
+      typeof value === "string"
+        ? value
+        : (value.target as HTMLInputElement).value;
 
-      dispatch(updateVariantField({ index, field, value: finalValue }));
-    };
+    // Dispatch the action with the appropriate payload
+    dispatch(
+      updateVariantField({
+        index,
+        field,
+        value: finalValue,
+      })
+    );
+  };
 
   const handleAttributeSelect = (attrName: string) => {
     setSelectedAttributes((prevSelected) => {
@@ -183,12 +211,7 @@ const Variant = () => {
 
   // Local component state for product code type and value
 
-  console.log(
-    "variantAttributes:",
-    variantAttributes,
-    "AttributesVariants:",
-    AttributesVariants
-  );
+  console.log("variants:", variants, "AttributesVariants:", AttributesVariants);
 
   const [codeType, setCodeType] = useState(sku);
   const [codeValue, setCodeValue] = useState<string>(sku || "");
@@ -276,7 +299,7 @@ const Variant = () => {
                   .filter((attribute) =>
                     selectedAttributes.includes(attribute.attrName)
                   )
-                  .map((attribute) => (
+                  .map((attribute, idx) => (
                     <div key={attribute.attrName} className="mb-4">
                       <label className="block text-sm font-medium mb-2">
                         {attribute.attrName}
@@ -292,6 +315,7 @@ const Variant = () => {
                         classNamePrefix="select"
                         onChange={(selected) =>
                           handleAttributeChange(
+                            idx,
                             group.groupName,
                             attribute.attrName,
                             selected?.map((option) => option.value) || null
@@ -307,170 +331,51 @@ const Variant = () => {
         )}
       </div>
 
-      <div className="p-3 rounded-lg shadow-md">
+      <div className=" rounded-lg shadow-md">
         <h3 className="text-lg font-semibold text-pri capitalize mb-4">
           Variant Management
         </h3>
 
-        {AttributesVariants?.map((variant, index) => (
-          <div key={index} className="p-3 border rounded-lg mb-4">
-            <div className="flex justify-between items-center">
-              <h4 className="text-sm font-semibold">Variant {index + 1}</h4>
-            </div>
-            {Object.entries(variant).map(([key, value], index: number) => (
-              <div key={`${key}-${index + 1}`} className="flex flex-col gap-3">
-                <div className="flex justify-between w-full">
-                  <strong>
-                    {key}: {value}
-                  </strong>{" "}
-                  <button
-                    onClick={() => handleRemoveVariant(index)}
-                    className="bg-red-500 text-white py-1 px-3 rounded"
-                  >
-                    Remove
-                  </button>
-                </div>
-                <div className="flex flex-col gap-2">
-                  <div className="space-y-6 mb-10">
-                    <div>
-                      {files.length > 0 && (
-                        <div className="flex flex-wrap">
-                          <h4>Uploaded Images</h4>
-                          {files.map((file, index) => (
-                            <div key={index}>
-                              <img
-                                src={file}
-                                alt={`Uploaded file ${index + 1}`}
-                                width={100}
-                              />
-                              <button onClick={() => removeFile(index)}>
-                                Remove
-                              </button>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                      <FilesUploader />
-                    </div>
-                    <div className="space-y-6 mb-10">
-                      {/* Pass handleFilesChange to update image URLs */}
-                      <h2 className="text-2xl font-semibold">
-                        Variant Information
-                      </h2>
-                      <div>
-                        <div className="mb-4">
-                          <label className="block text-sm font-medium">
-                            Select Product Code Type
-                          </label>
-                          <Select
-                            options={codeTypeOptions}
-                            styles={customStyles}
-                            value={codeTypeOptions.find(
-                              (option) => option.value === codeType
-                            )}
-                            onChange={(selectedOption) =>
-                              handleCodeTypeChange(selectedOption)
-                            }
-                            className="mt-1 bg-none text-sec border-gray-100"
-                            placeholder="Select code type"
-                          />
-                        </div>
-
-                        <div className="mb-4">
-                          <label className="block text-sm font-medium">
-                            Enter {codeType?.toUpperCase()} Code
-                          </label>
-                          <input
-                            type="text"
-                            value={codeValue}
-                            onChange={(event) =>
-                              handleVariantChange(
-                                index,
-                                "codeValue" as keyof VariantState
-                              )(event.target.value)
-                            }
-                            className="mt-1 block w-full border-gray-300 bg-transparent rounded-md shadow-sm"
-                            placeholder={`Enter ${codeType?.toUpperCase()} code`}
-                          />
-                        </div>
-                      </div>
-
-                      <h2 className="text-lg font-semibold mb-4">
-                        Add Prices, Quantities, and Discount
-                      </h2>
-
-                      {/* Base Price */}
-                      <div className="mb-4">
-                        <label className="block text-sm font-medium">
-                          Base Price
-                        </label>
-                        <input
-                          type="number"
-                          value={variants[basePrice ?? 0]?.basePrice ?? 0}
-                          onChange={handleVariantChange(index, "basePrice")}
-                          className="mt-1 block w-full border-gray-300 
-          rounded-md shadow-sm focus:border-indigo-500
-          bg-transparent focus:ring-indigo-500"
-                          placeholder="Enter base price"
-                        />
-                      </div>
-
-                      {/* Tax Rate */}
-                      <div className="mb-4">
-                        <label className="block text-sm font-medium">
-                          Tax Rate (%)
-                        </label>
-                        <input
-                          type="number"
-                          value={variants[taxRate ?? 0]?.taxRate ?? 0}
-                          onChange={handleVariantChange(index, "taxRate")}
-                          className="mt-1 block w-full border-gray-300 
-          rounded-md shadow-sm focus:border-indigo-500
-          bg-transparent focus:ring-indigo-500"
-                          placeholder="Enter tax rate"
-                        />
-                      </div>
-
-                      {/* Stock Quantity */}
-                      <div className="mb-4">
-                        <label className="block text-sm font-medium">
-                          Stock Quantity
-                        </label>
-                        <input
-                          type="number"
-                          value={
-                            variants[stockQuantity ?? 0]?.stockQuantity ?? 0
-                          }
-                          onChange={handleVariantChange(index, "stockQuantity")}
-                          className="mt-1 block w-full border-gray-300 
-          rounded-md shadow-sm focus:border-indigo-500
-          bg-transparent focus:ring-indigo-500"
-                          placeholder="Enter stock quantity"
-                        />
-                      </div>
-
-                      {/* Discount */}
-                      <div className="mb-4">
-                        <label className="block text-sm font-medium">
-                          Discount (%)
-                        </label>
-                        <input
-                          type="number"
-                          value={discount?.value ?? 0}
-                          onChange={handleVariantChange(index, "discount")}
-                          className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 bg-transparent focus:ring-indigo-500"
-                          placeholder="Enter discount percentage (0-100)"
-                        />
-                        <p className="text-sm text-gray-500 mt-1">
-                          Enter a value between 0 and 100 for the discount
-                          percentage.
-                        </p>
-                      </div>
-                    </div>
+        {AttributesVariants.map((variation, index) => (
+          <div key={index} className="variation-form">
+            <h3>Variation {index + 1}</h3>
+            {Object.entries(variation).map(([key, value]) => {
+              // Skip the attributes that have default values (those are not for user input)
+              if (
+                [
+                  "product_id",
+                  "sku",
+                  "basePrice",
+                  "finalPrice",
+                  "taxRate",
+                  "discount",
+                  "currency",
+                  "upc",
+                  "ean",
+                  "gtin",
+                  "stockQuantity",
+                  "imageUrls",
+                  "offerId",
+                  "category_id",
+                  "status",
+                ].includes(key)
+              ) {
+                return (
+                  <div key={key}>
+                    <label>{key}:</label>
+                    <input
+                      title={key}
+                      type="text"
+                      name={key}
+                      value={variants[index]?.[key] || value}
+                      onChange={(e) => handleVariantChange(index, key, e)}
+                      className="bg-transparent "
+                    />
                   </div>
-                </div>
-              </div>
-            ))}
+                );
+              }
+              return null;
+            })}
           </div>
         ))}
       </div>
