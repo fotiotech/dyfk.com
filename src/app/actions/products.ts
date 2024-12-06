@@ -215,40 +215,33 @@ export async function createProduct(formData: Prod) {
   // Save the product
   const savedProduct = await newProduct.save();
 
-// Ensure product_id is a valid ObjectId string (e.g., from savedProduct._id)
-const product_id = new mongoose.Types.ObjectId(savedProduct._id.toString()); // Ensure it's a valid string
+  if (savedProduct) {
+    // Save the variants
+    await Promise.all(
+      variants.map(async (variant) => {
+        const { variantAttributes, ...rest } = variant;
 
-// Ensure offerId is a valid ObjectId string or set it to null if not available
-const offerId = savedProduct.objectId
-  ? new mongoose.Types.ObjectId(savedProduct.objectId.toString()) // Use a valid string
-  : null;
+        const newVariant = new Variant({
+          product_id: savedProduct?._id, // This is a valid ObjectId
+          offerId: savedProduct?.offerId, // This can be null if not available
+          variantAttributes: Object.entries(variantAttributes as unknown as any)
+            .map(([groupName, attributes]) =>
+              Object.entries(attributes as unknown as any).map(
+                ([attrName, values]) => ({
+                  groupName,
+                  attributeName: attrName,
+                  values,
+                })
+              )
+            )
+            .flat(),
+          ...rest, // Other variant fields
+        });
 
-// Save the variants
-await Promise.all(
-  variants.map(async (variant) => {
-    const { variantAttributes, ...rest } = variant;
-
-    const newVariant = new Variant({
-      product_id: product_id, // This is a valid ObjectId
-      offerId: offerId,       // This can be null if not available
-      variantAttributes: Object.entries(variantAttributes as unknown as any)
-        .map(([groupName, attributes]) =>
-          Object.entries(attributes as unknown as any).map(
-            ([attrName, values]) => ({
-              groupName,
-              attributeName: attrName,
-              values,
-            })
-          )
-        )
-        .flat(),
-      ...rest, // Other variant fields
-    });
-
-    await newVariant.save();
-  })
-);
-
+        await newVariant.save();
+      })
+    );
+  }
 
   return { success: true, product: savedProduct };
 }
