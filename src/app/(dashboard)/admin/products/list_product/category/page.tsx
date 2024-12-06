@@ -10,15 +10,12 @@ import Link from "next/link";
 const Category = () => {
   const dispatch = useAppDispatch();
   const [category, setCategory] = useState<Cat[]>([]);
-  const { category_id } = useAppSelector((state) => state.product);
+  const { productId, category_id } = useAppSelector((state) => state.product);
   const [parentId, setParentId] = useState<string>(category_id);
-
   useEffect(() => {
     // Update parentId whenever categoryId changes
     setParentId(category_id);
   }, [category_id]); // Trigger whenever categoryId changes in the Redux store
-
-  console.log(parentId);
 
   // Fetch categories on mount or when parentId changes
   useEffect(() => {
@@ -26,7 +23,7 @@ const Category = () => {
       try {
         if (parentId) {
           const res = await getCategory(undefined, parentId, undefined);
-          if (res.length == 0) return null;
+          if (res.length === 0) return null;
           setCategory(res || []);
         } else {
           const res = await getCategory();
@@ -45,7 +42,6 @@ const Category = () => {
     setParentId(catId); // Update local state with the selected category ID
     dispatch(updateCategoryId(catId)); // Update Redux store with selected category ID
   };
-
 
   return (
     <div className="p-2 mt-4">
@@ -83,7 +79,7 @@ const Category = () => {
       {/* Next button */}
       <div className="text-end mt-4">
         <Link
-          href={parentId ? "/admin/products/add_product/basic_infos" : ""}
+          href={parentId ? "/admin/products/list_product/basic_infos" : ""}
           className="bg-blue-500 text-white p-2 rounded"
         >
           Next

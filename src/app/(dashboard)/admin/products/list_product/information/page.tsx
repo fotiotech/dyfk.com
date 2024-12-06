@@ -100,13 +100,13 @@ const Information: React.FC = () => {
       {/* Save Button */}
       <div className="flex justify-between items-center space-x-4 mt-6">
         <Link
-          href={codeValue ? "/admin/products/add_product/basic_infos" : ""}
+          href={codeValue ? "/admin/products/list_product/basic_infos" : ""}
           className="bg-blue-500 text-white p-2 rounded"
         >
           Back
         </Link>
         <Link
-          href={codeValue ? "/admin/products/add_product/offer" : ""}
+          href={codeValue ? "/admin/products/list_product/offer" : ""}
           className="bg-blue-500 text-white p-2 rounded"
         >
           Next

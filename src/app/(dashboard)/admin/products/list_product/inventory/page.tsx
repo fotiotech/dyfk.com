@@ -7,13 +7,13 @@ const Inventory = () => {
       Inventory{" "}
       <div>
         <Link
-          href={"/admin/products/add_product/variants"}
+          href={"/admin/products/list_product/variants"}
           className="bg-blue-500 text-white p-2 rounded"
         >
           Back
         </Link>
         <Link
-          href={"/admin/products/add_product/reviews_final"}
+          href={"/admin/products/list_product/reviews_final"}
           className="bg-blue-500 text-white p-2 rounded"
         >
           Next

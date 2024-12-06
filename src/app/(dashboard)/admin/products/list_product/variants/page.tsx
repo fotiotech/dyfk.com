@@ -205,7 +205,7 @@ const Variant = () => {
     }),
   };
 
-  console.log(variants);
+  console.log(imageUrls, variants);
 
   const codeTypeOptions = [
     { value: "sku", label: "SKU" },
@@ -381,30 +381,7 @@ const Variant = () => {
                 if (key === "imageUrls") {
                   return (
                     <div key={key}>
-                      {files.length > 0 && (
-                        <div className="flex flex-wrap">
-                          <h4>Uploaded Images</h4>
-                          {files.map((file, index) => (
-                            <div key={index}>
-                              {loading ? (
-                                <Spinner />
-                              ) : (
-                                <div>
-                                  <img
-                                    src={file}
-                                    alt={`Uploaded file ${index + 1}`}
-                                    width={100}
-                                  />
-                                  <button onClick={() => removeFile(index)}>
-                                    Remove
-                                  </button>
-                                </div>
-                              )}
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                      <FilesUploader />
+                      <FilesUploader files={files} addFiles={addFiles} />
                     </div>
                   );
                 }
@@ -431,13 +408,13 @@ const Variant = () => {
       <div className="flex justify-between items-center mt-6">
         {/* Back Button */}
         <Link
-          href={variants ? "/admin/products/add_product/details" : ""}
+          href={variants ? "/admin/products/list_product/details" : ""}
           className="bg-blue-500 text-white p-2 rounded"
         >
           Back
         </Link>
         <Link
-          href={variants ? "/admin/products/add_product/inventory" : ""}
+          href={variants ? "/admin/products/list_product/inventory" : ""}
           className="bg-blue-500 text-white p-2 rounded"
         >
           Next

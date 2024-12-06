@@ -59,7 +59,7 @@ const ProductList = () => {
                     : "hidden"
                 }`}
               >
-                <Link href={`/admin/products/edit_product?id=${product._id}`}>
+                <Link href={`/admin/products/list_product?id=${product._id}`}>
                   <li className=" p-2 border rounded-lg border-gray-800 cursor-pointer">
                     Edit
                   </li>

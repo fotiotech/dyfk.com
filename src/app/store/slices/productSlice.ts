@@ -1,5 +1,18 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { findProducts } from "@/app/actions/products";
+import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
 
+export const fetchProductById = createAsyncThunk(
+  "product/fetchById",
+  async (id: string, { rejectWithValue }) => {
+    try {
+      const response = await findProducts(id); // Replace with your API endpoint
+      if (!response) throw new Error("Failed to fetch product data");
+      return response;
+    } catch (error: any) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
 export interface VariantState {
   [key: string]: any;
   product_id?: string;
@@ -25,7 +38,11 @@ export interface VariantState {
 }
 
 export interface ProductState {
+  productId?: string;
+  url_slug: string;
   sku: string;
+  dsin: string;
+  offerId: string;
   product_name: string;
   brand_id: string;
   department: string;
@@ -46,7 +63,10 @@ export interface ProductState {
 }
 
 export const initialState: ProductState = {
+  productId: "",
+  url_slug: "",
   sku: "",
+  dsin: "",
   product_name: "",
   brand_id: "",
   department: "",
@@ -58,7 +78,7 @@ export const initialState: ProductState = {
   currency: "XAF",
   productCode: "",
   stockQuantity: 0,
-  imageUrls: [],
+  imageUrls: [] as string[],
   category_id: "",
   getVariant: false,
   attributes: {},
@@ -79,13 +99,14 @@ export const initialState: ProductState = {
       currency: "",
       VProductCode: "",
       stockQuantity: 0,
-      imageUrls: [],
+      imageUrls: [] as string[],
       offerId: "",
       category_id: "",
       variantAttributes: {},
       status: "active",
     },
   ],
+  offerId: "",
   status: "active",
 };
 
@@ -104,7 +125,6 @@ const productSlice = createSlice({
       }>
     ) => {
       const { field, value } = action.payload;
-
       // Safely update state[field] only if it exists in ProductState
       if (field in state) {
         (state[field] as typeof value) = value;
@@ -153,11 +173,21 @@ const productSlice = createSlice({
       }>
     ) => {
       const { groupName, attrName, selectedValues } = action.payload;
+
+      // Ensure `state.attributes` exists
+      if (!state.attributes) {
+        state.attributes = {};
+      }
+
+      // Ensure the groupName exists within attributes
       if (!state.attributes[groupName]) {
         state.attributes[groupName] = {};
       }
+
+      // Update or set the attribute values
       state.attributes[groupName][attrName] = selectedValues;
     },
+
     updateVariantField: (
       state = initialState,
       action: PayloadAction<{
@@ -210,22 +240,38 @@ const productSlice = createSlice({
     },
     syncVariantWithParent: (state) => {
       state.variants = state.variants.map((variant) => ({
-        sku: variant.sku || "", // Ensure SKU is present or default to empty
-        basePrice: variant.basePrice ?? state.basePrice ?? 0, // Use variant's basePrice or fallback to parent's basePrice, default to 0
+        // Sync product fields to variants, with variant-specific overrides
+        product_id: state.productId || variant.product_id || "",
+        sku: variant.sku || state.sku || "",
+        productName: variant.productName || state.product_name || "",
+        brand_id: variant.brand_id || state.brand_id || "",
+        department: variant.department || state.department || "",
+        description: variant.description || state.description || "",
+        basePrice: variant.basePrice ?? state.basePrice ?? 0,
         finalPrice:
-          variant.finalPrice ?? variant.basePrice ?? state.basePrice ?? 0, // Use variant's finalPrice, otherwise fall back to basePrice
-        taxRate: variant.taxRate ?? state.taxRate, // Sync tax rate, default to parent's taxRate if not provided
-        discount: variant.discount ?? state.discount ?? 0, // Sync discount object, fall back to parent's discount
-        productCode: variant.productCode || "", // Default empty if not provided
-        stockQuantity: variant.stockQuantity ?? 0, // Default to 0 if not defined
+          variant.finalPrice ??
+          variant.basePrice ??
+          state.finalPrice ??
+          state.basePrice ??
+          0,
+        taxRate: variant.taxRate ?? state.taxRate ?? 0,
+        discount: variant.discount ?? state.discount ?? 0,
+        currency: variant.currency || state.currency || "XAF",
+        VProductCode: variant.VProductCode || state.productCode || "",
+        stockQuantity: variant.stockQuantity ?? state.stockQuantity ?? 0,
         imageUrls:
-          variant?.imageUrls?.length! > 0 ? variant.imageUrls : state.imageUrls, // Sync images, fallback to parent's images if none in variant
-        category_id: variant.category_id || state.category_id, // Sync category ID, fall back to parent's category_id
+          variant.imageUrls && variant.imageUrls.length > 0
+            ? variant.imageUrls
+            : state.imageUrls,
+        category_id: variant.category_id || state.category_id || "",
         variantAttributes: {
           ...state.attributes,
-          ...variant.variantAttributes, // Merge parent attributes and variant attributes
+          ...variant.variantAttributes, // Merge attributes from product and variant
         },
-        status: variant.status || "active", // Default to active if status is missing
+        status: variant.status || state.status || "active",
+        offerId: variant.offerId || state.offerId,
+        url_slug: variant.url_slug || state.url_slug,
+        dsin: variant.dsin || state.dsin,
       }));
     },
 
@@ -261,6 +307,16 @@ const productSlice = createSlice({
         basePrice + (basePrice * taxRate) / 100 - discountAmount;
     },
 
+    setImageUrls: (state, action: PayloadAction<string[]>) => {
+      state.imageUrls = action.payload;
+    },
+    addImageUrl: (state, action: PayloadAction<string>) => {
+      state.imageUrls.push(action.payload);
+    },
+    removeImageUrl: (state, action: PayloadAction<number>) => {
+      state.imageUrls.splice(action.payload, 1);
+    },
+
     updateStockQuantity(state, action: PayloadAction<number>) {
       state.stockQuantity = action.payload;
     },
@@ -268,12 +324,28 @@ const productSlice = createSlice({
       state.currency = action.payload;
     },
   },
+  extraReducers: (builder) => {
+    builder
+      .addCase(
+        fetchProductById.fulfilled,
+        (state, action: PayloadAction<ProductState>) => {
+          // Update state with the fetched product data
+          return { ...state, ...action.payload };
+        }
+      )
+      .addCase(fetchProductById.rejected, (state, action) => {
+        console.error("Failed to fetch product:", action.payload);
+      });
+  },
 });
 
 export const {
   setProductData,
   updateProduct,
   updateCategoryId,
+  removeImageUrl,
+  setImageUrls,
+  addImageUrl,
   updateGetVariant,
   updateVariantAttributes,
   removeVariant,

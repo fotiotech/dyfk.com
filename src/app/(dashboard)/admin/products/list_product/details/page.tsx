@@ -134,7 +134,7 @@ const Details = () => {
           <div className="flex justify-between items-center mt-6">
             {/* Back Button */}
             <Link
-              href={"/admin/products/add_product/offer"}
+              href={"/admin/products/list_product/offer"}
               className="bg-blue-500 text-white p-2 rounded"
             >
               Back
@@ -142,8 +142,8 @@ const Details = () => {
             <Link
               href={
                 getVariant
-                  ? "/admin/products/add_product/variants"
-                  : "/admin/products/add_product/inventory"
+                  ? "/admin/products/list_product/variants"
+                  : "/admin/products/list_product/inventory"
               }
               className="bg-blue-500 text-white p-2 rounded"
             >

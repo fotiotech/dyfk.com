@@ -129,13 +129,13 @@ const Offer: React.FC = () => {
       {/* Navigation Buttons */}
       <div className="flex justify-between items-center space-x-4 mt-6">
         <Link
-          href={finalPrice ? "/admin/products/add_product/information" : ""}
+          href={finalPrice ? "/admin/products/list_product/information" : ""}
           className="bg-blue-500 text-white p-2 rounded"
         >
           Back
         </Link>
         <Link
-          href={finalPrice ? "/admin/products/add_product/details" : ""}
+          href={finalPrice ? "/admin/products/list_product/details" : ""}
           className="bg-blue-500 text-white p-2 rounded"
         >
           Next

@@ -1,14 +1,20 @@
+// FilesUploader.tsx
 import React, { useRef } from "react";
 import { AttachFile } from "@mui/icons-material";
 import { useDropzone } from "react-dropzone";
 import Image from "next/image";
-import Spinner from "./Spinner";
 import { useFileUploader } from "@/hooks/useFileUploader ";
+import Spinner from "./Spinner";
 
-const FilesUploader: React.FC = () => {
+type FilesUploaderProps = {
+  files: string[];
+  addFiles: (newFiles: File[]) => void;
+};
+
+const FilesUploader: React.FC<FilesUploaderProps> = ({ files, addFiles }) => {
   const inputRef = useRef<HTMLInputElement | null>(null);
 
-  const { files, loading, addFiles, removeFile } = useFileUploader();
+  const { loading, removeFile } = useFileUploader();
 
   const onDrop = (acceptedFiles: File[]) => {
     addFiles(acceptedFiles);

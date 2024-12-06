@@ -19,28 +19,8 @@ const AddHeroContent = () => {
         <h2>Add Hero Content</h2>
       </div>
       <div>
-        {files.length > 0 && (
-          <div className="flex flex-wrap">
-            <h4>Uploaded Images</h4>
-            {files.map((file, index) => (
-              <div key={index}>
-                {loading ? (
-                  <Spinner />
-                ) : (
-                  <div>
-                    <img
-                      src={file}
-                      alt={`Uploaded file ${index + 1}`}
-                      width={100}
-                    />
-                    <button onClick={() => removeFile(index)}>Remove</button>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        )}
-        <FilesUploader />
+        
+        <FilesUploader files={files} addFiles={addFiles} />
       </div>
       <form action={toCreateHeroContent}>
         <div>

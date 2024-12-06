@@ -4,7 +4,11 @@ import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Select from "react-select";
 import { RootState } from "@/app/store/store";
-import { updateProduct, initialState } from "@/app/store/slices/productSlice";
+import {
+  updateProduct,
+  initialState,
+  setImageUrls,
+} from "@/app/store/slices/productSlice";
 import FilesUploader from "@/components/FilesUploader";
 import { getBrands } from "@/app/actions/brand";
 import { Brand } from "@/constant/types";
@@ -12,13 +16,20 @@ import { useAppDispatch, useAppSelector } from "@/app/hooks";
 import Link from "next/link";
 import { useFileUploader } from "@/hooks/useFileUploader ";
 import Spinner from "@/components/Spinner";
+import Image from "next/image";
 
 const BasicInformation = () => {
   const { files, loading, addFiles, removeFile } = useFileUploader();
   const dispatch = useAppDispatch();
-  const { sku, product_name, brand_id, department, description, imageUrls } =
-    useAppSelector((state: RootState) => state.product);
-
+  const {
+    productId,
+    sku,
+    product_name,
+    brand_id,
+    department,
+    description,
+    imageUrls,
+  } = useAppSelector((state: RootState) => state.product);
   const [brands, setBrands] = useState<Brand[]>([]);
   const [selectedBrand, setSelectedBrand] = useState<{
     value: string;
@@ -34,13 +45,20 @@ const BasicInformation = () => {
   }, []);
 
   // Handle input changes (for text fields like sku, product_name, etc.)
-  const handleChange =
-    (field: keyof typeof initialState) =>
-    (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      const value = event.target.value;
+  const handleChange = (
+    field: keyof typeof initialState,
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const value = event.target.value;
+    dispatch(updateProduct({ field, value }));
+  };
 
-      dispatch(updateProduct({ field, value }));
-    };
+  useEffect(() => {
+    if (files.length > 0) {
+      const uploadedUrls = files.map((file: any) => file.url || file); // Adjust for file structure
+      dispatch(setImageUrls(uploadedUrls));
+    }
+  }, [files, dispatch]);
 
   const handleBrandChange = (selectedOption: any) => {
     setSelectedBrand(selectedOption);
@@ -72,28 +90,7 @@ const BasicInformation = () => {
   return (
     <div className="space-y-6 mb-10">
       <div>
-        {files.length > 0 && (
-          <div className="flex flex-wrap">
-            <h4>Uploaded Images</h4>
-            {files.map((file, index) => (
-              <div key={index}>
-                {loading ? (
-                  <Spinner />
-                ) : (
-                  <div>
-                    <img
-                      src={file}
-                      alt={`Uploaded file ${index + 1}`}
-                      width={100}
-                    />
-                    <button onClick={() => removeFile(index)}>Remove</button>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        )}
-        <FilesUploader />
+        <FilesUploader files={files} addFiles={addFiles} />
       </div>
       {/* Pass handleFilesChange to update image URLs */}
       <h2 className="text-2xl font-semibold">Basic Information</h2>
@@ -106,7 +103,7 @@ const BasicInformation = () => {
           type="text"
           value={sku}
           placeholder="Enter SKU"
-          onChange={handleChange("sku")}
+          onChange={(e) => handleChange("sku", e)}
           className="border rounded p-2 mt-1 bg-transparent"
         />
       </div>
@@ -119,7 +116,7 @@ const BasicInformation = () => {
           type="text"
           value={product_name}
           placeholder="Enter Product Name"
-          onChange={handleChange("product_name")}
+          onChange={(e) => handleChange("product_name", e)}
           className="border rounded p-2 mt-1 bg-transparent"
         />
       </div>
@@ -146,7 +143,7 @@ const BasicInformation = () => {
           type="text"
           value={department}
           placeholder="Enter Department"
-          onChange={handleChange("department")}
+          onChange={(e) => handleChange("department", e)}
           className="border rounded p-2 mt-1 bg-transparent"
         />
       </div>
@@ -158,19 +155,19 @@ const BasicInformation = () => {
           id="description"
           value={description}
           placeholder="Enter product description"
-          onChange={handleChange("description")}
+          onChange={(e) => handleChange("description", e)}
           className="border rounded p-2 mt-1 bg-transparent h-32"
         />
       </div>
       <div className="flex justify-between items-center space-x-4 mt-6">
         <Link
-          href={product_name ? "/admin/products/add_product/category" : ""}
+          href={product_name ? "/admin/products/list_product/category" : ""}
           className="bg-blue-500 text-white p-2 rounded"
         >
           Back
         </Link>
         <Link
-          href={product_name ? "/admin/products/add_product/information" : ""}
+          href={product_name ? "/admin/products/list_product/information" : ""}
           className="bg-blue-500 text-white p-2 rounded"
         >
           Next

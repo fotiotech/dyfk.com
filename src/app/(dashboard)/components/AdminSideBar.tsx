@@ -93,15 +93,15 @@ const AdminSideBar = ({
                 <li>All Products</li>
               </Link>
               <Link
-                href={"/admin/products/add_product"}
+                href={"/admin/products/list_product"}
                 onClick={handleCloseSideBar}
                 className={
-                  pathname.includes("/admin/products/add_product")
+                  pathname.includes("/admin/products/list_product")
                     ? "activeLink"
                     : "inactiveLink"
                 }
               >
-                <li>Add Product</li>
+                <li>List Product</li>
               </Link>
               <Link
                 href={"/admin/categories"}
