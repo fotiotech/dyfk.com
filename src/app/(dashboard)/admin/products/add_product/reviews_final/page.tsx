@@ -19,9 +19,7 @@ const AddProduct = () => {
     taxRate,
     discount,
     currency,
-    upc,
-    ean,
-    gtin,
+    productCode,
     stockQuantity,
     status,
     variants,
@@ -58,9 +56,8 @@ const AddProduct = () => {
         taxRate,
         discount,
         currency,
-        upc,
-        ean,
-        gtin,
+        productCode,
+       
         stockQuantity,
         status,
       } as unknown as any);

@@ -9,6 +9,7 @@ import {
 } from "@/app/actions/category";
 import { Category as Cat } from "@/constant/types";
 import { useFileUploader } from "@/hooks/useFileUploader ";
+import Spinner from "@/components/Spinner";
 
 const Categories = () => {
   const { files, loading, addFiles, removeFile } = useFileUploader();
@@ -144,12 +145,18 @@ const Categories = () => {
               <h4>Uploaded Images</h4>
               {files.map((file, index) => (
                 <div key={index}>
-                  <img
-                    src={file}
-                    alt={`Uploaded file ${index + 1}`}
-                    width={100}
-                  />
-                  <button onClick={() => removeFile(index)}>Remove</button>
+                  {loading ? (
+                    <Spinner />
+                  ) : (
+                    <div>
+                      <img
+                        src={file}
+                        alt={`Uploaded file ${index + 1}`}
+                        width={100}
+                      />
+                      <button onClick={() => removeFile(index)}>Remove</button>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>

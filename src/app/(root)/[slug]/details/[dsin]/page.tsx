@@ -44,6 +44,8 @@ const DetailsPage = ({
     getDetails();
   }, [params.dsin]);
 
+  console.log(details);
+
   const brand =
     typeof details?.brand_id === "object"
       ? { _id: details?.brand_id?._id, name: details?.brand_id?.name }
@@ -104,34 +106,41 @@ const DetailsPage = ({
               <div className="text-2xl font-bold text-gray-800">
                 <Prices amount={details?.finalPrice as number} />
               </div>
-              {details?.attributes?.length! > 0 && (
+              {details?.variants?.length! > 0 && (
                 <div>
-                  {details?.attributes
-                    ?.filter(
-                      (attributeGroup) => attributeGroup.groupName === "general"
-                    )
-                    .map((attributeGroup, groupIndex) => (
-                      <div key={groupIndex} className="mb-4">
-                        {Array.from(attributeGroup.attributes as any)
-                          .filter(
-                            ([attributeName]: any) =>
-                              attributeName !== "_id" && attributeName !== "0"
-                          )
-                          .map(([attributeName, attributeValues]: any, idx) => (
-                            <div
-                              key={`${attributeName}-${idx}`}
-                              className="flex gap-10 border-b pb-2 text-sm"
-                            >
-                              <strong>{attributeName}</strong>
-                              <span>
-                                {Array.isArray(attributeValues)
-                                  ? attributeValues.join(", ")
-                                  : attributeValues}
-                              </span>
-                            </div>
-                          ))}
-                      </div>
-                    ))}
+                  {details?.variants.map((variant, index) => (
+                    <div key={index} className="mb-4">
+                      {Object.entries(variant as any)
+                        .filter((v: any) => v.variantAttributes === "general")
+                        .map(([key, value]: any, idx) => (
+                          <div
+                            key={`${key}-${idx}`}
+                            className="flex flex-col gap-3 border-b p-2 text-sm"
+                          >
+                            <strong>{key}</strong>
+                            <span className="">
+                              {Array.isArray(value) ? (
+                                value.map((v) => (
+                                  <p
+                                    className="p-2 px-4 border 
+                                  rounded-lg bg-gray-100"
+                                  >
+                                    {v}
+                                  </p>
+                                ))
+                              ) : (
+                                <p
+                                  className="p-2 px-4 border 
+                                rounded-lg bg-gray-100"
+                                >
+                                  {value}
+                                </p>
+                              )}
+                            </span>
+                          </div>
+                        ))}
+                    </div>
+                  ))}
                 </div>
               )}
               {customerInfos && (

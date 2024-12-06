@@ -15,9 +15,7 @@ export interface VariantState {
   taxRate?: number;
   discount?: number;
   currency?: string;
-  upc?: string;
-  ean?: string;
-  gtin?: string;
+  VProductCode?: string;
   stockQuantity?: number;
   imageUrls?: string[];
   offerId?: string;
@@ -37,9 +35,7 @@ export interface ProductState {
   taxRate?: number;
   discount?: number;
   currency?: string;
-  upc?: string;
-  ean?: string;
-  gtin?: string;
+  productCode?: string;
   stockQuantity?: number;
   imageUrls: string[];
   category_id: string;
@@ -60,9 +56,7 @@ export const initialState: ProductState = {
   taxRate: 0,
   discount: 0,
   currency: "XAF",
-  upc: "",
-  ean: "",
-  gtin: "",
+  productCode: "",
   stockQuantity: 0,
   imageUrls: [],
   category_id: "",
@@ -83,9 +77,7 @@ export const initialState: ProductState = {
       taxRate: 0,
       discount: 0,
       currency: "",
-      upc: "",
-      ean: "",
-      gtin: "",
+      VProductCode: "",
       stockQuantity: 0,
       imageUrls: [],
       offerId: "",
@@ -224,9 +216,7 @@ const productSlice = createSlice({
           variant.finalPrice ?? variant.basePrice ?? state.basePrice ?? 0, // Use variant's finalPrice, otherwise fall back to basePrice
         taxRate: variant.taxRate ?? state.taxRate, // Sync tax rate, default to parent's taxRate if not provided
         discount: variant.discount ?? state.discount ?? 0, // Sync discount object, fall back to parent's discount
-        upc: variant.upc || "", // Default empty if not provided
-        ean: variant.ean || "", // Default empty if not provided
-        gtin: variant.gtin || "", // Default empty if not provided
+        productCode: variant.productCode || "", // Default empty if not provided
         stockQuantity: variant.stockQuantity ?? 0, // Default to 0 if not defined
         imageUrls:
           variant?.imageUrls?.length! > 0 ? variant.imageUrls : state.imageUrls, // Sync images, fallback to parent's images if none in variant

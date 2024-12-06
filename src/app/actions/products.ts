@@ -94,6 +94,7 @@ export async function findProductDetails(dsin?: string) {
         "brand_id",
         "name"
       );
+      const variants = await Variant.find({ product_id: product._id });
       if (product) {
         return {
           ...product.toObject(),
@@ -109,6 +110,11 @@ export async function findProductDetails(dsin?: string) {
             ...attr.toObject(),
             _id: attr._id?.toString(),
           })),
+          variants: variants.map((variant: any) => ({
+            ...variant.toObject(),
+            _id: variant._id.toString(),
+            product_id: variant.product_id.toString(),
+          })),
         };
       }
     }
@@ -119,42 +125,6 @@ export async function findProductDetails(dsin?: string) {
     // Throw an error or return null to ensure consistent return type
     // throw new Error("Failed to fetch product details");
   }
-}
-
-// Utility function to generate variations
-function generateVariations(variantAttributes: {
-  [groupName: string]: { [attrName: string]: string[] };
-}): Record<string, string>[] {
-  // Flatten the attributes from all groups
-  const flattenedAttributes: { [attrName: string]: string[] } = Object.entries(
-    variantAttributes
-  ).reduce((acc, [groupName, attributes]) => {
-    Object.entries(attributes).forEach(([attrName, attrValues]) => {
-      acc[attrName] = attrValues;
-    });
-    return acc;
-  }, {} as { [attrName: string]: string[] });
-
-  const keys = Object.keys(flattenedAttributes); // Attribute keys, e.g., ['Model', 'Weight']
-  const values = Object.values(flattenedAttributes); // Attribute values, e.g., [['Galaxie S22', 'Galaxie A14'], ['1.5 kg', '250 g']]
-
-  // Helper function to compute the cartesian product
-  const cartesian = (arr: string[][]): string[][] =>
-    arr.reduce<string[][]>(
-      (acc, curr) => acc.flatMap((d) => curr.map((e) => [...d, e])),
-      [[]] // Initial value is an array of empty arrays
-    );
-
-  // Generate combinations
-  const combinations = cartesian(values);
-
-  // Convert combinations into objects
-  return combinations.map((combination) =>
-    combination.reduce((obj, value, index) => {
-      obj[keys[index]] = value;
-      return obj;
-    }, {} as Record<string, string>)
-  );
 }
 
 export async function createProduct(formData: Prod) {
@@ -173,9 +143,7 @@ export async function createProduct(formData: Prod) {
     taxRate,
     discount,
     currency,
-    upc,
-    ean,
-    gtin,
+    productCode,
     stockQuantity,
     status,
   } = formData;
@@ -225,9 +193,7 @@ export async function createProduct(formData: Prod) {
     taxRate,
     discount,
     currency,
-    upc: upc || null,
-    ean: ean || null,
-    gtin: gtin || null,
+    productCode,
     stockQuantity,
     attributes: cleanedAttributes.length > 0 ? cleanedAttributes : null, // Set formatted attributes
     imageUrls,
@@ -248,21 +214,20 @@ export async function createProduct(formData: Prod) {
       await newVariant.save();
     })
   );
-
-  return savedProduct; // Optionally, return the saved product object
 }
 
-export async function updateProduct(
-  id: string,
-  categoryId: string,
-  attributes: { [groupName: string]: { [attrName: string]: string[] } }, // Original structure
-  files: string[],
-  formData: Prod
-) {
-  await connection();
+export async function updateProduct(id: string, formData: Prod) {
+  try {
+    // Connect to the database
+    await connection();
 
-  if (id && formData) {
+    if (!id || !formData) throw new Error("Invalid product ID or formData");
+
     const {
+      category_id,
+      attributes,
+      variants,
+      imageUrls,
       sku,
       productName,
       brand_id,
@@ -273,65 +238,83 @@ export async function updateProduct(
       taxRate,
       discount,
       currency,
-      upc,
-      ean,
-      gtin,
+      productCode,
       stockQuantity,
       status,
     } = formData;
 
-    // Reformat and clean up the attributes to remove unwanted keys
-    const cleanedAttributes = Object.keys(attributes)
-      .filter((groupName) => groupName !== "0") // Remove invalid group names like '0'
+    // Clean attributes
+    const cleanedAttributes = Object.keys(attributes || {})
+      .filter((groupName) => groupName !== "0")
       .map((groupName) => {
-        const group = attributes[groupName];
+        const group = attributes![groupName as keyof typeof attributes];
 
-        // Ensure that each group only contains valid attributes
         const cleanedAttributesObj = Object.fromEntries(
-          Object.entries(group).filter(([key]) => key !== "undefined") // Remove 'undefined' keys
+          Object.entries(group || {}).filter(([key]) => key !== "undefined")
         );
 
         return {
-          groupName: groupName, // The group name itself
-          attributes: cleanedAttributesObj, // Cleaned attributes inside that group
+          groupName,
+          attributes: cleanedAttributesObj,
         };
       });
 
+    // Update product
     const response = await Product.findByIdAndUpdate(
       id,
       {
         $set: {
-          sku: sku,
+          sku,
           productName,
-          category_id: new mongoose.Types.ObjectId(categoryId) || null,
-          brand_id: new mongoose.Types.ObjectId(brand_id as string) || null,
-          department: department,
-          description: description,
+          category_id: category_id
+            ? new mongoose.Types.ObjectId(category_id)
+            : null,
+          brand_id: brand_id
+            ? new mongoose.Types.ObjectId(brand_id as string)
+            : null,
+          department,
+          description,
           basePrice,
           finalPrice,
-          attributes: cleanedAttributes.length > 0 ? cleanedAttributes : null, // Set cleaned attributes
-          imageUrls: files || null,
+          attributes: cleanedAttributes.length > 0 ? cleanedAttributes : null,
+          imageUrls,
           taxRate,
           discount,
           currency,
-          upc: upc || null,
-          ean: ean || null,
-          gtin: gtin || null,
+          productCode,
           stockQuantity,
-          status: status,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
+          status,
+          updated_at: new Date(),
         },
       },
-      {
-        new: true,
-      }
+      { new: true }
     );
 
-    console.log(cleanedAttributes, response);
-  }
+    if (!response) throw new Error("Product not found");
 
-  revalidatePath("/admin/products/products_list");
+    // Update variants
+    if (variants?.length > 0) {
+      await Promise.all(
+        variants.map(async (variant) => {
+          await Variant.findByIdAndUpdate(
+            variant._id, // Ensure _id exists in variant
+            {
+              $set: { ...variant, product_id: response._id },
+            },
+            { new: true, upsert: true } // Upsert to create a new variant if it doesn't exist
+          );
+        })
+      );
+    }
+
+    // Revalidate cache for updated product list
+    await revalidatePath("/admin/products/products_list");
+
+    return response; // Return the updated product
+  } catch (error) {
+    console.error("Error updating product:", error);
+    throw new Error("Failed to update product");
+  }
 }
 
 export async function deleteProduct(id: string) {

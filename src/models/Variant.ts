@@ -14,9 +14,7 @@ interface IVariant extends Document {
   taxRate?: number;
   discount?: { type: string; value: number } | null;
   currency?: string;
-  upc?: string;
-  ean?: string;
-  gtin?: string;
+  VProductCode?: string;
   stockQuantity?: number;
   imageUrls: string[];
   offerId: mongoose.Types.ObjectId;
@@ -102,24 +100,13 @@ const VariantSchema = new Schema<IVariant>({
     type: String,
     default: "XAF", // Default currency (Central African CFA Franc)
   },
-  upc: {
+  VProductCode: {
     type: String,
     unique: true,
     sparse: true, // Optional but unique if present
     trim: true,
   },
-  ean: {
-    type: String,
-    unique: true,
-    sparse: true, // Optional but unique if present
-    trim: true,
-  },
-  gtin: {
-    type: String,
-    unique: true,
-    sparse: true, // Optional but unique if present
-    trim: true,
-  },
+
   stockQuantity: {
     type: Number,
     required: [true, "Stock quantity is required"],
@@ -155,4 +142,5 @@ const VariantSchema = new Schema<IVariant>({
   },
 });
 
-export const Variant = models.Variant || mongoose.model<IVariant>("Variant", VariantSchema);
+export const Variant =
+  models.Variant || mongoose.model<IVariant>("Variant", VariantSchema);

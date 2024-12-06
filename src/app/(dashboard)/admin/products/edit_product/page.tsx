@@ -31,9 +31,8 @@ const EditDeleteProduct = () => {
     taxRate,
     discount,
     currency,
-    upc,
-    ean,
-    gtin,
+    productCode,
+
     stockQuantity,
     status,
     variants,
@@ -80,15 +79,13 @@ const EditDeleteProduct = () => {
               taxRate: productData.taxRate || 0,
               discount: productData.discount || null,
               currency: productData.currency || "XAF",
-              upc: productData.upc || "",
-              ean: productData.ean || "",
-              gtin: productData.gtin || "",
+              productCode: productData.productCode || "",
               status: productData.status || "",
               stockQuantity: productData.stockQuantity || 0,
               imageUrls: productData.imageUrls || [],
               category_id: productData.category_id || "",
               attributes: formattedAttributes,
-              variants: variants,
+              variants: productData.variants,
             })
           );
         }

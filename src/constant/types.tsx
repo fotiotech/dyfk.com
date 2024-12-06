@@ -57,9 +57,7 @@ export type Product = {
   finalPrice: number; // Final price of the product after taxes and discounts
   discount?: { type: "percentage" | "fixed"; value: number } | null; // Discount details (optional)
   currency?: string; // Currency for the price (defaults to "XAF")
-  upc?: string; // Unique Product Code
-  ean?: string; // European Article Number
-  gtin?: string; // Global Trade Item Number
+  productCode?: string; // Unique Product Code
   stockQuantity: number; // Quantity in stock
   imageUrls: string[]; // Array of image URLs for the product
   attributes?: {

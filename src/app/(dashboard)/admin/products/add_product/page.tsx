@@ -1,6 +1,5 @@
 "use client";
 import Category from "./category/page";
-import { createProduct } from "@/app/actions/products";
 import { useAppSelector } from "@/app/hooks";
 import React from "react";
 import { Product } from "@/constant/types";
@@ -20,9 +19,7 @@ const AddProduct = () => {
     taxRate,
     discount,
     currency,
-    upc,
-    ean,
-    gtin,
+    productCode,
     stockQuantity,
     status,
     variants,

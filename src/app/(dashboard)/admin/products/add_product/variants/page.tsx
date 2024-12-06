@@ -16,6 +16,7 @@ import {
 import Link from "next/link";
 import FilesUploader from "@/components/FilesUploader";
 import { useFileUploader } from "@/hooks/useFileUploader ";
+import Spinner from "@/components/Spinner";
 // import { VariantState } from "../../../../../store/slices/productSlice";
 
 type AttributeType = {
@@ -38,9 +39,6 @@ const Variant = () => {
     discount,
     currency,
     sku,
-    upc,
-    ean,
-    gtin,
     imageUrls,
   } = useAppSelector((state) => state.product);
   const [attributes, setAttributes] = useState<AttributeType[]>([]);
@@ -135,9 +133,7 @@ const Variant = () => {
           taxRate: 0, // Default tax rate
           discount: 0, // Default discount
           currency: "", // Default currency
-          upc: "", // Default UPC
-          ean: "", // Default EAN
-          gtin: "", // Default GTIN
+          VProductCode: "", // Default UPC
           stockQuantity: 0, // Default stock quantity
           imageUrls: [], // Default image URLs
           offerId: "", // Placeholder for offer ID
@@ -209,25 +205,13 @@ const Variant = () => {
     }),
   };
 
-  // Local component state for product code type and value
+  console.log(variants);
 
-  console.log("variants:", variants, "AttributesVariants:", AttributesVariants);
-
-  const [codeType, setCodeType] = useState(sku);
-  const [codeValue, setCodeValue] = useState<string>(sku || "");
-
-  const handleCodeTypeChange = (selectedOption: any) => {
-    const newCodeType = selectedOption.value;
-    setCodeType(newCodeType);
-    setCodeValue(""); // Reset code value when the code type changes
-  };
-
-  // Options for react-select
   const codeTypeOptions = [
-    { value: sku, label: "SKU" },
-    { value: upc, label: "UPC" },
-    { value: ean, label: "EAN" },
-    { value: gtin, label: "GTIN" },
+    { value: "sku", label: "SKU" },
+    { value: "upc", label: "UPC" },
+    { value: "ean", label: "EAN" },
+    { value: "gtin", label: "GTIN" },
   ];
 
   return (
@@ -343,23 +327,87 @@ const Variant = () => {
               // Skip the attributes that have default values (those are not for user input)
               if (
                 [
-                  "product_id",
+                  "imageUrls",
                   "sku",
                   "basePrice",
                   "finalPrice",
                   "taxRate",
                   "discount",
-                  "currency",
-                  "upc",
-                  "ean",
-                  "gtin",
+                  "VProductCode",
                   "stockQuantity",
-                  "imageUrls",
-                  "offerId",
-                  "category_id",
                   "status",
                 ].includes(key)
               ) {
+                if (key === "VProductCode") {
+                  return (
+                    <div key={key}>
+                      <div className="mb-4">
+                        <label className="block text-sm font-medium">
+                          Select Product Code Type
+                        </label>
+                        <Select
+                          options={codeTypeOptions}
+                          styles={customStyles}
+                          name={key}
+                          value={codeTypeOptions.find(
+                            (option) => option.value === key
+                          )}
+                          onChange={(e) =>
+                            handleVariantChange(index, key, e as any)
+                          }
+                          className="mt-1 bg-none text-sec border-gray-100"
+                          placeholder="Select code type"
+                        />
+                      </div>
+
+                      <div className="mb-4">
+                        <label className="block text-sm font-medium">
+                          Enter Product Code
+                        </label>
+                        <input
+                          type="text"
+                          name={key}
+                          value={key}
+                          onChange={(e) => handleVariantChange(index, key, e)}
+                          className="mt-1 block w-full border-gray-300 
+                          bg-transparent rounded-md shadow-sm"
+                          placeholder={`Enter ${key.toUpperCase()} code`}
+                        />
+                      </div>
+                    </div>
+                  );
+                }
+
+                if (key === "imageUrls") {
+                  return (
+                    <div key={key}>
+                      {files.length > 0 && (
+                        <div className="flex flex-wrap">
+                          <h4>Uploaded Images</h4>
+                          {files.map((file, index) => (
+                            <div key={index}>
+                              {loading ? (
+                                <Spinner />
+                              ) : (
+                                <div>
+                                  <img
+                                    src={file}
+                                    alt={`Uploaded file ${index + 1}`}
+                                    width={100}
+                                  />
+                                  <button onClick={() => removeFile(index)}>
+                                    Remove
+                                  </button>
+                                </div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                      <FilesUploader />
+                    </div>
+                  );
+                }
                 return (
                   <div key={key}>
                     <label>{key}:</label>

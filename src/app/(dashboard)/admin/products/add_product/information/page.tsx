@@ -1,13 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import Select from "react-select";
-import {
-
-  ProductState,
-  updateProduct,
-} from "@/app/store/slices/productSlice"; // Assuming correct path to redux actions
+import { ProductState, updateProduct } from "@/app/store/slices/productSlice"; // Assuming correct path to redux actions
 import { RootState } from "@/app/store/store";
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
 import Link from "next/link";
@@ -16,7 +11,7 @@ const Information: React.FC = () => {
   const dispatch = useAppDispatch();
 
   // Select the current product state from the Redux store
-  const { sku, upc, ean, gtin } = useAppSelector(
+  const { sku, productCode } = useAppSelector(
     (state: RootState) => state.product
   );
 

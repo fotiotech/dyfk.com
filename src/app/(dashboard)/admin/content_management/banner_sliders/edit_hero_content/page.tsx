@@ -5,6 +5,7 @@ import {
   updateHeroContent,
 } from "@/app/actions/content_management";
 import FilesUploader from "@/components/FilesUploader";
+import Spinner from "@/components/Spinner";
 import { HeroSection } from "@/constant/types";
 import { useFileUploader } from "@/hooks/useFileUploader ";
 import { useSearchParams } from "next/navigation";
@@ -60,12 +61,18 @@ const EditHeroContent = () => {
             <h4>Uploaded Images</h4>
             {files.map((file, index) => (
               <div key={index}>
-                <img
-                  src={file}
-                  alt={`Uploaded file ${index + 1}`}
-                  width={100}
-                />
-                <button onClick={() => removeFile(index)}>Remove</button>
+                {loading ? (
+                  <Spinner />
+                ) : (
+                  <div>
+                    <img
+                      src={file}
+                      alt={`Uploaded file ${index + 1}`}
+                      width={100}
+                    />
+                    <button onClick={() => removeFile(index)}>Remove</button>
+                  </div>
+                )}
               </div>
             ))}
           </div>

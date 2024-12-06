@@ -72,24 +72,13 @@ const ProductSchema = new Schema(
       type: String,
       default: "XAF", // Default currency (Central African CFA Franc)
     },
-    upc: {
+    productCode: {
       type: String,
       unique: true,
       sparse: true, // Optional but unique if present
       trim: true,
     },
-    ean: {
-      type: String,
-      unique: true,
-      sparse: true, // Optional but unique if present
-      trim: true,
-    },
-    gtin: {
-      type: String,
-      unique: true,
-      sparse: true, // Optional but unique if present
-      trim: true,
-    },
+
     stockQuantity: {
       type: Number,
       required: [true, "Stock quantity is required"],

@@ -11,6 +11,7 @@ import { Brand } from "@/constant/types";
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
 import Link from "next/link";
 import { useFileUploader } from "@/hooks/useFileUploader ";
+import Spinner from "@/components/Spinner";
 
 const BasicInformation = () => {
   const { files, loading, addFiles, removeFile } = useFileUploader();
@@ -76,12 +77,18 @@ const BasicInformation = () => {
             <h4>Uploaded Images</h4>
             {files.map((file, index) => (
               <div key={index}>
-                <img
-                  src={file}
-                  alt={`Uploaded file ${index + 1}`}
-                  width={100}
-                />
-                <button onClick={() => removeFile(index)}>Remove</button>
+                {loading ? (
+                  <Spinner />
+                ) : (
+                  <div>
+                    <img
+                      src={file}
+                      alt={`Uploaded file ${index + 1}`}
+                      width={100}
+                    />
+                    <button onClick={() => removeFile(index)}>Remove</button>
+                  </div>
+                )}
               </div>
             ))}
           </div>
