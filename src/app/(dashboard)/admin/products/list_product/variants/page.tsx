@@ -204,7 +204,7 @@ const Variant = () => {
     { value: "gtin", label: "GTIN" },
   ];
 
-  console.log(variants);
+  console.log(variantAttributes, variants);
 
   return (
     <div className="p-3 rounded-lg shadow-md">

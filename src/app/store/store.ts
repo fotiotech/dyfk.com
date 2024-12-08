@@ -14,10 +14,10 @@ const persistConfig = {
 const persistedReducer = persistReducer(persistConfig, productReducer);
 
 export const store = configureStore({
-  reducer: { product: productReducer },
+  reducer: { product: persistedReducer },
 });
 
-// export const persistor = persistStore(store);
+export const persistor = persistStore(store);
 // TypeScript types for store
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;

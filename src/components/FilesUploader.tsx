@@ -1,5 +1,5 @@
 // FilesUploader.tsx
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { AttachFile } from "@mui/icons-material";
 import { useDropzone } from "react-dropzone";
 import Image from "next/image";
@@ -50,7 +50,7 @@ const FilesUploader: React.FC<FilesUploaderProps> = ({ files, addFiles }) => {
           )}
           <button
             type="button"
-            onClick={() => removeFile(index)}
+            onClick={() => removeFile(index, files)}
             className="absolute top-2 right-2 bg-black bg-opacity-50 text-white rounded-full p-1 hover:bg-opacity-70"
             title="Remove Image"
           >
