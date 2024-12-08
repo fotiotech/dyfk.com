@@ -47,6 +47,16 @@ const Variant = () => {
   const [attributes, setAttributes] = useState<AttributeType[]>([]);
   const [selectedAttributes, setSelectedAttributes] = useState<string[]>([]);
 
+  const memoizedVariantAttributes = useMemo(
+    () => variantAttributes,
+    [variantAttributes]
+  );
+
+  const AttributesVariants = useMemo(() => {
+    // Generate variations for each variant
+    return generateVariations(memoizedVariantAttributes || {});
+  }, [memoizedVariantAttributes]);
+
   useEffect(() => {
     dispatch(addVariant({ imageUrls: files }));
   }, []);
@@ -103,7 +113,8 @@ const Variant = () => {
       !variantAttributesData ||
       Object.keys(variantAttributesData).length === 0
     ) {
-      return []; // Return an empty array if input is empty or undefined
+      console.log("No variantAttributesData");
+      return; // Return an empty array if input is empty or undefined
     }
 
     // Step 1: Flatten the attributes from all groups
@@ -141,11 +152,6 @@ const Variant = () => {
 
     return result;
   }
-
-  const AttributesVariants = useMemo(() => {
-    // Generate variations for each variant
-    return generateVariations(variantAttributes || {});
-  }, [variantAttributes]);
 
   const handleRemoveVariant = (index: number) => {
     dispatch(removeVariant(index));
@@ -205,6 +211,10 @@ const Variant = () => {
   ];
 
   console.log(variantAttributes, variants);
+
+  useEffect(() => {
+    console.log("AttributesVariants:", AttributesVariants);
+  }, [AttributesVariants]);
 
   return (
     <div className="p-3 rounded-lg shadow-md">
@@ -330,7 +340,7 @@ const Variant = () => {
           Variant Management
         </h3>
 
-        {AttributesVariants.map((variation, index) => (
+        {AttributesVariants?.map((variation, index) => (
           <div key={index} className="mt-10">
             {Object.entries(variation).map(([key, value]) => {
               // Skip the attributes that have default values (those are not for user input)
