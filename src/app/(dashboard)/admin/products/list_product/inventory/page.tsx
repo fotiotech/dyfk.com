@@ -5,7 +5,7 @@ const Inventory = () => {
   return (
     <div>
       Inventory{" "}
-      <div>
+      <div className="flex justify-between items-center mt-6">
         <Link
           href={"/admin/products/list_product/variants"}
           className="bg-blue-500 text-white p-2 rounded"

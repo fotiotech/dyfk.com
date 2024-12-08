@@ -1,9 +1,11 @@
 "use client";
 import { createProduct } from "@/app/actions/products";
-import { useAppSelector } from "@/app/hooks";
-import React from "react";
+import { useAppDispatch, useAppSelector } from "@/app/hooks";
+import React, { useEffect, useState } from "react";
 import { Product } from "@/constant/types";
 import Link from "next/link";
+// import { persistor } from "@/app/store/store";
+import { clearProduct, ProductState } from "@/app/store/slices/productSlice";
 
 const AddProduct = () => {
   const {
@@ -24,10 +26,10 @@ const AddProduct = () => {
     stockQuantity,
     status,
     variants,
+    variantAttributes,
   } = useAppSelector((state) => state.product);
 
-  const prod = useAppSelector((state) => state.product)
-
+  const dispatch = useAppDispatch();
   const validateForm = () => {
     return (
       category_id &&
@@ -44,13 +46,13 @@ const AddProduct = () => {
   const handleSubmit = async () => {
     // if (validateForm()) {
     try {
-      await createProduct({
+      const res = await createProduct({
         category_id,
         attributes,
         variants,
         imageUrls,
         sku,
-        productName: product_name,
+        product_name,
         brand_id,
         department,
         description,
@@ -60,11 +62,18 @@ const AddProduct = () => {
         discount,
         currency,
         productCode,
-
         stockQuantity,
         status,
-      } as unknown as any);
-      alert("Product submitted successfully!");
+        variantAttributes,
+      } as unknown as ProductState);
+
+      if (res) {
+        alert("Product submitted successfully!");
+
+        // Clear Redux persisted data and reset state
+        //persistor.purge(); // Clear persisted data
+        //dispatch(clearProduct()); // Reset Redux state
+      }
     } catch (error) {
       console.error("Error submitting product:", error);
       alert("Failed to submit the product. Please try again.");

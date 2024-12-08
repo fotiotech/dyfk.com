@@ -1,16 +1,20 @@
 "use client";
 
 import { getCategory } from "@/app/actions/category";
-import { updateCategoryId } from "@/app/store/slices/productSlice";
+import {
+  clearProduct,
+  updateCategoryId,
+} from "@/app/store/slices/productSlice";
 import { Category as Cat } from "@/constant/types";
 import React, { useEffect, useState } from "react";
 import { useAppSelector, useAppDispatch } from "@/app/hooks";
 import Link from "next/link";
+// import { persistor } from "@/app/store/store";
 
 const Category = () => {
   const dispatch = useAppDispatch();
   const [category, setCategory] = useState<Cat[]>([]);
-  const { productId, category_id } = useAppSelector((state) => state.product);
+  const { category_id } = useAppSelector((state) => state.product);
   const [parentId, setParentId] = useState<string>(category_id);
   useEffect(() => {
     // Update parentId whenever categoryId changes

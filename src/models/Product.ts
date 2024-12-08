@@ -1,4 +1,6 @@
 import { Schema, model, models } from "mongoose";
+import { VariantAttribute } from "./VariantAttributes";
+import { Variant } from "./Variant";
 
 const ProductSchema = new Schema(
   {
@@ -121,6 +123,13 @@ const ProductSchema = new Schema(
     timestamps: { createdAt: "created_at", updatedAt: "updated_at" },
   }
 );
+
+ProductSchema.pre("findOneAndDelete", async function (next) {
+  const productId = this.getQuery()._id;
+  await Variant.deleteMany({ product_id: productId });
+  await VariantAttribute.deleteMany({ product_id: productId });
+  next();
+});
 
 const Product = models.Product || model("Product", ProductSchema);
 

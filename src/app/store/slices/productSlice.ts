@@ -20,6 +20,7 @@ export interface VariantState {
   dsin?: string;
   sku?: string;
   productName?: string;
+  variantName?: string;
   brand_id?: string;
   department?: string;
   description?: string;
@@ -33,7 +34,6 @@ export interface VariantState {
   imageUrls?: string[];
   offerId?: string;
   category_id?: string;
-  variantAttributes?: { [key: string]: { [key: string]: string[] } };
   status?: string;
 }
 
@@ -44,7 +44,7 @@ export interface ProductState {
   dsin: string;
   offerId: string;
   product_name: string;
-  brand_id: string;
+  brand_id: any;
   department: string;
   description: string;
   basePrice?: number;
@@ -58,6 +58,7 @@ export interface ProductState {
   category_id: string;
   getVariant?: boolean;
   attributes: { [key: string]: { [key: string]: string[] } };
+  variantAttributes?: { [key: string]: { [key: string]: string[] } };
   variants: VariantState[];
   status: "active" | "inactive";
 }
@@ -82,6 +83,7 @@ export const initialState: ProductState = {
   category_id: "",
   getVariant: false,
   attributes: {},
+  variantAttributes: {},
   variants: [
     {
       product_id: "",
@@ -89,6 +91,7 @@ export const initialState: ProductState = {
       dsin: "",
       sku: "",
       productName: "",
+      variantName: "",
       brand_id: "",
       department: "",
       description: "",
@@ -100,9 +103,10 @@ export const initialState: ProductState = {
       VProductCode: "",
       stockQuantity: 0,
       imageUrls: [] as string[],
+      attributes: {},
+      variantAttributes: {},
       offerId: "",
       category_id: "",
-      variantAttributes: {},
       status: "active",
     },
   ],
@@ -139,31 +143,24 @@ const productSlice = createSlice({
     updateVariantAttributes: (
       state,
       action: PayloadAction<{
-        variantIndex: number;
         groupName: string;
         attrName: string;
         selectedValues: string[];
       }>
     ) => {
-      const { variantIndex, groupName, attrName, selectedValues } =
-        action.payload;
+      const { groupName, attrName, selectedValues } = action.payload;
 
-      if (state.variants[variantIndex]) {
-        const variant = state.variants[variantIndex];
-
-        // Ensure variantAttributes initialization if needed
-        if (!variant.variantAttributes) {
-          variant.variantAttributes = {};
-        }
-
-        if (!variant.variantAttributes[groupName]) {
-          variant.variantAttributes[groupName] = {};
-        }
-
-        variant.variantAttributes[groupName][attrName] = selectedValues;
+      // Ensure variantAttributes initialization if needed
+      if (!state.variantAttributes) {
+        state.variantAttributes = {};
       }
-    },
 
+      if (!state.variantAttributes[groupName]) {
+        state.variantAttributes[groupName] = {};
+      }
+
+      state.variantAttributes[groupName][attrName] = selectedValues;
+    },
     updateAttributes: (
       state,
       action: PayloadAction<{
@@ -244,6 +241,7 @@ const productSlice = createSlice({
         product_id: state.productId || variant.product_id || "",
         sku: variant.sku || state.sku || "",
         productName: variant.productName || state.product_name || "",
+        variantName: variant.variantName || "",
         brand_id: variant.brand_id || state.brand_id || "",
         department: variant.department || state.department || "",
         description: variant.description || state.description || "",
@@ -256,22 +254,18 @@ const productSlice = createSlice({
           0,
         taxRate: variant.taxRate ?? state.taxRate ?? 0,
         discount: variant.discount ?? state.discount ?? 0,
-        currency: variant.currency || state.currency || "XAF",
+        currency: variant.currency || state.currency || "CFA",
         VProductCode: variant.VProductCode || state.productCode || "",
         stockQuantity: variant.stockQuantity ?? state.stockQuantity ?? 0,
         imageUrls:
-          variant.imageUrls && variant.imageUrls.length > 0
-            ? variant.imageUrls
-            : state.imageUrls,
+          variant?.imageUrls?.length! > 0 ? variant.imageUrls : state.imageUrls,
         category_id: variant.category_id || state.category_id || "",
-        variantAttributes: {
-          ...state.attributes,
-          ...variant.variantAttributes, // Merge attributes from product and variant
-        },
         status: variant.status || state.status || "active",
         offerId: variant.offerId || state.offerId,
         url_slug: variant.url_slug || state.url_slug,
         dsin: variant.dsin || state.dsin,
+        variantAttributes: variant.variantAttributes || state.variantAttributes,
+        attributes: variant.attributes || state.attributes,
       }));
     },
 
@@ -323,6 +317,9 @@ const productSlice = createSlice({
     updateCurrency(state, action: PayloadAction<string>) {
       state.currency = action.payload;
     },
+    clearProduct: (state) => {
+      return initialState; // Reset state to its initial values
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -359,6 +356,7 @@ export const {
   setProductPrice,
   updateStockQuantity,
   updateCurrency,
+  clearProduct,
 } = productSlice.actions;
 
 export default productSlice.reducer;

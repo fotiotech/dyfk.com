@@ -12,6 +12,8 @@ import {
   updateVariantField,
   updateVariantAttributes,
   VariantState,
+  ProductState,
+  initialState,
 } from "@/app/store/slices/productSlice";
 import Link from "next/link";
 import FilesUploader from "@/components/FilesUploader";
@@ -33,6 +35,7 @@ const Variant = () => {
   const {
     category_id,
     variants,
+    variantAttributes,
     basePrice,
     taxRate,
     stockQuantity,
@@ -83,7 +86,6 @@ const Variant = () => {
   ) => {
     dispatch(
       updateVariantAttributes({
-        variantIndex, // Specify which variant to update
         groupName,
         attrName,
         selectedValues: selectedValues || [], // Default to an empty array if null
@@ -94,38 +96,33 @@ const Variant = () => {
     dispatch(syncVariantWithParent());
   };
 
-  function generateVariations(
-    variantAttributesData: VariantState["variantAttributes"]
-  ) {
-    if (!variantAttributesData) return []; // Handle empty or undefined input gracefully
+  function generateVariations(variantAttributesData: {
+    [groupName: string]: { [attributeName: string]: string[] };
+  }) {
+    if (
+      !variantAttributesData ||
+      Object.keys(variantAttributesData).length === 0
+    ) {
+      return []; // Return an empty array if input is empty or undefined
+    }
 
-    // Flatten the attributes from all groups
-    const flattenedAttributes: { [attrName: string]: string[] } =
-      Object.entries(variantAttributesData).reduce((acc, [_, attributes]) => {
-        Object.entries(attributes).forEach(([attrName, attrValues]) => {
-          acc[attrName] = attrValues;
+    // Step 1: Flatten the attributes from all groups
+    const flattenedAttributes = Object.values(variantAttributesData).reduce(
+      (acc, groupAttributes) => {
+        Object.entries(groupAttributes).forEach(([attrName, attrValues]) => {
+          acc[attrName] = attrValues; // Combine attributes from all groups
         });
         return acc;
-      }, {} as { [attrName: string]: string[] });
+      },
+      {} as { [attrName: string]: string[] }
+    );
 
-    const keys = Object.keys(flattenedAttributes); // Attribute keys, e.g., ['Color', 'Size', 'Weight']
-    const values = Object.values(flattenedAttributes); // Attribute values, e.g., [['Red', 'Blue'], ['M', 'L'], ['1kg', '2kg']]
-
-    // Generate all combinations of attribute values
-    const combine = (arr: string[][]) =>
-      arr.reduce(
-        (acc, curr) => acc.flatMap((x) => curr.map((y) => [...x, y])),
-        [[]] as string[][]
-      );
-
-    const combinations = combine(values);
-
-    // Map each combination to an object with flattened attributes
-    return combinations.map((combo) =>
-      combo.reduce(
-        (acc, val, idx) => ({
-          ...acc,
-          [keys[idx]]: val, // Map attribute keys to their respective values
+    // Step 2: Generate separate objects for each attribute and value
+    const result = Object.entries(flattenedAttributes).flatMap(
+      ([attrName, attrValues]) =>
+        attrValues.map((value) => ({
+          [attrName]: value, // Map attribute to its value
+          variantName: "", // Placeholder for the variant name
           product_id: "", // Placeholder for product ID
           sku: "", // Placeholder for SKU
           basePrice: 0, // Default base price
@@ -133,27 +130,22 @@ const Variant = () => {
           taxRate: 0, // Default tax rate
           discount: 0, // Default discount
           currency: "", // Default currency
-          VProductCode: "", // Default UPC
+          VProductCode: "", // Default product code
           stockQuantity: 0, // Default stock quantity
           imageUrls: [], // Default image URLs
           offerId: "", // Placeholder for offer ID
           category_id: "", // Placeholder for category ID
           status: "active", // Default status
-        }),
-        {} as Omit<VariantState, "variantAttributes">
-      )
+        }))
     );
+
+    return result;
   }
 
   const AttributesVariants = useMemo(() => {
-    if (variants.length > 0) {
-      // Generate variations for each variant
-      return variants.flatMap((variant) =>
-        generateVariations(variant.variantAttributes || {})
-      );
-    }
-    return [];
-  }, [variants]);
+    // Generate variations for each variant
+    return generateVariations(variantAttributes || {});
+  }, [variantAttributes]);
 
   const handleRemoveVariant = (index: number) => {
     dispatch(removeVariant(index));
@@ -205,14 +197,14 @@ const Variant = () => {
     }),
   };
 
-  console.log(imageUrls, variants);
-
   const codeTypeOptions = [
     { value: "sku", label: "SKU" },
     { value: "upc", label: "UPC" },
     { value: "ean", label: "EAN" },
     { value: "gtin", label: "GTIN" },
   ];
+
+  console.log(variants);
 
   return (
     <div className="p-3 rounded-lg shadow-md">
@@ -225,8 +217,27 @@ const Variant = () => {
             {AttributesVariants?.map((variant: any, idx: number) => (
               <div key={`variant-${idx}`} className="flex gap-10 pb-2 text-sm">
                 <div>
-                  {Object.entries(variant).map(
-                    ([key, value]: any, index: number) => (
+                  {Object.entries(variant)
+                    .filter(
+                      ([key]) =>
+                        ![
+                          "product_id",
+                          "variantName",
+                          "currency",
+                          "category_id",
+                          "offerId",
+                          "imageUrls",
+                          "sku",
+                          "basePrice",
+                          "finalPrice",
+                          "taxRate",
+                          "discount",
+                          "VProductCode",
+                          "stockQuantity",
+                          "status",
+                        ].includes(key)
+                    )
+                    .map(([key, value]: [string, any], index: number) => (
                       <div key={`${key}-${index + 1}`} className="flex gap-2">
                         <strong>
                           {index + 1} {key}:
@@ -242,8 +253,7 @@ const Variant = () => {
                           </button>
                         </div>
                       </div>
-                    )
-                  )}
+                    ))}
                 </div>
               </div>
             ))}
@@ -321,8 +331,7 @@ const Variant = () => {
         </h3>
 
         {AttributesVariants.map((variation, index) => (
-          <div key={index} className="variation-form">
-            <h3>Variation {index + 1}</h3>
+          <div key={index} className="mt-10">
             {Object.entries(variation).map(([key, value]) => {
               // Skip the attributes that have default values (those are not for user input)
               if (
@@ -398,8 +407,48 @@ const Variant = () => {
                     />
                   </div>
                 );
+              } else {
+                if (
+                  ![
+                    "product_id",
+                    "variantName",
+                    "currency",
+                    "category_id",
+                    "offerId",
+                    "imageUrls",
+                    "sku",
+                    "basePrice",
+                    "finalPrice",
+                    "taxRate",
+                    "discount",
+                    "VProductCode",
+                    "stockQuantity",
+                    "status",
+                  ].includes(key)
+                ) {
+                  return (
+                    <div key={key}>
+                      <label htmlFor="variant name" className="my-3 mt-5">
+                        {key}: {value}
+                      </label>
+                      <input
+                        title="variant name"
+                        type="text"
+                        name={key}
+                        value={value}
+                        onChange={() =>
+                          handleVariantChange(
+                            index,
+                            "variantName",
+                            value as string
+                          )
+                        }
+                        className="bg-transparent"
+                      />
+                    </div>
+                  );
+                }
               }
-              return null;
             })}
           </div>
         ))}

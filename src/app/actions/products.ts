@@ -7,9 +7,9 @@ import { connection } from "@/utils/connection";
 import mongoose from "mongoose";
 import { revalidatePath } from "next/cache";
 import slugify from "slugify";
-import { VariantState } from "../store/slices/productSlice";
 import { Variant } from "@/models/Variant";
-const { ObjectId } = require("mongodb");
+import { VariantAttribute } from "@/models/VariantAttributes";
+import { ProductState } from "../store/slices/productSlice";
 
 // Generate a slug from the product name and department
 function generateSlug(name: string, department: string | null) {
@@ -98,32 +98,52 @@ export async function findProducts(id?: string) {
   }
 }
 
-export async function findProductDetails(dsin?: string) {
+// Define return type for `findProductDetails`
+interface ProductDetails {
+  _id: string;
+  category_id: string | null;
+  brand_id: { _id: string; name: string } | null;
+  attributes: Array<any>;
+  variantAttributes: Array<any>;
+  [key: string]: any;
+}
+
+export async function findProductDetails(
+  dsin?: string
+): Promise<ProductDetails | null> {
   try {
+    // Ensure database connection is established
     await connection();
-    console.log(mongoose.modelNames());
+
     if (dsin) {
+      // Find product by dsin, and populate the brand information
       const product = await Product.findOne({ dsin }).populate(
         "brand_id",
         "name"
       );
-      const variants = await Variant.find({ product_id: product._id });
+
       if (product) {
+        // Find variant attributes related to the product
+        const variantAttributes = await VariantAttribute.find({
+          product_id: product._id,
+        });
+
+        console.log("Product details:", product);
+        console.log("Variant attributes:", variantAttributes);
+
+        // Return sanitized product details
         return {
+          // Safely convert to object, and ensure proper conversion of fields
           ...product.toObject(),
           _id: product._id?.toString(),
           category_id: product.category_id?.toString() ?? null,
-          brand_id: product.brand_id?._id
+          brand_id: product.brand_id
             ? {
-                _id: product.brand_id._id.toString(),
+                _id: product.brand_id._id?.toString(),
                 name: product.brand_id.name,
               }
             : null,
-          attributes: product.attributes?.map((attr: any) => ({
-            ...attr.toObject(),
-            _id: attr._id?.toString(),
-          })),
-          variants: variants.map((variant: any) => ({
+          variantAttributes: variantAttributes.map((variant: any) => ({
             ...variant.toObject(),
             _id: variant._id.toString(),
             product_id: variant.product_id.toString(),
@@ -131,23 +151,60 @@ export async function findProductDetails(dsin?: string) {
         };
       }
     }
-    // Explicitly return null if no product is found
+
+    // Return null if no product is found
     return null;
   } catch (error) {
+    // Log the error for debugging
     console.error("Error fetching product details:", error);
-    // Throw an error or return null to ensure consistent return type
-    // throw new Error("Failed to fetch product details");
+    // Optionally, rethrow the error or return null
+    throw new Error("Failed to fetch product details.");
   }
 }
 
-export async function createProduct(formData: Prod) {
+interface VariantDetails {
+  _id: string;
+  variantAttributesId: string;
+  [key: string]: any;
+}
+
+export async function findVariantDetails(
+  product_id: string,
+  variantName: string
+): Promise<VariantDetails | null> {
+  try {
+    await connection();
+
+    if (product_id && variantName) {
+      const variant = await Variant.findOne(
+        { product_id, variantName } // Ensure proper filtering
+      );
+
+      if (variant) {
+        return {
+          ...variant.toObject(),
+          _id: variant?._id.toString(),
+          product_id: variant.product_id?.toString(),
+        };
+      }
+    }
+
+    return null; // Return null if no variant is found
+  } catch (error) {
+    console.error("Error fetching variant details:", error);
+    throw new Error("Failed to fetch variant details.");
+  }
+}
+
+export async function createProduct(formData: ProductState) {
   const {
     category_id,
     attributes,
     variants,
+    variantAttributes,
     imageUrls,
     sku,
-    productName,
+    product_name,
     brand_id,
     department,
     description,
@@ -161,40 +218,34 @@ export async function createProduct(formData: Prod) {
     status,
   } = formData;
 
-  console.log(formData);
-
-  // Validation for required fields
-  if (!productName || !category_id) {
-    return { error: "Product name and category ID are required." };
+  if (!product_name || !category_id) {
+    throw new Error("Product name and category ID are required.");
   }
 
-  // Generate required fields
-  const urlSlug = generateSlug(productName, department);
+  const urlSlug = generateSlug(product_name, department);
   const dsin = generateDsin();
 
-  // Clean attributes
   const cleanedAttributes = Object.entries(attributes || {})
-    .filter(([groupName]) => groupName !== "0") // Remove invalid group names
+    .filter(([groupName]) => groupName !== "0")
     .map(([groupName, group]) => ({
       groupName,
       attributes: Object.fromEntries(
-        Object.entries(group).filter(([key]) => key !== "undefined") // Remove invalid attributes
+        Object.entries(group).filter(([key]) => key !== "undefined")
       ),
     }));
 
   await connection();
 
-  // Create the product
   const newProduct = new Product({
     url_slug: urlSlug,
     dsin,
     sku,
-    productName,
+    productName: product_name,
     category_id: new mongoose.Types.ObjectId(category_id),
     brand_id: brand_id
-      ? new mongoose.Types.ObjectId(
-          typeof brand_id === "string" ? brand_id : brand_id._id
-        )
+      ? typeof brand_id === "string"
+        ? brand_id.toString()
+        : brand_id?._id.toString()
       : null,
     department,
     description,
@@ -212,38 +263,64 @@ export async function createProduct(formData: Prod) {
     updated_at: new Date().toISOString(),
   });
 
-  // Save the product
   const savedProduct = await newProduct.save();
 
-  if (savedProduct) {
-    // Save the variants
-    await Promise.all(
-      variants.map(async (variant) => {
-        const { variantAttributes, ...rest } = variant;
+  if (!savedProduct) throw new Error("Failed to save the product.");
 
-        const newVariant = new Variant({
-          product_id: savedProduct?._id, // This is a valid ObjectId
-          offerId: savedProduct?.offerId, // This can be null if not available
-          variantAttributes: Object.entries(variantAttributes as unknown as any)
-            .map(([groupName, attributes]) =>
-              Object.entries(attributes as unknown as any).map(
-                ([attrName, values]) => ({
-                  groupName,
-                  attributeName: attrName,
-                  values,
-                })
-              )
-            )
-            .flat(),
-          ...rest, // Other variant fields
-        });
+  const flattenedAttributes = Object.entries(variantAttributes?.general!).map(
+    ([name, values]) => ({
+      name,
+      values,
+    })
+  );
 
-        await newVariant.save();
-      })
-    );
-  }
+  const variantAttributesSaved = await Promise.all(
+    flattenedAttributes.map(async (attribute) => {
+      const variantAttribute = new VariantAttribute({
+        product_id: savedProduct?._id.toString(),
+        name: attribute.name,
+        values: attribute.values,
+      });
 
-  return { success: true, product: savedProduct };
+      return await variantAttribute.save();
+    })
+  );
+
+  console.log(variants);
+
+  const variantsSaved = await Promise.all(
+    variants.map(async (variant) => {
+      const newVariant = new Variant({
+        product_id: savedProduct?._id.toString(), // Map relevant IDs
+        url_slug: generateDsin(),
+        dsin: generateDsin(),
+        sku: generateDsin(),
+        productName: variant?.productName,
+        variantName: variant?.variantName,
+        brand_id: variant?.brand_id
+          ? new mongoose.Types.ObjectId(variant.brand_id)
+          : null,
+        category_id: new mongoose.Types.ObjectId(variant.category_id),
+        department: variant.department,
+        description: variant.description || "",
+        basePrice: variant.basePrice,
+        finalPrice: variant.finalPrice,
+        taxRate: variant.taxRate || 0,
+        discount: variant.discount || null,
+        currency: variant.currency || "CFA",
+        stockQuantity: variant.stockQuantity,
+        attributes: variant.attributes || [],
+        variantAttributes: variant.variantAttributes || [],
+        imageUrls: variant.imageUrls || [],
+        VProductCode: generateDsin(),
+        status: variant.status || "active",
+      });
+
+      return await newVariant.save();
+    })
+  );
+
+  return { product: savedProduct, variantAttributesSaved, variantsSaved };
 }
 
 export async function updateProduct(id: string, formData: Prod) {

@@ -1,8 +1,9 @@
 "use client";
 
-import { findProductDetails } from "@/app/actions/products";
+import { findProductDetails, findVariantDetails } from "@/app/actions/products";
 import { useUser } from "@/app/context/UserContext";
 import Loading from "@/app/loading";
+import { VariantState } from "@/app/store/slices/productSlice";
 import AddToCart from "@/components/AddToCart";
 import CheckoutButton from "@/components/CheckoutButton";
 import DetailImages from "@/components/DetailImages";
@@ -23,6 +24,10 @@ const DetailsPage = ({
 }) => {
   const { customerInfos } = useUser();
   const [details, setDetails] = useState<Product | null>(null);
+  const [variant, setVariant] = useState({
+    id: "",
+    variantName: "",
+  });
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -31,7 +36,7 @@ const DetailsPage = ({
       try {
         if (params.dsin) {
           const response = await findProductDetails(params.dsin);
-          setDetails(response);
+          setDetails(response as any as Product);
         } else {
           console.warn("DSIN is undefined, skipping fetch.");
         }
@@ -43,6 +48,16 @@ const DetailsPage = ({
     }
     getDetails();
   }, [params.dsin]);
+
+  useEffect(() => {
+    async function getVariantDetails() {
+      if (variant.id) {
+        const res = await findVariantDetails(variant.id, variant.variantName);
+        setDetails(res as unknown as Product);
+      }
+    }
+    getVariantDetails();
+  }, [variant]);
 
   console.log(details);
 
@@ -106,43 +121,89 @@ const DetailsPage = ({
               <div className="text-2xl font-bold text-gray-800">
                 <Prices amount={details?.finalPrice as number} />
               </div>
-              {details?.variants?.length! > 0 && (
+              {details?.variantAttributes?.length! > 0 && (
                 <div>
-                  {details?.variants.map((variant, index) => (
-                    <div key={index} className="mb-4">
-                      {Object.entries(variant as any)
-                        .filter((v: any) => v.variantAttributes === "general")
-                        .map(([key, value]: any, idx) => (
-                          <div
-                            key={`${key}-${idx}`}
-                            className="flex flex-col gap-3 border-b p-2 text-sm"
-                          >
-                            <strong>{key}</strong>
-                            <span className="">
-                              {Array.isArray(value) ? (
-                                value.map((v) => (
-                                  <p
-                                    className="p-2 px-4 border 
-                                  rounded-lg bg-gray-100"
+                  {details?.variantAttributes.map((attribute, attrIndex) => {
+                    if (attribute.name.toLocaleLowerCase() === "color") {
+                      return (
+                        <div key={attrIndex} className="mb-4">
+                          {attribute.name &&
+                          attribute.values &&
+                          Array.isArray(attribute.values) ? (
+                            <div className="flex flex-col gap-2 border-b px-2 text-sm">
+                              <strong>{attribute.name}:</strong>
+                              {/* Display each value in the 'values' array */}
+                              <div className="whitespace-nowrap ">
+                                {attribute.values.map((value, valueIdx) => (
+                                  <div
+                                    className={`${
+                                      details?.variantName === value
+                                        ? "border-2 border-blue-700"
+                                        : ""
+                                    } mx-2 inline-block rounded-lg`}
                                   >
-                                    {v}
-                                  </p>
-                                ))
-                              ) : (
-                                <p
-                                  className="p-2 px-4 border 
-                                rounded-lg bg-gray-100"
-                                >
-                                  {value}
-                                </p>
-                              )}
-                            </span>
-                          </div>
-                        ))}
-                    </div>
-                  ))}
+                                    <p
+                                      key={valueIdx}
+                                      onClick={() =>
+                                        setVariant({
+                                          id: details?._id as string,
+                                          variantName: value,
+                                        })
+                                      }
+                                      style={{ backgroundColor: `${value}` }}
+                                      className={` p-6 rounded-lg m-1`}
+                                    ></p>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          ) : null}
+                        </div>
+                      );
+                    }
+
+                    if (attribute.name.toLocaleLowerCase() === "sizes") {
+                      return (
+                        <div key={attrIndex} className="mb-4">
+                          {attribute.name &&
+                          attribute.values &&
+                          Array.isArray(attribute.values) ? (
+                            <div className="flex flex-col gap-2 border-b px-2 text-sm">
+                              <strong>{attribute.name}:</strong>
+                              {/* Display each value in the 'values' array */}
+                              <div className="whitespace-nowrap ">
+                                {attribute.values.map((value, valueIdx) => (
+                                  <div
+                                    className={`${
+                                      details?.variantName === value
+                                        ? "border-2 border-blue-700"
+                                        : ""
+                                    } mx-2 inline-block rounded-lg`}
+                                  >
+                                    <p
+                                      key={valueIdx}
+                                      onClick={() =>
+                                        setVariant({
+                                          id: details?._id as string,
+                                          variantName: value,
+                                        })
+                                      }
+                                      className={` p-6 px-14 border rounded-lg m-1`}
+                                    >
+                                      {value}
+                                    </p>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          ) : null}
+                        </div>
+                      );
+                    }
+                  })}
                 </div>
               )}
+
               {customerInfos && (
                 <Link href="/checkout/billing_address">
                   <div className="flex items-center gap-2 text-sm text-gray-700">
@@ -201,7 +262,7 @@ const DetailsPage = ({
         </div>
 
         {/* Cart Section */}
-        <div className="xl:w-1/4 bg-gray-50 p-6">
+        <div className="xl:w-1/4 bg-gray-50 p-3">
           <h2 className="font-bold text-lg xl:text-2xl mb-4">
             Items in Your Cart
           </h2>
@@ -210,7 +271,7 @@ const DetailsPage = ({
       </div>
 
       {/* Product Gallery */}
-      <div className="py-8 px-6">
+      <div className="py-8 px-3">
         <h2 className="text-lg font-semibold mb-4">Product Gallery</h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
           {details?.imageUrls?.map((image, idx) => (
@@ -227,7 +288,7 @@ const DetailsPage = ({
       </div>
 
       {/* Reviews Section */}
-      <div className="p-6 border-t">
+      <div className=" border-t">
         <ReviewForm productId={details?._id as string} />
         <ProductReviews productId={details?._id as string} />
       </div>

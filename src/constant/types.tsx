@@ -42,12 +42,20 @@ export type Brand = {
   status?: "active" | "inactive";
 };
 
+interface VariantAttribute {
+  _id: string;
+  name: string;
+  product_id: string;
+  values: string[];
+}
+
 export type Product = {
   _id?: string;
   url_slug?: string; // Unique slug for the product URL
   dsin?: string; // Unique identifier for the product
   sku?: string; // Stock Keeping Unit
   productName: string; // Name of the product
+  variantName: string; // Name of the product
   category_id: string; // ID of the category the product belongs to
   brand_id: string | { _id: string; name: string }; // ID or populated brand object
   department: string; // Department the product belongs to
@@ -65,6 +73,7 @@ export type Product = {
     attributes: Record<string, string[]>; // Map of attribute names to string arrays
   }[];
   variants: VariantState[];
+  variantAttributes: VariantAttribute[];
   offerId?: string; // Optional ID of an associated offer
   status?: "active" | "inactive"; // Status of the product
   created_at?: string; // Timestamp when the product was created

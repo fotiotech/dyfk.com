@@ -4,10 +4,12 @@ const VariantSchema = new Schema({
   product_id: {
     type: Schema.Types.ObjectId,
     ref: "Product",
-    // required: true,
+    required: [true, "Product ID is required"],
   },
   VProductCode: {
     type: String,
+    unique: false,
+    default: "ABC",
   },
   url_slug: {
     type: String,
@@ -23,6 +25,11 @@ const VariantSchema = new Schema({
     type: String,
     trim: true,
     required: [true, "Product name is required"],
+  },
+  variantName: {
+    type: String,
+    trim: true,
+    required: [true, "Variant name is required"],
   },
   category_id: {
     type: Schema.Types.ObjectId,
@@ -86,18 +93,18 @@ const VariantSchema = new Schema({
     {
       groupName: {
         type: String,
-        required: true,
+        required: false,
       },
       attributes: {
-        type: Map,
-        of: String,
+        type: Object, // Change to Object instead of Map
+        required: false,
       },
     },
   ],
   // offerId: {
   //   type: Schema.Types.ObjectId,
   //   ref: "Offer",
-  //   required: false,
+  //   required: [false, "Offer ID is optional"],
   // },
   status: {
     type: String,
