@@ -241,7 +241,7 @@ export async function createProduct(formData: ProductState) {
     dsin,
     sku,
     productName: product_name,
-    category_id: new mongoose.Types.ObjectId(category_id),
+    category_id: category_id.toString(),
     brand_id: brand_id
       ? typeof brand_id === "string"
         ? brand_id.toString()
