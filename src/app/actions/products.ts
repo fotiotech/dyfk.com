@@ -297,10 +297,8 @@ export async function createProduct(formData: ProductState) {
         sku: generateDsin(),
         productName: variant?.productName,
         variantName: variant?.variantName,
-        brand_id: variant?.brand_id
-          ? new mongoose.Types.ObjectId(variant.brand_id)
-          : null,
-        category_id: new mongoose.Types.ObjectId(variant.category_id),
+        brand_id: variant?.brand_id ? variant?.brand_id.toString() : null,
+        category_id: variant?.category_id?.toString(),
         department: variant.department,
         description: variant.description || "",
         basePrice: variant.basePrice,
