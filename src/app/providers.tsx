@@ -8,7 +8,7 @@ import { SessionProvider } from "next-auth/react";
 import { Provider as ReduxProvider } from "react-redux";
 import { UserProvider } from "./context/UserContext";
 import { CartProvider } from "./context/CartContext";
-import { persistor, store } from "./store/store";
+import { store } from "./store/store";
 import { PersistGate } from "redux-persist/integration/react";
 
 interface ProviderProps {
@@ -23,11 +23,11 @@ const Providers = ({ children }: ProviderProps) => {
       <I18nextProvider i18n={i18n}>
         <QueryClientProvider client={queryClient}>
           <ReduxProvider store={store}>
-            <PersistGate loading={null} persistor={persistor}>
-              <CartProvider>
-                <UserProvider>{children}</UserProvider>
-              </CartProvider>
-            </PersistGate>
+            {/* <PersistGate loading={null} persistor={persistor}> */}
+            <CartProvider>
+              <UserProvider>{children}</UserProvider>
+            </CartProvider>
+            {/* </PersistGate> */}
           </ReduxProvider>
         </QueryClientProvider>
       </I18nextProvider>
