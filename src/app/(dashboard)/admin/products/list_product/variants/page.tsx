@@ -2,7 +2,7 @@
 
 import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
-import Select from "react-select";
+import Select, { SingleValue } from "react-select";
 import { findCategoryAttributesAndValues } from "@/app/actions/attributes";
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
 import {
@@ -28,6 +28,8 @@ type AttributeType = {
     attrValue: string[];
   }[];
 };
+
+type OptionType = { value: string; label: string };
 
 const Variant = () => {
   const { files, loading, addFiles, removeFile } = useFileUploader();
@@ -63,22 +65,24 @@ const Variant = () => {
 
   useEffect(() => {
     const fetchAttributes = async () => {
-      if (category_id !== "") {
-        const response = await findCategoryAttributesAndValues(category_id);
-        if (response?.length > 0) {
-          const formattedAttributes = response[0].groupedAttributes
-            ?.filter((group: any) => group.groupName === "General")
-            ?.map((group: any) => ({
-              groupName: group.groupName
-                ? group.groupName.toLowerCase()
-                : "additional details",
-              attributes: group.attributes?.map((attr: any) => ({
-                attrName: attr.attributeName,
-                attrValue: attr.attributeValues?.map((val: any) => val.value),
-              })),
-            }));
-          setAttributes(formattedAttributes);
-        }
+      // if (category_id !== "") {
+      const response = await findCategoryAttributesAndValues(
+        "6733d171a382a19b2a147a70"
+      );
+      if (response?.length > 0) {
+        const formattedAttributes = response[0].groupedAttributes
+          ?.filter((group: any) => group.groupName === "General")
+          ?.map((group: any) => ({
+            groupName: group.groupName
+              ? group.groupName.toLowerCase()
+              : "additional details",
+            attributes: group.attributes?.map((attr: any) => ({
+              attrName: attr.attributeName,
+              attrValue: attr.attributeValues?.map((val: any) => val.value),
+            })),
+          }));
+        setAttributes(formattedAttributes);
+        // }
       }
     };
     try {
@@ -160,19 +164,19 @@ const Variant = () => {
   const handleVariantChange = (
     index: number,
     field: keyof VariantState,
-    value: string | React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    value: string | React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    subField?: string // Optional subField
   ) => {
-    // Determine the final value
     const finalValue =
       typeof value === "string"
         ? value
         : (value.target as HTMLInputElement).value;
 
-    // Dispatch the action with the appropriate payload
     dispatch(
       updateVariantField({
         index,
         field,
+        subField, // Include subField in the action
         value: finalValue,
       })
     );
@@ -203,7 +207,9 @@ const Variant = () => {
     }),
   };
 
-  const codeTypeOptions = [
+  const [codeType, setCodeType] = useState("sku");
+
+  const codeTypeOptions: OptionType[] = [
     { value: "sku", label: "SKU" },
     { value: "upc", label: "UPC" },
     { value: "ean", label: "EAN" },
@@ -367,13 +373,18 @@ const Variant = () => {
                         <Select
                           options={codeTypeOptions}
                           styles={customStyles}
-                          name={key}
                           value={codeTypeOptions.find(
-                            (option) => option.value === key
+                            (option) =>
+                              option.value ===
+                              variants[index]?.VProductCode?.type
                           )}
-                          onChange={(e) =>
-                            handleVariantChange(index, key, e as any)
-                          }
+                          onChange={(option: SingleValue<OptionType>) => {
+                            handleVariantChange(
+                              index,
+                              "VProductCode",
+                              option?.value || ""
+                            );
+                          }}
                           className="mt-1 bg-none text-sec border-gray-100"
                           placeholder="Select code type"
                         />
@@ -385,12 +396,17 @@ const Variant = () => {
                         </label>
                         <input
                           type="text"
-                          name={key}
-                          value={key}
-                          onChange={(e) => handleVariantChange(index, key, e)}
-                          className="mt-1 block w-full border-gray-300 
-                          bg-transparent rounded-md shadow-sm"
-                          placeholder={`Enter ${key.toUpperCase()} code`}
+                          value={variants[index]?.VProductCode?.value || ""}
+                          onChange={(e) =>
+                            handleVariantChange(
+                              index,
+                              "VProductCode",
+                              e,
+                              "value"
+                            )
+                          }
+                          className="mt-1 block w-full border-gray-300 bg-transparent rounded-md shadow-sm"
+                          placeholder="Enter Product Code"
                         />
                       </div>
                     </div>

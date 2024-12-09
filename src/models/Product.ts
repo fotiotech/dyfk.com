@@ -74,12 +74,12 @@ const ProductSchema = new Schema(
       type: String,
       default: "XAF", // Default currency (Central African CFA Franc)
     },
-    productCode: {
-      type: String,
-      unique: true,
-      sparse: true, // Optional but unique if present
-      trim: true,
-    },
+    // productCode: {
+    //   type: Object,
+    //   // unique: true,
+    //   sparse: true, // Optional but unique if present
+    //   trim: true,
+    // },
 
     stockQuantity: {
       type: Number,

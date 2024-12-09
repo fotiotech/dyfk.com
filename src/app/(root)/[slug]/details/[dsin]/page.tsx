@@ -124,7 +124,7 @@ const DetailsPage = ({
               {details?.variantAttributes?.length! > 0 && (
                 <div>
                   {details?.variantAttributes.map((attribute, attrIndex) => {
-                    if (attribute.name.toLocaleLowerCase() === "color") {
+                    if (attribute?.name === "Color") {
                       return (
                         <div key={attrIndex} className="mb-4">
                           {attribute.name &&
@@ -162,7 +162,7 @@ const DetailsPage = ({
                       );
                     }
 
-                    if (attribute.name.toLocaleLowerCase() === "sizes") {
+                    if (attribute.name === "Sizes") {
                       return (
                         <div key={attrIndex} className="mb-4">
                           {attribute.name &&

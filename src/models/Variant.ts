@@ -6,11 +6,11 @@ const VariantSchema = new Schema({
     ref: "Product",
     required: [true, "Product ID is required"],
   },
-  VProductCode: {
-    type: String,
-    unique: false,
-    default: "ABC",
-  },
+  // VProductCode: {
+  //   type: Object,
+  //   unique: false,
+  //   default: "ABC",
+  // },
   url_slug: {
     type: String,
   },

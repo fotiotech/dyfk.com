@@ -29,7 +29,7 @@ export interface VariantState {
   taxRate?: number;
   discount?: number;
   currency?: string;
-  VProductCode?: string;
+  VProductCode?: { type: string; value: string };
   stockQuantity?: number;
   imageUrls?: string[];
   offerId?: string;
@@ -52,7 +52,7 @@ export interface ProductState {
   taxRate?: number;
   discount?: number;
   currency?: string;
-  productCode?: string;
+  productCode?: { type: string; value: string };
   stockQuantity?: number;
   imageUrls: string[];
   category_id: string;
@@ -77,7 +77,7 @@ export const initialState: ProductState = {
   taxRate: 0,
   discount: 0,
   currency: "XAF",
-  productCode: "",
+  productCode: { type: "", value: "" },
   stockQuantity: 0,
   imageUrls: [] as string[],
   category_id: "",
@@ -100,7 +100,7 @@ export const initialState: ProductState = {
       taxRate: 0,
       discount: 0,
       currency: "",
-      VProductCode: "",
+      VProductCode: { type: "", value: "" },
       stockQuantity: 0,
       imageUrls: [] as string[],
       attributes: {},
@@ -191,28 +191,34 @@ const productSlice = createSlice({
         index: number;
         field: keyof VariantState;
         value: any;
+        subField?: string;
       }>
     ) => {
-      const { index, field, value } = action.payload;
-
-      // Make a copy of the variants array
+      const { index, field, value, subField } = action.payload;
       const updatedVariants = [...state.variants];
 
-      // Ensure the specific variant exists
-      if (!updatedVariants[index]) {
-        updatedVariants[index] = {}; // Initialize the variant if it's not defined
+      if (subField && field === "VProductCode" && typeof value === "string") {
+        const existingCode = updatedVariants[index].VProductCode;
+
+        if (existingCode && typeof existingCode === "object") {
+          updatedVariants[index] = {
+            ...updatedVariants[index],
+            VProductCode: {
+              ...existingCode,
+              [subField]: value,
+            },
+          };
+        }
+      } else {
+        updatedVariants[index] = {
+          ...updatedVariants[index],
+          [field]: value,
+        };
       }
 
-      // Update the specific field in the correct variant
-      updatedVariants[index] = {
-        ...updatedVariants[index], // Keep the existing fields
-        [field]: value, // Update the specific field with the new value
-      };
-
-      // Return the new state with updated variants
       return {
         ...state,
-        variants: updatedVariants, // Updated variants array
+        variants: updatedVariants,
       };
     },
 
@@ -255,7 +261,8 @@ const productSlice = createSlice({
         taxRate: variant.taxRate ?? state.taxRate ?? 0,
         discount: variant.discount ?? state.discount ?? 0,
         currency: variant.currency || state.currency || "CFA",
-        VProductCode: variant.VProductCode || state.productCode || "",
+        VProductCode: variant.VProductCode ||
+          state.productCode || { type: "", value: "" },
         stockQuantity: variant.stockQuantity ?? state.stockQuantity ?? 0,
         imageUrls:
           variant?.imageUrls?.length! > 0 ? variant.imageUrls : state.imageUrls,

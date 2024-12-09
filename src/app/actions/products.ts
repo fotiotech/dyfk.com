@@ -254,7 +254,7 @@ export async function createProduct(formData: ProductState) {
     taxRate,
     discount,
     currency,
-    productCode,
+    // productCode,
     stockQuantity,
     attributes: cleanedAttributes.length > 0 ? cleanedAttributes : null,
     imageUrls: imageUrls || [],
@@ -310,7 +310,7 @@ export async function createProduct(formData: ProductState) {
         attributes: variant.attributes || [],
         variantAttributes: variant.variantAttributes || [],
         imageUrls: variant.imageUrls || [],
-        VProductCode: generateDsin(),
+        // VProductCode: generateDsin(),
         status: variant.status || "active",
       });
 
