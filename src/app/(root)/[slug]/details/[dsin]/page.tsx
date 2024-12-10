@@ -57,7 +57,7 @@ const DetailsPage = ({
       }
     }
     getVariantDetails();
-  }, [variant]);
+  }, [variant.id]);
 
   console.log(details);
 
@@ -124,82 +124,57 @@ const DetailsPage = ({
               {details?.variantAttributes?.length! > 0 && (
                 <div>
                   {details?.variantAttributes.map((attribute, attrIndex) => {
-                    if (attribute?.name === "Color") {
+                    const isColor = attribute?.name === "Color";
+                    const isSize = attribute?.name === "Sizes";
+
+                    if (
+                      (isColor || isSize) &&
+                      attribute.values &&
+                      Array.isArray(attribute.values)
+                    ) {
                       return (
                         <div key={attrIndex} className="mb-4">
-                          {attribute.name &&
-                          attribute.values &&
-                          Array.isArray(attribute.values) ? (
-                            <div className="flex flex-col gap-2 border-b px-2 text-sm">
-                              <strong>{attribute.name}:</strong>
-                              {/* Display each value in the 'values' array */}
-                              <div className="whitespace-nowrap ">
-                                {attribute.values.map((value, valueIdx) => (
-                                  <div
-                                    className={`${
-                                      details?.variantName === value
-                                        ? "border-2 border-blue-700"
-                                        : ""
-                                    } mx-2 inline-block rounded-lg`}
-                                  >
-                                    <p
-                                      key={valueIdx}
-                                      onClick={() =>
-                                        setVariant({
-                                          id: details?._id as string,
-                                          variantName: value,
-                                        })
-                                      }
-                                      style={{ backgroundColor: `${value}` }}
-                                      className={` p-6 rounded-lg m-1`}
-                                    ></p>
+                          <div className="flex flex-col gap-2 border-b px-2 text-sm">
+                            <strong>{attribute.name}:</strong>
+                            <div className="whitespace-nowrap">
+                              {attribute.values.map((value, valueIdx) => {
+                                const isSelected =
+                                  details?.variantName === value;
+                                const commonStyles = `${
+                                  isSelected ? "border-2 border-blue-700" : ""
+                                } mx-2 inline-block rounded-lg`;
+                                const handleClick = () =>
+                                  setVariant({
+                                    id: details?._id as string,
+                                    variantName: value,
+                                  });
+
+                                return (
+                                  <div key={valueIdx} className={commonStyles}>
+                                    {isColor ? (
+                                      <p
+                                        onClick={handleClick}
+                                        style={{ backgroundColor: value }}
+                                        className="p-4 rounded-full m-1"
+                                      ></p>
+                                    ) : isSize ? (
+                                      <p
+                                        onClick={handleClick}
+                                        className="p-6 px-14 border rounded-lg m-1"
+                                      >
+                                        {value}
+                                      </p>
+                                    ) : null}
                                   </div>
-                                ))}
-                              </div>
+                                );
+                              })}
                             </div>
-                          ) : null}
+                          </div>
                         </div>
                       );
                     }
 
-                    if (attribute.name === "Sizes") {
-                      return (
-                        <div key={attrIndex} className="mb-4">
-                          {attribute.name &&
-                          attribute.values &&
-                          Array.isArray(attribute.values) ? (
-                            <div className="flex flex-col gap-2 border-b px-2 text-sm">
-                              <strong>{attribute.name}:</strong>
-                              {/* Display each value in the 'values' array */}
-                              <div className="whitespace-nowrap ">
-                                {attribute.values.map((value, valueIdx) => (
-                                  <div
-                                    className={`${
-                                      details?.variantName === value
-                                        ? "border-2 border-blue-700"
-                                        : ""
-                                    } mx-2 inline-block rounded-lg`}
-                                  >
-                                    <p
-                                      key={valueIdx}
-                                      onClick={() =>
-                                        setVariant({
-                                          id: details?._id as string,
-                                          variantName: value,
-                                        })
-                                      }
-                                      className={` p-6 px-14 border rounded-lg m-1`}
-                                    >
-                                      {value}
-                                    </p>
-                                  </div>
-                                ))}
-                              </div>
-                            </div>
-                          ) : null}
-                        </div>
-                      );
-                    }
+                    return null;
                   })}
                 </div>
               )}
